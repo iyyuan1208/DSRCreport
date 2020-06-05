@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 7 Weather Overlayed with Traffic Stops | Data Science Research Circle</title>
+  <meta name="description" content="This is an exploratory data report on police traffic data." />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 7 Weather Overlayed with Traffic Stops | Data Science Research Circle" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an exploratory data report on police traffic data." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 7 Weather Overlayed with Traffic Stops | Data Science Research Circle" />
+  
+  <meta name="twitter:description" content="This is an exploratory data report on police traffic data." />
+  
+
+<meta name="author" content="Pomona College Data Science Research Circle" />
+
+
+<meta name="date" content="2020-05-29" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="stop-outcomes-in-san-diego-1.html"/>
+<link rel="next" href="common-violations-and-map-visualisations-in-san-antonio-tx.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
+<li class="chapter" data-level="2" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>2</b> Functions</a><ul>
+<li class="chapter" data-level="2.1" data-path="functions.html"><a href="functions.html#data-uploading-functions"><i class="fa fa-check"></i><b>2.1</b> Data Uploading Functions</a></li>
+<li class="chapter" data-level="2.2" data-path="functions.html"><a href="functions.html#veil-of-darkness-functions"><i class="fa fa-check"></i><b>2.2</b> Veil of Darkness Functions</a></li>
+<li class="chapter" data-level="2.3" data-path="functions.html"><a href="functions.html#nationwide-functions"><i class="fa fa-check"></i><b>2.3</b> Nationwide Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="description-of-data.html"><a href="description-of-data.html"><i class="fa fa-check"></i><b>3</b> Description of Data</a><ul>
+<li class="chapter" data-level="3.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-datasets-with-rmysql"><i class="fa fa-check"></i><b>3.1</b> Querying Datasets with RMySQL</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-subsets-of-dataset"><i class="fa fa-check"></i><b>3.1.1</b> Querying Subsets of dataset</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="description-of-data.html"><a href="description-of-data.html#web-scrapping-and-uploading-datasets"><i class="fa fa-check"></i><b>3.2</b> Web Scrapping and Uploading Datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html"><i class="fa fa-check"></i><b>4</b> Exploratory Data Analysis</a><ul>
+<li class="chapter" data-level="4.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#national-overview-of-motorist-demographics"><i class="fa fa-check"></i><b>4.1</b> National Overview of Motorist Demographics</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html"><i class="fa fa-check"></i><b>5</b> Stop outcomes, day-to-night, in Oakland, CA</a><ul>
+<li class="chapter" data-level="5.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#set-up"><i class="fa fa-check"></i><b>5.1</b> Set up</a></li>
+<li class="chapter" data-level="5.2" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#set-up-sunsetsunrise-times-in-ca-oakland"><i class="fa fa-check"></i><b>5.2</b> Set up sunset/sunrise times in CA Oakland</a></li>
+<li class="chapter" data-level="5.3" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#stop-outcomes-by-race-and-daynight"><i class="fa fa-check"></i><b>5.3</b> Stop outcomes, by race and day/night</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#counts-by-race"><i class="fa fa-check"></i><b>5.3.1</b> Counts, by race</a></li>
+<li class="chapter" data-level="5.3.2" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#daynight-outcomes-of-stop-by-race"><i class="fa fa-check"></i><b>5.3.2</b> Day/night outcomes of stop by race</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#dataset-specific-exploration"><i class="fa fa-check"></i><b>5.4</b> Dataset-specific Exploration</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#stop-outcomes-in-san-diego"><i class="fa fa-check"></i><b>5.4.1</b> Stop outcomes in San Diego</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="stop-outcomes-in-san-diego-1.html"><a href="stop-outcomes-in-san-diego-1.html"><i class="fa fa-check"></i><b>6</b> Stop Outcomes in San Diego</a><ul>
+<li class="chapter" data-level="6.0.1" data-path="stop-outcomes-in-san-diego-1.html"><a href="stop-outcomes-in-san-diego-1.html#weather-overlay-in-raleigh"><i class="fa fa-check"></i><b>6.0.1</b> Weather Overlay in Raleigh</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html"><i class="fa fa-check"></i><b>7</b> Weather Overlayed with Traffic Stops</a><ul>
+<li class="chapter" data-level="7.1" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html#visualizing-weather-in-raleigh-north-carolina"><i class="fa fa-check"></i><b>7.1</b> Visualizing Weather in Raleigh, North Carolina</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html#violations-map-in-san-antonio"><i class="fa fa-check"></i><b>7.1.1</b> Violations map in San Antonio</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html"><i class="fa fa-check"></i><b>8</b> Common Violations and Map Visualisations in San Antonio, TX</a><ul>
+<li class="chapter" data-level="8.1" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#common-violations"><i class="fa fa-check"></i><b>8.1</b> Common Violations</a></li>
+<li class="chapter" data-level="8.2" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#map-overlay"><i class="fa fa-check"></i><b>8.2</b> Map Overlay</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#socioeconomic-factors-in-durham"><i class="fa fa-check"></i><b>8.2.1</b> Socioeconomic Factors in Durham</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="socioeconomic-factors-in-durham-1.html"><a href="socioeconomic-factors-in-durham-1.html"><i class="fa fa-check"></i><b>9</b> Socioeconomic Factors in Durham</a><ul>
+<li class="chapter" data-level="9.1" data-path="socioeconomic-factors-in-durham-1.html"><a href="socioeconomic-factors-in-durham-1.html#modeling-the-probability-of-seach-given-stop"><i class="fa fa-check"></i><b>9.1</b> Modeling the Probability of Seach Given Stop</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="sunrise-and-sunset-in-san-antonio-tx.html"><a href="sunrise-and-sunset-in-san-antonio-tx.html"><i class="fa fa-check"></i><b>10</b> Sunrise and Sunset in San Antonio, TX</a></li>
+<li class="chapter" data-level="11" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>11</b> Methods</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="chapter" data-level="12" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>12</b> Final Words</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data Science Research Circle</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="weather-overlayed-with-traffic-stops" class="section level1">
+<h1><span class="header-section-number">Chapter 7</span> Weather Overlayed with Traffic Stops</h1>
+<p>This section of exploratory data analysis sees if precipitation shows correlation with the amount of traffic stops per day. The expected correlation is that if it rains more there will be an increase in traffic stops because wet roads could lead to more reckless driving.</p>
+<p>The Rnoaa package requires an API key, which can be acquired from the Rnoaa documentation</p>
+<div id="visualizing-weather-in-raleigh-north-carolina" class="section level2">
+<h2><span class="header-section-number">7.1</span> Visualizing Weather in Raleigh, North Carolina</h2>
+<p>In this example, we will overlay precipitation over traffic stops in Raleigh February.</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="weather-overlayed-with-traffic-stops.html#cb77-1"></a>raleigh &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * FROM NCraleigh&quot;</span>)</span></code></pre></div>
+<p>In order to get weather data we must call the ncdc function. The key argument to keep in mind is the stationid argument. In order to find a city’s station ID you must go to this NOAA’s website <a href="https://www.ncdc.noaa.gov/cdo-web/search" class="uri">https://www.ncdc.noaa.gov/cdo-web/search</a>. Moreover, the type of data such as precipation, temperature, and snow etc is contingent on the station ID. For this example, we will look at precipitation only, but there is room to explore more variables to see in any affect traffic.</p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="weather-overlayed-with-traffic-stops.html#cb78-1"></a>out &lt;-<span class="st"> </span><span class="kw">ncdc</span>(<span class="dt">datasetid=</span><span class="st">&#39;GHCND&#39;</span>, <span class="dt">stationid=</span><span class="st">&#39;GHCND:USC00317079&#39;</span>, <span class="dt">datatypeid=</span><span class="st">&#39;PRCP&#39;</span>, <span class="dt">startdate =</span> <span class="st">&#39;2013-01-01&#39;</span>, <span class="dt">enddate =</span> <span class="st">&#39;2013-12-31&#39;</span>, <span class="dt">limit =</span> <span class="dv">500</span>)</span></code></pre></div>
+<p>Now that we have the two datasets we must clean them because we will be joining them.</p>
+<p>Here we use the lubridate package to make year, month, and day their own columns in the weather dataframe.</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="weather-overlayed-with-traffic-stops.html#cb79-1"></a>weather_df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(out<span class="op">$</span>data)</span>
+<span id="cb79-2"><a href="weather-overlayed-with-traffic-stops.html#cb79-2"></a></span>
+<span id="cb79-3"><a href="weather-overlayed-with-traffic-stops.html#cb79-3"></a><span class="co"># fix weather_df dates</span></span>
+<span id="cb79-4"><a href="weather-overlayed-with-traffic-stops.html#cb79-4"></a>weather_df &lt;-<span class="st"> </span>weather_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">clean_date =</span> <span class="kw">ymd_hms</span>(date))</span>
+<span id="cb79-5"><a href="weather-overlayed-with-traffic-stops.html#cb79-5"></a></span>
+<span id="cb79-6"><a href="weather-overlayed-with-traffic-stops.html#cb79-6"></a><span class="co"># make individual columns with year, month, &amp; day</span></span>
+<span id="cb79-7"><a href="weather-overlayed-with-traffic-stops.html#cb79-7"></a>weather_df &lt;-<span class="st"> </span>weather_df <span class="op">%&gt;%</span></span>
+<span id="cb79-8"><a href="weather-overlayed-with-traffic-stops.html#cb79-8"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">year =</span> <span class="kw">year</span>(clean_date),</span>
+<span id="cb79-9"><a href="weather-overlayed-with-traffic-stops.html#cb79-9"></a>         <span class="dt">month =</span> <span class="kw">month</span>(clean_date),</span>
+<span id="cb79-10"><a href="weather-overlayed-with-traffic-stops.html#cb79-10"></a>         <span class="dt">day =</span> <span class="kw">day</span>(clean_date))</span></code></pre></div>
+<p>Similarly, the raleigh dataset must also have year, month, and day in separate columns.</p>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="weather-overlayed-with-traffic-stops.html#cb80-1"></a><span class="co"># use libridate to add clean date column for lubridate to interpret</span></span>
+<span id="cb80-2"><a href="weather-overlayed-with-traffic-stops.html#cb80-2"></a>raleigh &lt;-<span class="st"> </span>raleigh <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">clean_date =</span> <span class="kw">ymd</span>(date, <span class="dt">tz =</span> <span class="st">&#39;UTC&#39;</span>))</span>
+<span id="cb80-3"><a href="weather-overlayed-with-traffic-stops.html#cb80-3"></a></span>
+<span id="cb80-4"><a href="weather-overlayed-with-traffic-stops.html#cb80-4"></a><span class="co"># use lubridate to add year, month, day columns</span></span>
+<span id="cb80-5"><a href="weather-overlayed-with-traffic-stops.html#cb80-5"></a>raleigh &lt;-<span class="st"> </span>raleigh <span class="op">%&gt;%</span></span>
+<span id="cb80-6"><a href="weather-overlayed-with-traffic-stops.html#cb80-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">year =</span> <span class="kw">year</span>(clean_date),</span>
+<span id="cb80-7"><a href="weather-overlayed-with-traffic-stops.html#cb80-7"></a>         <span class="dt">month =</span> <span class="kw">month</span>(clean_date),</span>
+<span id="cb80-8"><a href="weather-overlayed-with-traffic-stops.html#cb80-8"></a>         <span class="dt">day =</span> <span class="kw">day</span>(clean_date))</span></code></pre></div>
+<p>Now that we have the two dataframes cleaned up, we can follow a sequence of piping commands to join and plot them.</p>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="weather-overlayed-with-traffic-stops.html#cb81-1"></a><span class="co"># define month variable so we can easily plot different months</span></span>
+<span id="cb81-2"><a href="weather-overlayed-with-traffic-stops.html#cb81-2"></a>month_var =<span class="st"> </span><span class="dv">3</span></span>
+<span id="cb81-3"><a href="weather-overlayed-with-traffic-stops.html#cb81-3"></a>title =<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;Stop Counts with Arrests and Precipitation Day in 2013-&quot;</span>, <span class="kw">paste</span>(month_var))</span>
+<span id="cb81-4"><a href="weather-overlayed-with-traffic-stops.html#cb81-4"></a>  </span>
+<span id="cb81-5"><a href="weather-overlayed-with-traffic-stops.html#cb81-5"></a><span class="co"># the pipe sequence below will examine a month in a year such that we count all the traffic</span></span>
+<span id="cb81-6"><a href="weather-overlayed-with-traffic-stops.html#cb81-6"></a><span class="co"># stops that happened that day. Then, we plot the stop counts for a specific day and max temp in</span></span>
+<span id="cb81-7"><a href="weather-overlayed-with-traffic-stops.html#cb81-7"></a></span>
+<span id="cb81-8"><a href="weather-overlayed-with-traffic-stops.html#cb81-8"></a>raleigh <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb81-9"><a href="weather-overlayed-with-traffic-stops.html#cb81-9"></a><span class="st">  </span><span class="co"># filter out raleigh entries in year 2013 and month variable</span></span>
+<span id="cb81-10"><a href="weather-overlayed-with-traffic-stops.html#cb81-10"></a><span class="st">  </span><span class="kw">filter</span>(year <span class="op">==</span><span class="st"> </span><span class="dv">2013</span>, month <span class="op">==</span><span class="st"> </span>month_var, arrest_made<span class="op">==</span><span class="st">&quot;TRUE&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb81-11"><a href="weather-overlayed-with-traffic-stops.html#cb81-11"></a><span class="st">  </span><span class="co"># left_join by &#39;clean_date&#39; </span></span>
+<span id="cb81-12"><a href="weather-overlayed-with-traffic-stops.html#cb81-12"></a><span class="st">  </span><span class="kw">left_join</span>(weather_df, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&#39;clean_date&#39;</span>))<span class="op">%&gt;%</span></span>
+<span id="cb81-13"><a href="weather-overlayed-with-traffic-stops.html#cb81-13"></a><span class="st">  </span><span class="co"># Group the data by day as this will be our shared x-axis</span></span>
+<span id="cb81-14"><a href="weather-overlayed-with-traffic-stops.html#cb81-14"></a><span class="st">  </span><span class="kw">group_by</span>(day.x) <span class="op">%&gt;%</span></span>
+<span id="cb81-15"><a href="weather-overlayed-with-traffic-stops.html#cb81-15"></a><span class="st">  </span><span class="co"># count the number of stops per day and the precipitation value of that day</span></span>
+<span id="cb81-16"><a href="weather-overlayed-with-traffic-stops.html#cb81-16"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">count =</span> <span class="kw">n</span>(), <span class="dt">precipitation=</span><span class="kw">max</span>(value)) <span class="op">%&gt;%</span></span>
+<span id="cb81-17"><a href="weather-overlayed-with-traffic-stops.html#cb81-17"></a><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span></span>
+<span id="cb81-18"><a href="weather-overlayed-with-traffic-stops.html#cb81-18"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x=</span>day.x, <span class="dt">y=</span> precipitation, <span class="dt">color=</span><span class="st">&quot;PRCP&quot;</span>)) <span class="op">+</span></span>
+<span id="cb81-19"><a href="weather-overlayed-with-traffic-stops.html#cb81-19"></a><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x=</span>day.x, <span class="dt">y=</span> count<span class="op">/</span>.<span class="dv">05</span>, <span class="dt">color =</span> <span class="st">&quot;Stop Count&quot;</span>)) <span class="op">+</span><span class="st">  </span></span>
+<span id="cb81-20"><a href="weather-overlayed-with-traffic-stops.html#cb81-20"></a><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">sec.axis =</span> <span class="kw">sec_axis</span>(<span class="op">~</span>.<span class="op">*</span>.<span class="dv">05</span>, <span class="dt">name =</span> <span class="st">&quot;Stop Count&quot;</span>)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb81-21"><a href="weather-overlayed-with-traffic-stops.html#cb81-21"></a><span class="st">  </span><span class="kw">ggtitle</span>(title)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
+<p>Based on the plot, it seems like precipitation in day does not impract the amount of stops. For example, the precipitation day 15 and 25 is relatively but stop count still fluctuates. Future analysis could look at the hourly level of stop counts and precipation or a year long look of precipiation and stop counts per day.</p>
+<!-- \newpage -->
+<!-- \newpage -->
+<div id="violations-map-in-san-antonio" class="section level3">
+<h3><span class="header-section-number">7.1.1</span> Violations map in San Antonio</h3>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="stop-outcomes-in-san-diego-1.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="common-violations-and-map-visualisations-in-san-antonio-tx.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/04-combined.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

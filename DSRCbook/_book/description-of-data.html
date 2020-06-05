@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Description of Data | Data Exploration of U.S. Police Stops</title>
+  <meta name="description" content="This is an exploratory data report on police traffic data." />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Description of Data | Data Exploration of U.S. Police Stops" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an exploratory data report on police traffic data." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Description of Data | Data Exploration of U.S. Police Stops" />
+  
+  <meta name="twitter:description" content="This is an exploratory data report on police traffic data." />
+  
+
+<meta name="author" content="Pomona College Data Science Research Circle" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="functions.html"/>
+<link rel="next" href="exploratory-data-analysis.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.0.3/leaflet.js"></script>
+<script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.3/leaflet-providers-plugin.js"></script>
+<link href="libs/leaflet-markercluster-1.0.5/MarkerCluster.css" rel="stylesheet" />
+<link href="libs/leaflet-markercluster-1.0.5/MarkerCluster.Default.css" rel="stylesheet" />
+<script src="libs/leaflet-markercluster-1.0.5/leaflet.markercluster.js"></script>
+<script src="libs/leaflet-markercluster-1.0.5/leaflet.markercluster.freezable.js"></script>
+<script src="libs/leaflet-markercluster-1.0.5/leaflet.markercluster.layersupport.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Data Exploration of U.S. Police Stops</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#dedication"><i class="fa fa-check"></i><b>1.1</b> Dedication</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#motivation"><i class="fa fa-check"></i><b>1.2</b> Motivation</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="literature-review.html"><a href="literature-review.html"><i class="fa fa-check"></i><b>2</b> Literature Review</a></li>
+<li class="chapter" data-level="3" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>3</b> Functions</a><ul>
+<li class="chapter" data-level="3.1" data-path="functions.html"><a href="functions.html#data-uploading-functions"><i class="fa fa-check"></i><b>3.1</b> Data Uploading Functions</a></li>
+<li class="chapter" data-level="3.2" data-path="functions.html"><a href="functions.html#veil-of-darkness-functions"><i class="fa fa-check"></i><b>3.2</b> Veil of Darkness Functions</a></li>
+<li class="chapter" data-level="3.3" data-path="functions.html"><a href="functions.html#nationwide-functions"><i class="fa fa-check"></i><b>3.3</b> Nationwide Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="description-of-data.html"><a href="description-of-data.html"><i class="fa fa-check"></i><b>4</b> Description of Data</a><ul>
+<li class="chapter" data-level="4.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-datasets-with-rmysql"><i class="fa fa-check"></i><b>4.1</b> Querying Datasets with RMySQL</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-subsets-of-dataset"><i class="fa fa-check"></i><b>4.1.1</b> Querying Subsets of dataset</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="description-of-data.html"><a href="description-of-data.html#web-scrapping-and-uploading-datasets"><i class="fa fa-check"></i><b>4.2</b> Web Scrapping and Uploading Datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html"><i class="fa fa-check"></i><b>5</b> Exploratory Data Analysis</a><ul>
+<li class="chapter" data-level="5.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#demographics-of-motorists-stopped-nationwide"><i class="fa fa-check"></i><b>5.1</b> Demographics of Motorists Stopped, Nationwide</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#set-up"><i class="fa fa-check"></i><b>5.1.1</b> Set Up</a></li>
+<li class="chapter" data-level="5.1.2" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#race-and-sex-of-stopped-motorists"><i class="fa fa-check"></i><b>5.1.2</b> Race and sex of stopped motorists</a></li>
+<li class="chapter" data-level="5.1.3" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#distribution-of-motorists-age-by-race"><i class="fa fa-check"></i><b>5.1.3</b> Distribution of motorists’ age by race</a></li>
+<li class="chapter" data-level="5.1.4" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#age-distribution-by-race-nationally"><i class="fa fa-check"></i><b>5.1.4</b> Age distribution by race, nationally</a></li>
+<li class="chapter" data-level="5.1.5" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#search-rates"><i class="fa fa-check"></i><b>5.1.5</b> Search rates</a></li>
+<li class="chapter" data-level="5.1.6" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#query-the-data"><i class="fa fa-check"></i><b>5.1.6</b> 1. Query the data</a></li>
+<li class="chapter" data-level="5.1.7" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#transform-data"><i class="fa fa-check"></i><b>5.1.7</b> 2. Transform data</a></li>
+<li class="chapter" data-level="5.1.8" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#plot-using-geofacet-1"><i class="fa fa-check"></i><b>5.1.8</b> 3. Plot using geofacet</a></li>
+<li class="chapter" data-level="5.1.9" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#use-scatter-plot-to-examine-ratios"><i class="fa fa-check"></i><b>5.1.9</b> 4. Use scatter plot to examine ratios</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#dataset-specific-exploration"><i class="fa fa-check"></i><b>5.2</b> Dataset-specific Exploration</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#stop-outcomes-from-day-to-night-in-oakland-ca"><i class="fa fa-check"></i><b>5.2.1</b> Stop outcomes from day to night in Oakland, CA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#stop-outcomes-in-san-diego-ca"><i class="fa fa-check"></i><b>5.2.2</b> Stop outcomes in San Diego, CA</a></li>
+<li class="chapter" data-level="5.2.3" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#weather-overlay-in-raleigh-nc"><i class="fa fa-check"></i><b>5.2.3</b> Weather overlay in Raleigh, NC</a></li>
+<li class="chapter" data-level="5.2.4" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#maps-in-san-antonio-tx"><i class="fa fa-check"></i><b>5.2.4</b> Maps in San Antonio, TX</a></li>
+<li class="chapter" data-level="5.2.5" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#socioeconomic-factors-in-durham-nc"><i class="fa fa-check"></i><b>5.2.5</b> Socioeconomic factors in Durham, NC</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#modeling-the-probability-of-seach-given-stop"><i class="fa fa-check"></i><b>5.3</b> Modeling the Probability of Seach Given Stop</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#sunrise-and-sunset"><i class="fa fa-check"></i><b>5.3.1</b> Sunrise and Sunset</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="logistic-regression.html"><a href="logistic-regression.html"><i class="fa fa-check"></i><b>6</b> Logistic Regression</a><ul>
+<li class="chapter" data-level="6.1" data-path="logistic-regression.html"><a href="logistic-regression.html#charlotte-nc-logistic-regression"><i class="fa fa-check"></i><b>6.1</b> Charlotte, NC Logistic Regression</a></li>
+<li class="chapter" data-level="6.2" data-path="logistic-regression.html"><a href="logistic-regression.html#plotting-s-curves"><i class="fa fa-check"></i><b>6.2</b> Plotting S-curves</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="logistic-regression.html"><a href="logistic-regression.html#grouping"><i class="fa fa-check"></i><b>6.2.1</b> Grouping</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="logistic-regression.html"><a href="logistic-regression.html#veil-of-darkness-nationwide"><i class="fa fa-check"></i><b>6.3</b> Veil of Darkness Nationwide</a></li>
+<li class="chapter" data-level="6.4" data-path="logistic-regression.html"><a href="logistic-regression.html#predictive-models"><i class="fa fa-check"></i><b>6.4</b> Predictive Models</a></li>
+<li class="chapter" data-level="6.5" data-path="logistic-regression.html"><a href="logistic-regression.html#empirical-search-probabilities-nationwide"><i class="fa fa-check"></i><b>6.5</b> Empirical Search Probabilities Nationwide</a><ul>
+<li class="chapter" data-level="6.5.1" data-path="logistic-regression.html"><a href="logistic-regression.html#create-a-list-of-relevant-data-sets"><i class="fa fa-check"></i><b>6.5.1</b> 1. Create a list of relevant data sets</a></li>
+<li class="chapter" data-level="6.5.2" data-path="logistic-regression.html"><a href="logistic-regression.html#query-the-stop-and-search-counts."><i class="fa fa-check"></i><b>6.5.2</b> 2. Query the stop and search counts.</a></li>
+<li class="chapter" data-level="6.5.3" data-path="logistic-regression.html"><a href="logistic-regression.html#combine-and-plot-the-data"><i class="fa fa-check"></i><b>6.5.3</b> 3. Combine and plot the data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="limitations-and-discussion.html"><a href="limitations-and-discussion.html"><i class="fa fa-check"></i><b>7</b> Limitations and Discussion</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data Exploration of U.S. Police Stops</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="description-of-data" class="section level1">
+<h1><span class="header-section-number">Chapter 4</span> Description of Data</h1>
+<p>The data was extracted from the Stanford Open Policing Project data hub. The Open Policing Project’s website contains ninety city and state-wide standardized stop datasets in both RDS and CSV format. From there, we uploaded six datasets to a mySQL database and locally queried the data on our personal laptops via RMySQL package within R.</p>
+<p>The possible variables within each dataset are listed below with description and corresponding units.</p>
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Variable
+</th>
+<th style="text-align:left;">
+Description
+</th>
+<th style="text-align:left;">
+Units
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Stop Date
+</td>
+<td style="text-align:left;">
+States the year, month, day
+</td>
+<td style="text-align:left;">
+XXXX-XX-XX
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stop Time
+</td>
+<td style="text-align:left;">
+States the time of the stop
+</td>
+<td style="text-align:left;">
+XX:XX:XX
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stop Location
+</td>
+<td style="text-align:left;">
+States the street intersection of the stop
+</td>
+<td style="text-align:left;">
+Names two streets, occasionally lists a city
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Driver Race
+</td>
+<td style="text-align:left;">
+Describes the race of driver as given on the driver’s license
+</td>
+<td style="text-align:left;">
+String representing the subject’s race
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Driver Sex
+</td>
+<td style="text-align:left;">
+Describes the sex orientation of driver
+</td>
+<td style="text-align:left;">
+Binary Female/Male
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Driver Age
+</td>
+<td style="text-align:left;">
+Describes the age of the driver
+</td>
+<td style="text-align:left;">
+Integer representing the driver’s age
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Search Conducted
+</td>
+<td style="text-align:left;">
+Describes whether there was a search conducted or not
+</td>
+<td style="text-align:left;">
+True (search conducted) or False (search not conducted)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Contraband Found
+</td>
+<td style="text-align:left;">
+Describes whether there was contraband found after a search was conducted
+</td>
+<td style="text-align:left;">
+True (contraband found) or False (contraband not found)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Citation Issued
+</td>
+<td style="text-align:left;">
+Describes whether there was a citation issued to the driver
+</td>
+<td style="text-align:left;">
+True (citation issued) or False (no citation issued)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Warning Issued
+</td>
+<td style="text-align:left;">
+Describes whether there was a warning issued to the driver
+</td>
+<td style="text-align:left;">
+True (warning issued) or False (no warning issued)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Frisk Performed
+</td>
+<td style="text-align:left;">
+Describes whether there was a frisk performed on the driver
+</td>
+<td style="text-align:left;">
+True (frisk performed) or False (no frisk performed)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Arrest Made
+</td>
+<td style="text-align:left;">
+Describes whether the driver was arrested
+</td>
+<td style="text-align:left;">
+True (arrest made) or False (no frisk performed)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Reason for Stop
+</td>
+<td style="text-align:left;">
+Describes why the driver was stopped
+</td>
+<td style="text-align:left;">
+String describing the reason for the stop
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Violation
+</td>
+<td style="text-align:left;">
+Describes the violation when a citation or warning was issued
+</td>
+<td style="text-align:left;">
+String representing the violation
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>We focused on the datasets for San Francisco, San Diego, Oakland, Raleigh, Charlotte, and Durham, and San Antonio. Below, the “X” represents whether the dataset for that particular city includes the specified variable.</p>
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+City
+</th>
+<th style="text-align:left;">
+Number.of.Observations
+</th>
+<th style="text-align:left;">
+Stop.Date
+</th>
+<th style="text-align:left;">
+Stop.Time
+</th>
+<th style="text-align:left;">
+Stop.Location
+</th>
+<th style="text-align:left;">
+Driver.Race
+</th>
+<th style="text-align:left;">
+Search.Conducted
+</th>
+<th style="text-align:left;">
+Contraband.found
+</th>
+<th style="text-align:left;">
+Citation.Issued
+</th>
+<th style="text-align:left;">
+Warning.Issued
+</th>
+<th style="text-align:left;">
+Frisk.Performed
+</th>
+<th style="text-align:left;">
+Arrest.Made
+</th>
+<th style="text-align:left;">
+Reason.For.Stop
+</th>
+<th style="text-align:left;">
+Violation
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+San Francisco
+</td>
+<td style="text-align:left;">
+905,070
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Oakland
+</td>
+<td style="text-align:left;">
+133,405
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+San Diego
+</td>
+<td style="text-align:left;">
+382,844
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Charlotte
+</td>
+<td style="text-align:left;">
+1,598,453
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Durham
+</td>
+<td style="text-align:left;">
+326,024
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Raleigh
+</td>
+<td style="text-align:left;">
+856,400
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+San Antonio
+</td>
+<td style="text-align:left;">
+1,040,428
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>While many of the datasets included a multitude of the variables above, there were clear limitations. First, while the California datasets were rich in variables, the “reason for stop” was dubious at best. Not only did many reasons make no logical sense, but also up to four reasons were listed for a single observation. Moreover, there is no uniformity in the “reason for stop” for all datasets in California. In contrast, the datasets in North Carolina had a clean “reason for stop”; however, these datasets do not have latitude/longitude which limits the geographical comparisons we can make. Additionally, only a small fraction of the city and state datasets contained subject age; the scarcity of information regarding subject age makes it difficult to compare nationally. Lastly, only a few datasets, such as Chicago, contained the police officer’s identification number. While we did not investigate the effect of the age, race, or other factors of individual police officers, it would be meaningful for more datasets to contain that information to draw national correlations.</p>
+<div id="querying-datasets-with-rmysql" class="section level2">
+<h2><span class="header-section-number">4.1</span> Querying Datasets with RMySQL</h2>
+<p>First import the necesarry packages to work with SQL in R</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="description-of-data.html#cb12-1"></a><span class="kw">library</span>(XML)</span>
+<span id="cb12-2"><a href="description-of-data.html#cb12-2"></a><span class="kw">library</span>(RMySQL)</span></code></pre></div>
+<pre><code>## Loading required package: DBI</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="description-of-data.html#cb14-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb14-2"><a href="description-of-data.html#cb14-2"></a><span class="kw">library</span>(knitr)</span>
+<span id="cb14-3"><a href="description-of-data.html#cb14-3"></a><span class="kw">library</span>(rlist)</span></code></pre></div>
+<pre><code>## Warning: package &#39;rlist&#39; was built under R version 3.6.3</code></pre>
+<p>Next, setup a connection to the database.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="description-of-data.html#cb16-1"></a><span class="co"># Connect to database</span></span>
+<span id="cb16-2"><a href="description-of-data.html#cb16-2"></a>con &lt;-<span class="st"> </span><span class="kw">dbConnect</span>(</span>
+<span id="cb16-3"><a href="description-of-data.html#cb16-3"></a>  <span class="kw">MySQL</span>(), <span class="dt">host =</span> <span class="st">&quot;traffic.st47s.com&quot;</span>, <span class="dt">user =</span> <span class="st">&quot;student&quot;</span>,</span>
+<span id="cb16-4"><a href="description-of-data.html#cb16-4"></a>  <span class="dt">password =</span> <span class="st">&quot;Sagehen47&quot;</span>, <span class="dt">dbname =</span> <span class="st">&quot;traffic&quot;</span>)</span></code></pre></div>
+<p>Note: If you are looking to modify the database you must use a different username and password that can be acquired through Professor Hardin.</p>
+<p>dbGetQuery returns a dataframe, so storing it in a variable adds that dataframe to the global environment</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="description-of-data.html#cb17-1"></a>raleigh_df &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * FROM NCraleigh LIMIT 15&quot;</span>)</span></code></pre></div>
+<div id="querying-subsets-of-dataset" class="section level3">
+<h3><span class="header-section-number">4.1.1</span> Querying Subsets of dataset</h3>
+<p>Certain scenarios such as running a logistic regression need not every variable from a dataset - only the variables of interest. Moreover, running a logistic regression on every city with all columns is a taxing operation. This is where querying can be useful in selecting portions of the datasets deemed essential.</p>
+<p>The logistic regression called for the race, age, sex, and data variables. The query_data function will takes in a database table name (city_name) and will select the desired variables from that table.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="description-of-data.html#cb18-1"></a>query_data &lt;-<span class="st"> </span><span class="cf">function</span>(city_name){</span>
+<span id="cb18-2"><a href="description-of-data.html#cb18-2"></a>  <span class="co"># cancenate SQL query string</span></span>
+<span id="cb18-3"><a href="description-of-data.html#cb18-3"></a>  command &lt;-<span class="st"> </span></span>
+<span id="cb18-4"><a href="description-of-data.html#cb18-4"></a><span class="st">    </span><span class="kw">paste</span>(<span class="st">&quot;SELECT subject_age, subject_race, subject_sex, date, search_conducted FROM&quot;</span>,</span>
+<span id="cb18-5"><a href="description-of-data.html#cb18-5"></a>         city_name, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>)</span>
+<span id="cb18-6"><a href="description-of-data.html#cb18-6"></a>  <span class="kw">return</span>(DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con, command))</span>
+<span id="cb18-7"><a href="description-of-data.html#cb18-7"></a>} </span>
+<span id="cb18-8"><a href="description-of-data.html#cb18-8"></a></span>
+<span id="cb18-9"><a href="description-of-data.html#cb18-9"></a><span class="co"># Make a list of datasets</span></span>
+<span id="cb18-10"><a href="description-of-data.html#cb18-10"></a>datasets &lt;-<span class="st"> </span><span class="kw">list</span>()</span>
+<span id="cb18-11"><a href="description-of-data.html#cb18-11"></a>datasets &lt;-<span class="st"> </span><span class="kw">lapply</span>(datasets_of_interest, query_data)</span></code></pre></div>
+</div>
+</div>
+<div id="web-scrapping-and-uploading-datasets" class="section level2">
+<h2><span class="header-section-number">4.2</span> Web Scrapping and Uploading Datasets</h2>
+<p>This section will show the dataset upload process. The first step is to acquire all the RDS weblinks from the Stanford Policing Project Website.</p>
+<p>The code here is written by Professor Sarkis and it will get all the rds files from the stanford policing project website. Then, it stores all the file names into a character string</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="description-of-data.html#cb19-1"></a>url &lt;-<span class="st"> &quot;https://openpolicing.stanford.edu/data/&quot;</span></span>
+<span id="cb19-2"><a href="description-of-data.html#cb19-2"></a>doc &lt;-<span class="st"> </span><span class="kw">htmlParse</span>(<span class="kw">readLines</span>(url), <span class="dt">asText=</span><span class="ot">TRUE</span>)</span>
+<span id="cb19-3"><a href="description-of-data.html#cb19-3"></a>links &lt;-<span class="st"> </span><span class="kw">xpathSApply</span>(doc, <span class="st">&quot;//a/@href&quot;</span>)</span>
+<span id="cb19-4"><a href="description-of-data.html#cb19-4"></a><span class="kw">free</span>(doc)</span>
+<span id="cb19-5"><a href="description-of-data.html#cb19-5"></a></span>
+<span id="cb19-6"><a href="description-of-data.html#cb19-6"></a>all_links &lt;-<span class="st"> </span><span class="kw">as.character</span>(links[<span class="kw">grep</span>(<span class="st">&#39;_.*rds&#39;</span>, links)])</span></code></pre></div>
+<p>One could also get all the dataset file names for a specific state by adding the state’s two character abbreviation e.g.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="description-of-data.html#cb20-1"></a>california_links &lt;-<span class="st"> </span><span class="kw">as.character</span>(links[<span class="kw">grep</span>(<span class="st">&#39;ca_.*rds&#39;</span>, links)])</span></code></pre></div>
+<p>Another optional step is to splice certain links using base R indexing</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="description-of-data.html#cb21-1"></a><span class="co"># subset list to get desired links</span></span>
+<span id="cb21-2"><a href="description-of-data.html#cb21-2"></a>all_links &lt;-<span class="st"> </span>all_links[<span class="dv">43</span><span class="op">:</span><span class="dv">48</span>]</span>
+<span id="cb21-3"><a href="description-of-data.html#cb21-3"></a>all_links &lt;-<span class="st"> </span>all_links[<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">5</span>)]</span></code></pre></div>
+<p>Since the datasets are written to the database using the dbWriteTable function from RMySQL library, logical datatypes get interpreted as character, which will be tedious to deal with in future analysis. Therefore, the convertLogicalToInt function will convert columns that have logical datatypes into doubles (0 and 1).</p>
+<p>convertLogicalToInt function:
+input: dataset
+output: dataset with logical values set to binary</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="description-of-data.html#cb22-1"></a>convertLogicalToInt &lt;-<span class="st"> </span><span class="cf">function</span>(input_df){</span>
+<span id="cb22-2"><a href="description-of-data.html#cb22-2"></a>  vars &lt;-<span class="st"> </span><span class="kw">sapply</span>(input_df, class) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb22-3"><a href="description-of-data.html#cb22-3"></a><span class="st">  </span><span class="kw">list.which</span>(.<span class="op">==</span><span class="st">&#39;logical&#39;</span>)</span>
+<span id="cb22-4"><a href="description-of-data.html#cb22-4"></a></span>
+<span id="cb22-5"><a href="description-of-data.html#cb22-5"></a>  input_df[,vars] &lt;-<span class="st"> </span><span class="kw">sapply</span>(input_df[,vars], as.numeric)</span>
+<span id="cb22-6"><a href="description-of-data.html#cb22-6"></a>  input_df</span>
+<span id="cb22-7"><a href="description-of-data.html#cb22-7"></a>  <span class="kw">return</span>(input_df)</span>
+<span id="cb22-8"><a href="description-of-data.html#cb22-8"></a>}</span></code></pre></div>
+<p>Subsequently, dbWriteTable also needs a name for the table, which can parsed out of the weblinks. The getDFName function returns a suitable datatable name.</p>
+<p>getDFName:
+input: name of dataset (this could also be name of link from web scrape)
+output: clean dataset name that includes state and city</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="description-of-data.html#cb23-1"></a>getDFName &lt;-<span class="st"> </span><span class="cf">function</span>(input_string){</span>
+<span id="cb23-2"><a href="description-of-data.html#cb23-2"></a>  tmp &lt;-<span class="st"> </span><span class="kw">str_split</span>(input_string, <span class="st">&#39;_&#39;</span>, <span class="dt">simplify =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb23-3"><a href="description-of-data.html#cb23-3"></a>tmp</span>
+<span id="cb23-4"><a href="description-of-data.html#cb23-4"></a></span>
+<span id="cb23-5"><a href="description-of-data.html#cb23-5"></a>state &lt;-<span class="st"> </span><span class="kw">str_to_upper</span>(tmp[,<span class="dv">2</span>])</span>
+<span id="cb23-6"><a href="description-of-data.html#cb23-6"></a></span>
+<span id="cb23-7"><a href="description-of-data.html#cb23-7"></a><span class="cf">if</span>(tmp[,<span class="dv">4</span>] <span class="op">!=</span><span class="st"> &quot;2019&quot;</span>){</span>
+<span id="cb23-8"><a href="description-of-data.html#cb23-8"></a>    cityName &lt;-<span class="st"> </span><span class="kw">paste</span>(tmp[,<span class="dv">3</span>], tmp[,<span class="dv">4</span>], <span class="dt">sep=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb23-9"><a href="description-of-data.html#cb23-9"></a>    name &lt;-<span class="st"> </span><span class="kw">paste</span>(state, cityName, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb23-10"><a href="description-of-data.html#cb23-10"></a>} <span class="cf">else</span> {</span>
+<span id="cb23-11"><a href="description-of-data.html#cb23-11"></a>    cityName &lt;-<span class="st"> </span>tmp[,<span class="dv">3</span>]</span>
+<span id="cb23-12"><a href="description-of-data.html#cb23-12"></a>    name &lt;-<span class="st"> </span><span class="kw">paste</span>(state, cityName, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb23-13"><a href="description-of-data.html#cb23-13"></a>}</span>
+<span id="cb23-14"><a href="description-of-data.html#cb23-14"></a>name</span>
+<span id="cb23-15"><a href="description-of-data.html#cb23-15"></a><span class="kw">return</span>(name)</span>
+<span id="cb23-16"><a href="description-of-data.html#cb23-16"></a>}</span></code></pre></div>
+<p>The penultimate step is to read the RDS file and write that to the database using the dbWriteTable function. The results from the two previous functions will serve as arguments for the dbWriteTable function.</p>
+<p>uploadLinksToDatabase:
+input: string link from web scrape
+outout: 0 - indicating that the code finished executing
+This function will take in a RDS link and write the dataset to the database</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="description-of-data.html#cb24-1"></a>uploadLinksToDatabase &lt;-<span class="st"> </span><span class="cf">function</span>(input_link){</span>
+<span id="cb24-2"><a href="description-of-data.html#cb24-2"></a>  tmpDF &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">gzcon</span>(<span class="kw">url</span>(input_link)))</span>
+<span id="cb24-3"><a href="description-of-data.html#cb24-3"></a>  tmpDF &lt;-<span class="st"> </span><span class="kw">convertLogicalToInt</span>(tmpDF)</span>
+<span id="cb24-4"><a href="description-of-data.html#cb24-4"></a>  name&lt;-<span class="st"> </span><span class="kw">getDFName</span>(input_link)</span>
+<span id="cb24-5"><a href="description-of-data.html#cb24-5"></a>  </span>
+<span id="cb24-6"><a href="description-of-data.html#cb24-6"></a>  <span class="kw">dbWriteTable</span>(con2, name, tmpDF, <span class="dt">overwrite =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb24-7"><a href="description-of-data.html#cb24-7"></a>  <span class="kw">return</span>(<span class="dv">0</span>)</span>
+<span id="cb24-8"><a href="description-of-data.html#cb24-8"></a>}</span></code></pre></div>
+<p>lapply serves as a ‘oneline’ for loop. The argument all_links is a character string of links, which lapply will iterate through and call the function, uploadLinksToDatabase, on each link</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="description-of-data.html#cb25-1"></a><span class="kw">lapply</span>(all_links, uploadLinksToDatabase)</span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="functions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="exploratory-data-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/03-description_of_data.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
