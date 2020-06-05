@@ -1,0 +1,198 @@
+---
+title: "Exploring Stop Outcomes"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r include = FALSE}
+library(data.table)
+library(lubridate)
+library(ggplot2)
+library(dplyr)
+library(RMySQL)
+library(knitr)
+library(formatR)
+
+# Set so that long lines in R will be wrapped:
+opts_chunk$set(tidy.opts=list(width.cutoff=40),tidy=TRUE)
+```
+
+```{r echo = FALSE}
+con1 <- dbConnect(
+  MySQL(), host = "traffic.st47s.com", user = "student",
+  password = "Sagehen47", dbname = "traffic")
+con2 <- dbConnect(
+  MySQL(), host = "traffic.st47s.com", user = "student", 
+  password = "Sagehen47", dbname = "trafficbadTF")
+```
+
+```{r echo = FALSE}
+CAsd1 <- DBI::dbGetQuery(con1, "SELECT raw_row_number, arrest_made, citation_issued, warning_issued, search_conducted, search_person, search_vehicle FROM CAsandiego")
+
+CAsd2 <- DBI::dbGetQuery(con2, "SELECT raw_row_number, date, time, service_area, subject_age, subject_race, subject_sex, type, outcome, reason_for_stop, raw_action_taken, raw_subject_race_description FROM CAsandiego")
+
+goodSD <- merge(x=CAsd1,y=CAsd2,by="raw_row_number",all.x=TRUE)
+
+goodSD <- goodSD %>% mutate(clean_date = ymd(date, tz = "UTC"),
+                            yday = yday(clean_date))
+```
+
+#### Significance of Stop Outcomes
+
+It is helpful to look at the distribution of stop outcomes because it could suggest underlying intent from the officer or commonalities in policing different races (i.e. prevalence of profiled searches, warrant for arrest). Additionally, it can communicate trends in policing behavior in regards to race of a particular police department. The following visualizations display the distribution of searches and arrests made on traffic stops in San Diego. 
+
+#### Recoding Race column in San Diego Dataset
+
+Unlike many datasets, in San Diego, subject race is recorded in a very detailed and consistant manner. However, for the purpose of comparing with other datasets used in the Stanford Open Policing Project, the below race selections were recodded as `"ASIAN/PACIFIC ISLANDER"` to reflect how race is categorized by police departments in other cities and states. The `recode` function can be used to recode entries in the `raw_subject_race_description` column as such. Here the `recode` function is used to overwrite some `raw_subject_race_description` entries as `"ASIAN/PACIFIC ISLANDER"`.
+
+```{r}
+goodSD$raw_subject_race_description <- recode(goodSD$raw_subject_race_description, "VIETNAMESE"="ASIAN/PACIFIC ISLANDER", 
+                                "SAMOAN"="ASIAN/PACIFIC ISLANDER", 
+                                "LAOTIAN"="ASIAN/PACIFIC ISLANDER",
+                                "KOREAN"="ASIAN/PACIFIC ISLANDER",
+                                "JAPANESE"="ASIAN/PACIFIC ISLANDER",
+                                "INDIAN"="ASIAN/PACIFIC ISLANDER",
+                                "HAWAIIAN"="ASIAN/PACIFIC ISLANDER", 
+                                "GUAMANIAN"="ASIAN/PACIFIC ISLANDER",
+                               "FILIPINO"="ASIAN/PACIFIC ISLANDER",
+                                "CHINESE"="ASIAN/PACIFIC ISLANDER",
+                                "CAMBODIAN"="ASIAN/PACIFIC ISLANDER",
+                               "ASIAN INDIAN"="ASIAN/PACIFIC ISLANDER",
+                               "OTHER ASIAN"="ASIAN/PACIFIC ISLANDER",
+                               "PACIFIC ISLANDER"="ASIAN/PACIFIC ISLANDER")
+```
+
+#### Plotting Search Conducted by Race
+
+Below is that code for creating a data table with generated percentages of search and non-search traffic stops in San Diego. The following steps are replicated for person searches, vehicle searches, arrests made, citations issued, and warnings issued.
+
+```{r}
+# create a new dataset
+SearchesByRaceCOL <- goodSD %>% 
+  
+  # group by race and search_conducted columns
+  group_by(raw_subject_race_description, search_conducted) %>%
+  
+  # calculate count for searches conducted by race
+  summarize(Total =n()) %>% 
+  
+  # group by race group
+  group_by(raw_subject_race_description) %>% 
+  
+  # calculate percentage of searches conducted
+  mutate(pct=Total/sum(Total))
+
+# save the percentages in data table
+data.table(SearchesByRaceCOL)
+
+# omit NAs for searches conducted
+SearchesByRaceCOL <- na.omit(SearchesByRaceCOL) 
+```
+
+Below is a bar plot of `SearchesByRaceCOL` which visualizes the percentage of traffic stops that resulted in a search binned by race group.
+
+```{r echo = FALSE}
+# visualize proportion of stops with searches vs. stops without searches
+ggplot(SearchesByRaceCOL, aes(x=raw_subject_race_description, y=pct, fill=search_conducted))+ geom_col() + coord_flip() + ggtitle("Search Conducted by Race") + xlab("Race") + ylab("Percentage") + labs(fill = "Search Conducted")
+```
+
+It is important to note that search conducted includes all stops that result in a search of person and search of vehicle but are not composed of entirely of the two. The following two bar plots visualize search of person and search of vehicle percentages by race.
+
+
+#### Plotting Search Person by Race
+```{r include = FALSE}
+SearchPersonsByRace <- goodSD %>% 
+  group_by(raw_subject_race_description, search_person) %>%
+  summarize(Total =n()) %>% 
+  group_by(raw_subject_race_description) %>% 
+  mutate(pct=Total/sum(Total))
+
+data.table(SearchPersonsByRace)
+
+SearchPersonsByRace <- na.omit(SearchPersonsByRace)
+```
+
+```{r echo = FALSE}
+ggplot(SearchPersonsByRace, aes(x=raw_subject_race_description, y=pct, fill=search_person)) + geom_col() + coord_flip() + ggtitle("Search Persons by Race") + xlab("Race") + ylab("Percentage") + labs(fill = "Search Person")
+```
+
+#### Plotting Search Vehicle by Race
+```{r include = FALSE}
+SearchVehiclesByRace <- goodSD %>% 
+  group_by(raw_subject_race_description, search_vehicle) %>%
+  summarize(Total =n()) %>% 
+  group_by(raw_subject_race_description) %>% 
+  mutate(pct=Total/sum(Total))
+
+data.table(SearchVehiclesByRace)
+  
+SearchVehiclesByRace <- na.omit(SearchVehiclesByRace)
+```
+```{r echo = FALSE}
+ggplot(SearchVehiclesByRace, aes(x=raw_subject_race_description, y=pct, fill=search_vehicle)) + geom_col() + coord_flip() + ggtitle("Search Vehicles by Race") + xlab("Race") + ylab("Percentage") + labs(fill = "Search Vehicle")
+```
+
+#### Plotting Arrest Made by Race
+```{r include = FALSE}
+ArrestsByRace <- goodSD %>% 
+  
+  # group rows by race and arrest_made
+  group_by(raw_subject_race_description, arrest_made) %>% 
+  
+  # calculate count for each group
+  summarize(Total =n()) %>% 
+  group_by(raw_subject_race_description) %>% 
+  mutate(pct=Total/sum(Total))
+
+data.table(ArrestsByRace)
+
+ArrestsByRace <- na.omit(ArrestsByRace)
+```
+```{r echo = FALSE}
+# visualizae proportions for arrest_made
+ggplot(ArrestsByRace, aes(x=raw_subject_race_description, y=pct, fill=arrest_made))+ geom_col() + coord_flip() + ggtitle("Arrests Made by Race") + xlab("Race") + ylab("Percentage") + labs(fill = "Arrest Made")
+```
+
+It is important to note that if an arrest was made, it does not necessarily mean that a traffic violation was the cause of arrest. By analyzing the `reason for stop` column, one can easily see that pedestrians and vehicles are included in the traffic stop data set. Additionally, the data set does not account for stops that were made because of a prexisting arrest warrant which dictates that race was not a motivation in making the arrest/stop.
+
+
+#### Plotting Citations Issued by Race
+```{r include = FALSE}
+CitationsByRace <- goodSD %>% 
+  group_by(raw_subject_race_description, citation_issued) %>%
+  summarize(Total =n()) %>% 
+  group_by(raw_subject_race_description) %>% 
+  mutate(pct=Total/sum(Total))
+
+data.table(CitationsByRace)
+  
+CitationsByRace <- na.omit(CitationsByRace)
+```
+```{r echo = FALSE}  
+  
+ggplot(CitationsByRace, aes(x=raw_subject_race_description, y=pct, fill=citation_issued)) + geom_col() + coord_flip() + ggtitle("Citations Issued by Race") + xlab("Race") + ylab("Percentage") + labs(fill = "Citations Issued")
+```
+
+#### Plotting Warnings Issued by Race
+```{r include = FALSE}
+WarningsByRace <- goodSD %>% 
+  group_by(raw_subject_race_description, warning_issued) %>%
+  summarize(Total =n()) %>% 
+  group_by(raw_subject_race_description) %>% 
+  mutate(pct=Total/sum(Total))
+
+data.table(WarningsByRace)
+
+WarningsByRace <- na.omit(WarningsByRace)
+```
+```{r echo = FALSE}
+ggplot(WarningsByRace, aes(x=raw_subject_race_description, y=pct, fill=warning_issued)) + geom_col() + coord_flip() + ggtitle("Warnings Issued by Race") + xlab("Race") + ylab("Percentage") + labs(fill = "Warnings Issued")
+```
+
+From observing all possible stop outcomes and their proportions, it is observed in San Diego, arrest is not as prevalent in traffic stops. However, citations and warnings are much more prevalent proportionally with relatively equivalent percentages across all races.

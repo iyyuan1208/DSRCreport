@@ -1,0 +1,175 @@
+---
+title: "Stop Outcomes in San Diego"
+output: pdf_document
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(data.table)
+library(lubridate)
+library(ggplot2)
+library(dplyr)
+library(rnoaa)
+library(RMySQL)
+options(noaakey = "zLqzWqraVVkczRVkGghzpNyVgqtFYiMa")
+```
+
+```{r, echo=FALSE}
+con1 <- dbConnect(
+  MySQL(), host = "traffic.st47s.com", user = "student",
+  password = "Sagehen47", dbname = "traffic")
+con2 <- dbConnect(
+  MySQL(), host = "traffic.st47s.com", user = "student", 
+  password = "Sagehen47", dbname = "trafficbadTF")
+```
+
+```{r}
+CAsd1 <- DBI::dbGetQuery(con1, "SELECT raw_row_number, arrest_made, citation_issued, warning_issued, search_conducted, search_person, search_vehicle FROM CAsandiego")
+CAsd2 <- DBI::dbGetQuery(con2, "SELECT raw_row_number, date, time, service_area, subject_age, subject_race, subject_sex, type, outcome, reason_for_stop, raw_action_taken, raw_subject_race_description FROM CAsandiego")
+```
+
+```{r include = FALSE}
+goodSD <- merge(x=CAsd1,y=CAsd2,by="raw_row_number",all.x=TRUE)
+goodSD <- goodSD %>% mutate(clean_date = ymd(date, tz = "UTC"),
+                            yday = yday(clean_date))
+CAsd2016 <- goodSD %>%  filter(clean_date >= as.Date("2016-01-01") & clean_date <= "2016-12-31")
+```
+
+#### Plotting Count by Race over years 2014-2017
+```{r}
+goodSD %>% 
+count(year = year(date), raw_subject_race_description) %>% 
+ggplot(aes(x = year, y = n, color = raw_subject_race_description)) +
+geom_point() +
+geom_line()
+```
+
+##### Recoding Race column 
+```{r}
+# in SD, subject race was very detailed and consistant unlike other datasets
+# thus, recoded raw_subject_race_description for 'ASIAN/PACIFIC ISLANDER'
+goodSD$raw_subject_race_description <-recode(goodSD$raw_subject_race_description, "VIETNAMESE"="ASIAN/PACIFIC ISLANDER", 
+                                "SAMOAN"="ASIAN/PACIFIC ISLANDER", 
+                                "LAOTIAN"="ASIAN/PACIFIC ISLANDER",
+                                "KOREAN"="ASIAN/PACIFIC ISLANDER",
+                                "JAPANESE"="ASIAN/PACIFIC ISLANDER",
+                                "INDIAN"="ASIAN/PACIFIC ISLANDER",
+                                "HAWAIIAN"="ASIAN/PACIFIC ISLANDER", 
+                                "GUAMANIAN"="ASIAN/PACIFIC ISLANDER",
+                               "FILIPINO"="ASIAN/PACIFIC ISLANDER",
+                                "CHINESE"="ASIAN/PACIFIC ISLANDER",
+                                "CAMBODIAN"="ASIAN/PACIFIC ISLANDER",
+                               "ASIAN INDIAN"="ASIAN/PACIFIC ISLANDER",
+                               "OTHER ASIAN"="ASIAN/PACIFIC ISLANDER",
+                               "PACIFIC ISLANDER"="ASIAN/PACIFIC ISLANDER")
+```
+
+#### Plotting Search Conducted by Race
+It is helpful to look at the distribution of stop outcomes because it could suggest underlying intent from the officer or commonalities in policing different races (i.e. prevalence of profiled searches, warrant for arrest). The following two visualizations display the distribution of searches and arrests made on traffic stops in San Diego. 
+```{r}
+# create a new dataset
+SearchesByRaceCOL <- goodSD %>% 
+  
+  # select race and search_conducted columns
+  group_by(raw_subject_race_description, search_conducted) %>%
+  
+  # calculate count for search_conducted by race
+  summarize(Total =n()) %>% 
+  group_by(raw_subject_race_description) %>% 
+  mutate(pct=Total/sum(Total))
+  data.table(SearchesByRaceCOL)
+# omit NAs for search_conducted
+SearchesByRaceCOL <- na.omit(SearchesByRaceCOL) 
+# visualize proportion of searches to non-search stops
+ggplot(SearchesByRaceCOL, aes(x=raw_subject_race_description, y=pct, fill=search_conducted))+ geom_col() + coord_flip() + ggtitle("Search Conducted by Race")
+```
+
+#### Plotting Search Person by Race
+```{r echo = FALSE}
+SearchPersonsByRace <- goodSD %>% 
+  group_by(raw_subject_race_description, search_person) %>%
+  summarize(Total =n()) %>% 
+  group_by(raw_subject_race_description) %>% 
+  mutate(pct=Total/sum(Total))
+  data.table(SearchPersonsByRace)
+ggplot(SearchPersonsByRace, aes(x=raw_subject_race_description, y=pct, fill=search_person)) + geom_col() + coord_flip() + ggtitle("Search Persons by Race")
+```
+
+#### Plotting Search Vehicle by Race
+```{r echo = FALSE}
+SearchVehiclesByRace <- goodSD %>% 
+  group_by(raw_subject_race_description, search_vehicle) %>%
+  summarize(Total =n()) %>% 
+  group_by(raw_subject_race_description) %>% 
+  mutate(pct=Total/sum(Total))
+  data.table(SearchVehiclesByRace)
+ggplot(SearchVehiclesByRace, aes(x=raw_subject_race_description, y=pct, fill=search_vehicle)) + geom_col() + coord_flip() + ggtitle("Search Vehicles by Race")
+```
+
+#### Plotting Arrest Made by Race
+```{r echo = FALSE}
+ArrestsByRace <- goodSD %>% 
+  
+  # group rows by race and arrest_made
+  group_by(raw_subject_race_description, arrest_made) %>% 
+  
+  # calculate count for each group
+  summarize(Total =n()) %>% 
+  group_by(raw_subject_race_description) %>% 
+  mutate(pct=Total/sum(Total))
+  data.table(ArrestsByRace)
+# visualizae proportions for arrest_made
+ggplot(ArrestsByRace, aes(x=raw_subject_race_description, y=pct, fill=arrest_made))+ geom_col() + coord_flip() + ggtitle("Arrests Made by Race")
+```
+
+#### Plotting Citations Issued by Race
+```{r echo = FALSE}
+CitationsByRace <- goodSD %>% 
+  group_by(raw_subject_race_description, citation_issued) %>%
+  summarize(Total =n()) %>% 
+  group_by(raw_subject_race_description) %>% 
+  mutate(pct=Total/sum(Total))
+  data.table(CitationsByRace)
+ggplot(CitationsByRace, aes(x=raw_subject_race_description, y=pct, fill=citation_issued)) + geom_col() + coord_flip() + ggtitle("Citations Issued by Race")
+```
+
+#### Plotting Warnings Issued by Race
+```{r echo = FALSE}
+WarningsByRace <- goodSD %>% 
+  group_by(raw_subject_race_description, warning_issued) %>%
+  summarize(Total =n()) %>% 
+  group_by(raw_subject_race_description) %>% 
+  mutate(pct=Total/sum(Total))
+  data.table(WarningsByRace)
+ggplot(WarningsByRace, aes(x=raw_subject_race_description, y=pct, fill=warning_issued)) + geom_col() + coord_flip() + ggtitle("Warnings Issued by Race")
+```
+
+#### Distribution of NAs in outcome variables
+```{r}
+#search_conducted vs. arrest_made, citation_issued, warning_issued
+table(goodSD$search_conducted,goodSD$arrest_made)
+table(goodSD$search_conducted,goodSD$citation_issued)
+table(goodSD$search_conducted,goodSD$warning_issued)
+#search_person vs. arrest_made, citation_issued, warning_issued
+table(goodSD$search_person,goodSD$arrest_made)
+table(goodSD$search_person,goodSD$citation_issued)
+table(goodSD$search_person,goodSD$warning_issued)
+#search_vehicle vs. arrest_made, citation_issued, warning_issued
+table(goodSD$search_vehicle,goodSD$arrest_made)
+table(goodSD$search_vehicle,goodSD$citation_issued)
+table(goodSD$search_vehicle,goodSD$warning_issued)
+#What does a conducted search result in?
+table(goodSD$search_conducted,goodSD$search_vehicle)
+table(goodSD$search_conducted,goodSD$search_person)
+table(goodSD$search_person,goodSD$search_vehicle)
+#NAs in search variables appear to be indicators that search was not designated as a person or vehicle search
+#three variable plots
+#looking at traffic stops in relation to income level in the area
+#dimension reduction: finding what we wanted to predict/model
+#chugging away at the Shiny app
+```
+
+
+
+
+

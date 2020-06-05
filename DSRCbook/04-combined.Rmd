@@ -1,0 +1,44 @@
+---
+title: Dataset Specific EDA 
+output: 
+  pdf_document:
+    toc: yes 
+---
+
+# Exploratory Data Analysis
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Demographics of Motorists Stopped, Nationwide
+```{r child = '_NationalTrafficStopDemographics.Rmd'}
+```
+
+## Dataset-specific Exploration
+
+### Stop outcomes from day to night in Oakland, CA
+```{r child = '_stopoutcomesCA.Rmd'}
+```
+
+### Stop outcomes in San Diego, CA
+```{r child = '_sd_bar_plots_by_race.Rmd'}
+```
+
+### Weather overlay in Raleigh, NC
+<!-- \newpage -->
+```{r child = '_weather_overlay_report.Rmd'}
+```
+<!-- \newpage -->
+<!-- \newpage -->
+### Maps in San Antonio, TX
+```{r child = '_Geography.Rmd'}
+```
+\newpage
+### Socioeconomic factors in Durham, NC
+<!-- \newpage -->
+```{r child = '_economicdurham.Rmd'}
+```
+
+## Modeling the Probability of Seach Given Stop
+```{r child = '_sunrise_ivy.Rmd'}
+```

@@ -1,0 +1,246 @@
+---
+title: "Functions"
+output: 
+  pdf_document: default
+---
+
+# Functions
+
+This section explains the various functions used throughout our research.
+
+## Data Uploading Functions
+
+The functions here serve as cleaning functions such that a ready to use dataset gets uploaded to the database as a data table. 
+
+convertLogicalToInt function:
+input: dataset
+output: dataset with logical values set to binary
+```{r}
+convertLogicalToInt <- function(input_df){
+  vars <- sapply(input_df, class) %>% 
+  list.which(.=='logical')
+
+  input_df[,vars] <- sapply(input_df[,vars], as.numeric)
+  input_df
+  return(input_df)
+}
+```
+
+getDFName:
+input: name of dataset (this could also be name of link from web scrape)
+output: clean dataset name that includes state and city
+```{r}
+getDFName <- function(input_string){
+  tmp <- str_split(input_string, '_', simplify = TRUE)
+  tmp
+  
+  state <- str_to_upper(tmp[,2])
+  
+  if(tmp[,4] != "2019"){
+      cityName <- paste(tmp[,3], tmp[,4], sep="")
+      name <- paste(state, cityName, sep="")
+  } else {
+      cityName <- tmp[,3]
+      name <- paste(state, cityName, sep="")
+  }
+  name
+  return(name)
+}
+```
+
+uploadLinksToDatabase:
+input: string link from web scrape
+outout: 0 - indicating that the code finished executing
+This function will take in a RDS link and write the dataset to the database
+```{r}
+uploadLinksToDatabase <- function(input_link){
+  tmpDF <- readRDS(gzcon(url(input_link)))
+  tmpDF <- convertLogicalToInt(tmpDF)
+  name<- getDFName(input_link)
+  
+  dbWriteTable(con2, name, tmpDF, overwrite = TRUE)
+  return(0)
+}
+```
+
+## Veil of Darkness Functions
+
+Veil of Darkness functions work with lutz and lubridate to determine whether a stop took place in the dark. 
+
+The first step in getting the sunset and sunrise times is to get the coordinates for the city. To do this, we can Google search the city name and webscrape the Google search results. 
+
+The two code chunk below has functions that will perform this process. get_cityNames takes in a datatable's name and cleans it so that the google search engine result will return the desired page that has the coordinates. 
+```{r}
+get_cityNames <- function(name){
+  check <- str_extract(name, "[a-z]+")
+  if(check == "statewide"){
+    return(state.name[grep(str_sub(name, 1,2), state.abb)])
+  } else {
+    return(check)
+  }
+}
+
+```
+
+get_coordinates takes in said clean city names and scrape the google search web result. The function will return a vector of doubles. The first index is for latitude and second index has longitude. 
+```{r, eval=FALSE}
+get_coordinates <- function(city){
+  url <- 
+    paste("https://www.google.com/search?q=",
+          city,
+          "+lat+long&oq=sandiego+lat+long&aqs=chrome..69i57.2463j0j7&sourceid=chrome&ie=UTF-8")
+  doc <- htmlParse(readLines(url), asText=TRUE)
+  links <- xpathSApply(doc, "//div[@class='kCrYT']", xmlValue)
+  clean_coor <- as.list(str_split(links[2], ","))
+  lat <- as.numeric(str_extract(clean_coor[[1]][1], "\\d+\\.*\\d*"))
+  long <- -1*as.numeric(str_extract(clean_coor[[1]][2], "\\d+\\.*\\d*"))
+  x <- c(lat,long)
+  return(x)
+}
+
+clean_names <- list()
+clean_names <- lapply(datasets_of_interest, get_cityNames)
+coordinates <- lapply(clean_names,get_coordinates)
+```
+
+Next, we will define two helper functions in getting that call the lutz package and retrieve the times.
+
+outsunriseset
+  input: latitude (dbl), longitude(dbl), date(Date or Posix), timezime (tz), direction(string) 
+  output: Date with time of the desired sun direction
+```{r}
+oursunriseset <- function(latitude, longitude, date, timezone, direction) {
+  date.lat.long <- data.frame(date = date, lat = latitude, lon = longitude)
+  if(direction == "sunset"){
+    # call getSunlightTimes from the lutz package
+    getSunlightTimes(data = date.lat.long, keep=direction, tz=timezone)$sunset 
+  } else if(direction == "sunrise"){
+    getSunlightTimes(data = date.lat.long, keep=direction, tz=timezone)$sunrise  
+  } else if (direction == "dusk"){
+    getSunlightTimes(data = date.lat.long, keep=direction, tz=timezone)$dusk
+  } else if (direction == "dawn"){
+    getSunlightTimes(data = date.lat.long, keep=direction, tz=timezone)$dawn
+  }
+}
+```
+
+time_to_minute is the helper function the Stanford Open Policing Project uses in their tutorial to help convert times into a numeric values that's easier to manipulate - this will be useful when splicing out times between sunset and dusk to remove ambiguouity in the intertwilight zone. 
+input: time (character)
+output: minutes (double)
+```{r}
+time_to_minute <- function(time) {
+  hour(hms(time)) * 60 + minute(hms(time))
+}
+```
+
+add_night_day function utilizes oursunriseset function to mutate sunrise and sunset times and a binary variables to see if the stop happened in the night of day. In addition, this function takes out the intertwilightzone i.e. stops between sunset and dusk and dawn and sunrise. 
+```{r, eval=FALSE, include=TRUE}
+add_night_day <- function(city_df, time_zone, lat, long){
+    
+    sunset_times <- city_df %>% distinct(date) %>% mutate(date = as.Date(ymd(date, tz = time_zone))) %>% 
+  mutate(sunset = oursunriseset(lat, long, date, time_zone, direction="sunset"), 
+        dusk = oursunriseset(lat, long, date, time_zone, direction="dusk"),
+        dawn = oursunriseset(lat, long, date, time_zone, direction="dawn"),
+        sunrise = oursunriseset(lat, long, date, time_zone, direction="sunrise"),
+        sunset = format(sunset, "%H:%M:%S"),
+        dusk = format(dusk, "%H:%M:%S"),
+        dawn = format(dawn, "%H:%M:%S"),
+        sunrise = format(sunrise, "%H:%M:%S"),
+        sunset_min=time_to_minute(sunset), 
+        dusk_min=time_to_minute(dusk),
+        dawn_min=time_to_minute(dawn), 
+        sunrise_min=time_to_minute(sunrise)) %>% drop_na()
+  
+  city_df <- city_df %>% drop_na() %>% mutate(date=as.Date(ymd(date, tz = time_zone))) %>%
+    left_join(sunset_times, by="date") %>% drop_na() %>% 
+    mutate(minute = time_to_minute(time), 
+           minutes_after_dark = minute - dusk_min,
+           is_dark = as.factor(minute > dusk_min | minute < dawn_min)) %>% 
+        # filter out amiguous time between sunset and dusk and dawn and sunrise
+  filter(!(minute > sunset_min & minute < dusk_min),
+         !(minute < sunrise_min & minute > dawn_min)) %>% select(subject_race, is_dark)
+    
+  # select(subject_race, search_conducted, subject_age, is_dark)
+  return(city_df)
+}
+```
+
+## Nationwide Functions
+
+These are functions used when analyzing multiple datatables from the database. 
+
+relevant_datasets:
+input: - all dataset names which can be acquired through SHOW TABLES SQL command
+       - A vector containing string of variables names we wish to dissect
+output: a character string of dataset names
+```{r}
+relevant_datasets <- function(all_dataset_names, variables_of_interest){
+  
+  # create empty vector
+  datasets_of_interest <- c()
+    
+  for(city in all_dataset_names){
+    
+    # run only if table is not empty 
+    check_command = paste("SELECT 1 FROM", city, sep=" ", "LIMIT 1")
+    count <- DBI::dbGetQuery(con, check_command)
+    
+    if(nrow(count) != 0){
+      # cancenate SQL query string
+      command <- paste("EXPLAIN", city, sep = " ")
+      field_vector <- unlist(as.list(DBI::dbGetQuery(con, command))$Field, 
+                             use.names = FALSE)
+  
+      # of_interest_book is TRUE iff field_vector contains all the variables of interest
+      of_interest_bool <- setequal(intersect(field_vector, variables_of_interest),
+                                   variables_of_interest)
+      
+      # add dataset name to vector if of_interest_bool
+      if(of_interest_bool){
+        datasets_of_interest <- c(datasets_of_interest, city)
+      }
+    }
+  }
+  
+  return(datasets_of_interest)
+}
+```
+
+query_data:
+input: name (character)
+output: dataframe
+Note: the command variable must be modified to the variables you are examining
+```{r, eval=FALSE, include=FALSE}
+query_data <- function(city_name){
+  # cancenate SQL query string
+  command <- paste("SELECT subject_race, date, time FROM", city_name, sep = " ")
+  return(DBI::dbGetQuery(con, command))
+} 
+```
+
+fix_ages quickly sets any ages to a dbl data type
+```{r, eval=FALSE, include=TRUE}
+fix_ages <- function(city_dataset){
+  city_dataset <- city_dataset %>% mutate(subject_age = as.numeric(subject_age)) 
+  return(city_dataset)
+}
+```
+
+logistic_regression
+input: 
+  - city dataset (dataframe)
+  - name of city (character)
+output: a dataframe where the columns are the coefficients (only returns one row of coefficient matrix; this function is insteaded to be used in a for loop or mapply so that we run the logistic regression on every dataset)
+```{r}
+coefficient_matrix <- data.frame("intercept" = numeric(), "subject_age" = numeric(), "subject_race" = as.numeric(), "subject_age.subject_race" = as.numeric(), "dataset_name" = character())
+
+logistic_regression <- function(city_dataset, name){
+  # run logistic regression
+  fitlog <- glm(formula = search_conducted ~ subject_race*subject_age, data = city_dataset, family = binomial, control = list(maxit = 50))
+  # record logistic regression coefficients
+  coefficient_row_vector = t(fitlog$coefficients)
+  # row bind each coefficient and dataset tibble with the coefficent_matrix
+  coefficient_matrix <<- rbind(coefficient_matrix, cbind.data.frame(as.data.frame(coefficient_row_vector), name))
+}
+```
+

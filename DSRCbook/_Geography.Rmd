@@ -1,0 +1,106 @@
+---
+title: "Geography on San Antonio Dataset"
+output:
+  pdf_document: default
+always_allow_html: true
+---
+```{r, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+library(tinytex)
+```
+#### Neccessary packages
+
+The following packages provide the tools to begin some geography analysis. Note that a SQL database was also used, but was not included in this code as it is demonstrated in previous sections. Please see https://cran.r-project.org/web/packages/RMySQL/index.html for further instructions in neccessary.
+```{r}
+library(lubridate)
+library(RMySQL)
+library(ggmap)
+library(leaflet)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+```
+
+```{r message = FALSE, include=FALSE}
+library(RMySQL)  
+con <- dbConnect(
+  MySQL(), host = "traffic.st47s.com", user = "student", 
+  password = "Sagehen47", dbname = "traffic")
+```
+
+```{r, include=FALSE}
+library(RMySQL)  
+con1 <- dbConnect(
+  MySQL(), host = "traffic.st47s.com", user = "student", 
+  password = "Sagehen47", dbname = "trafficbadTF")
+```
+#### Geography Plots
+
+Our work surrounding Geography grew from a general curiosity about the latitude and longitude variables available on some datasets. The EDA on this topic began with a simple plot of the stops in San Antonio.
+
+My first step was querying the SQL database to create a local dataframe with the variables of interest. The variables were the following: longitude, latitude, subject race, subject sex, date of stop, and time of stop. I then cleaned the data to be in the appropriate units for my plot. Note that I include a random sample of the dataframe to lighten the load on the computer system to hopefully increase usability.
+```{r}
+# Create a new dataframe with variables of interest
+coor <- DBI::dbGetQuery(con,
+  "SELECT lng, lat, subject_race, subject_sex, date, time FROM TXsanantonio")
+
+#creates a label to be used for each marker in cluster plot
+coor <- coor %>% unite(full_label, date, time, subject_race, 
+                       subject_sex, sep = ", ", remove = FALSE)
+
+#changes columns to appropriate units for plotting and color coding
+coor$lng <- with(coor, as.numeric(lng))
+coor$lat <- with(coor, as.numeric(lat))
+coor$subject_sex <- with(coor, as.factor(subject_sex))
+
+#create a random sample of 20000 to decrease load on computer
+coor <- sample_n(coor, 20000)
+```
+
+To make my first simple map, I created a base map with longitude and latitude boundaries around San Antonio. Then, using the geom_point function, I plotted the stops over this base map color coding by subject race and varying shapes by subject sex. The grid for the base map can be changed for a hardcoded "zoom".
+```{r}
+#creating the simple map with grid latitude and longitude values
+map <- get_map(c(left = -99, bottom = 29.2, right = -98, top = 29.9))
+
+race_sex_plot <- ggmap(map) + geom_point(aes(x=lng, y=lat, 
+                                             color = subject_race, 
+                                             shape = subject_sex), 
+                                         data = coor, size = 0.75) + 
+  xlab("Longitude") + ylab("Latitude") + 
+  ggtitle("Simple Overlay Map of San Antonio Stops") + coord_quickmap()
+race_sex_plot
+```
+The next step was to create interactive graphs. To do so, I used the leaflet package. Note that these will not show in the PDF version of this analysis.
+
+The first is a graph similar to the plot over a base map, but allows for zoom and movement. This graph is also color coded by subject race.
+```{r}
+#creating a color palette
+my_colors <- colorFactor("plasma", 
+                         domain = c("asain/pacific islander", "black", 
+                                    "white", "hispanic", 
+                                    "NA", "other", "unknown"))
+
+#creating the leaflet graph
+leaflet(coor) %>% addProviderTiles(providers$Esri.NatGeoWorldMap) %>% 
+  addCircleMarkers(
+    color = ~my_colors(subject_race), # coloring by race
+    stroke = FALSE, 
+    fillOpacity = 1,
+    radius = 3) %>%
+  addLegend(pal = my_colors, values = ~subject_race, opacity = 1)
+```
+The final graph is a cluster graph of all of the datapoints. Using the marketClusterOptions function, the graph automatically clusters the data, showing the number of stops in an area on the map. The area considered in each cluster is indicated by a blue marking when hovering the cursor over the number. Zooming in further will make these zones smaller. After zooming in enough to see individual stops, hovering over each marker will display a label of the date, time, race, and sex of the individual stopped. These labels can of couse be changed for different data sets.
+```{r}
+leaflet(coor) %>% addTiles() %>% 
+  addMarkers(clusterOptions = markerClusterOptions(), label = coor$full_label)
+```
+
+##### Observations, Questions, and Potential Extentions
+
+The investigation of Geography raised many questions and observations. The first observation was that there exist some latitude and longitude value that are not in San Antonio, but rather in Austin, Houston, and some closer to Louisiana. This may be a flaw in the dataset, but could also be that a San Antonio officer was in another city at the time of that stop. Neverless, it presents a potential area of concern for data usability. 
+
+One question raised was the potential discrepancies between highway stops and stops in smaller towns for example. There may be differences in demographics for highway and non highway stops and understanding these differences is critical when trying to combat the issue of a denominator explained in the literature review. The cluster plot emphasized the importance of this distinction, with locations on highways having clusters of more than 200 stops for a single longitude and latitude. One many question if there are particular demographics travelling along these cluster locations and if so, how that may impact the stop counts.
+
+Another point of further research can be controlling for demographics of certain neighborhoods or districts and comparing stop rates to those demographics. This can be done a variety of ways and would of course require more data than can be found on the Stanford Open Policing Porject database. One may also look into any information on scheduling for police officers—where they are sent more often, at what points in the day, etc.
+
+

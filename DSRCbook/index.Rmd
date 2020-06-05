@@ -1,0 +1,41 @@
+--- 
+title: "Data Exploration of U.S. Police Stops"
+author: "Pomona College Data Science Research Circle"
+date: "Spring 2020"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [references.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+description: "This is an exploratory data report on police traffic data."
+---
+
+# Preface
+
+## Dedication
+
+\quad First, we affirm strongly that #BlackLivesMatter as our project (which attempts to analyze police behavior in the US) comes to a close in May 2020. As institutional injustices committed against Black and Indigenous people of color (BIPOC) persist, we hope not to center ourselves in their activism. 
+
+\quad Rather, we affirm the movement as a reminder for fellow students and academics who work with traffic stop data and are almost exclusively non-BIPOC. Critically reflect on our role as (budding) data scientists, statisticians, economists, criminologists: how has privilege _enabled_ us to work in this field? And, how has privilege _limited_ our lived experiences to be several degrees removed from the goals of our research? How do we try to resolve this discrepancy?
+
+\quad Second, our team would like to thank our generous and kind professors, Professor Hardin and Professor Sarkis, for providing the expertise, encouragement, and wonderful banter that helped us through this unprecedented and strenuous semester. We are grateful for your guidance and will miss our Tuesday, 8:00 am Zoom calls.
+
+## Motivation
+
+\quad Welcome! This page is the manifestation of a semester-long investigative project conducted by a Data Science Research Circle at Pomona College in Claremont, CA. The research circle consisted of seven students including: [Amber Lee](https://github.com/Amber-Patricia-Lee) (‘22), [Arm Wonghirundacha](https://github.com/armwong9) (‘22), [Emma Godfrey](https://github.com/emmacgodfrey) (‘21), [Ethan Ong](https://github.com/eruong) (‘21), [Ivy Yuan](https://github.com/iyyuan1208) (‘21), [Oliver Chang](https://github.com/oliverc1623) (‘22), and [Will Gray](https://github.com/wega2018) (‘22). Additionally the research circle was advised by Professors [Jo Hardin](https://research.pomona.edu/johardin/) and [Ghassan Sarkis](https://www.pomona.edu/directory/people/ghassan-y-sarkis) from the Department of Mathematics. The work is motivated by recent literature and investigative analysis on policing practices around the country, particularly from the [Stanford Open Policing Project](https://openpolicing.stanford.edu/).
+
+\quad The Stanford Open Policing Project is an ongoing research effort to gather and publish police stop data from around the United States. The project is a collaboration between the Stanford Computational Journalism Lab and the Stanford School of Engineering led by professor Cheryl Phillips and Sharad Goel. Beginning in 2015, the Stanford Open Policing project has requested both state-wide and city-wide public information about police stops; requests were filed for all 50 states and over 100 cities. On June 19th 2017, the project published the collected data on their website openpolicing.stanford.edu and as of 2020, the website holds data from 42 states totalling 255 million data points. 221 million of these stops were from 33 state patrol datasets collected and the remaining 34 million were from 56 city-wide datasets (@pierson2020).
+
+\quad One of the primary focuses of the Stanford Open Policing Project is traffic stop data. More than 50,000 traffic stops occur every day — 20 million in a year — yet prior to the debut of the Open Policing Project database, there was a lack of reliable, comprehensive, and standardized national datasets on these traffic stop data to analyze. The Open Policing Project provides a unique opportunity to investigate these traffic stops, with particular intention to work towards a definitive test of racial profiling. We hope to extend the interdisciplinary work towards this difinitive test—a test grounded in social and political relevance. As expressed by @goel2017, knowing the true extent of racial profiling is a crucial tool for informing police department trainings, protecting Fourth Amendment rights of minority defendants, and validating the qualitative experiences of historically-oppressed groups.
+
+\quad The motivation for this project is to continue the analysis of the Stanford Open Policing Project dataset. This includes reproducing previous findings and applying methodologies used on smaller datasets to the Stanford nation-wide database. The three topics of interest before beginning EDA for this project were the following: the enactment of seatbelt laws and its effect on traffic stops, night versus day stops, and discrepancies of search rates. Not all were pursued, but each provided a unique direction for data analysis. The report is organized into several parts: I. Preface, II. Literature Review, III. Functions. IV. Description of Data, V. Exploratory Data Analysis, VI. Logistic Regression, and VI. Limitations and Discussion.
+
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```

@@ -1,0 +1,198 @@
+---
+title: "Common Violations and Map Visualisations"
+output:
+  pdf_document: default
+
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+library(shiny)
+library(lubridate)
+library(lwgeom)
+library(RMySQL)
+library(forcats)
+library(ggmap)
+library(leaflet)
+library(cowplot)
+library(googleway)
+library(ggspatial)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(ggplot2)
+library(data.table)
+library(ggrepel)
+library(tidyverse)
+library(rgeos)
+library(raster)
+library(maps)
+library(mapdata)
+library(rworldmap)
+library(ggsn)
+library(dplyr)
+library(tinytex)
+```
+
+```{r message = FALSE, include=FALSE}
+library(RMySQL)  
+con <- dbConnect(
+  MySQL(), host = "traffic.st47s.com", user = "student", 
+  password = "Sagehen47", dbname = "traffic")
+```
+
+```{r, include=FALSE}
+library(RMySQL)  
+con1 <- dbConnect(
+  MySQL(), host = "traffic.st47s.com", user = "student", 
+  password = "Sagehen47", dbname = "trafficbadTF")
+```
+
+```{r message = FALSE, include=FALSE}
+San1 <- DBI::dbGetQuery(con, "SELECT raw_row_number, arrest_made, 
+                        citation_issued, search_conducted FROM TXsanantonio")
+
+San2 <- DBI::dbGetQuery(con1, "SELECT raw_row_number, date, time, 
+                        location, lat, lng, district, substation, 
+                        subject_age, subject_race, subject_sex, type, 
+                        violation, search_basis, speed, posted_speed, 
+                        vehicle_color, vehicle_make, vehicle_model, 
+                        vehicle_registration_state, vehicle_year, 
+                        raw_race, raw_posted_speed, raw_actual_speed, 
+                        raw_search_reason, raw_contraband_or_evidence, raw_custodial_arrest_made FROM TXsanantonio")
+SanAntonioData <- merge(x=San1,y=San2,by="raw_row_number",all.x=TRUE)
+```
+
+```{r, include=FALSE}
+SAobs <- DBI::dbGetQuery(con, "SELECT * FROM TXsanantonio LIMIT 10")
+```
+
+```{r, include=FALSE}
+Violations <- DBI::dbGetQuery(con, "SELECT DISTINCT violation FROM TXsanantonio")
+
+filtered <- Violations %>% filter(str_detect(violation, "MASSAGE"))
+```
+
+```{r, include=FALSE}
+dbGetQuery(con, 
+  "SELECT subject_race, AVG(subject_age) AS 'ave age' 
+  FROM TXsanantonio 
+  GROUP BY subject_race
+  ORDER BY `ave age`")
+```
+
+#### Common Violations
+
+Here I graphed the 5 violations that occured most frequently. It is important to notice that this would only include those violations that are worded exactly the same. More work would need to be done in order to find which violations mean the same thing but some had typos or minor differences.
+```{r}
+VioData <- DBI::dbGetQuery(con,
+  "SELECT violation, COUNT(violation) AS 'num_violations' FROM TXsanantonio
+  GROUP BY violation
+  ORDER BY `num_violations` DESC
+  LIMIT 5")
+
+ggplot(data = VioData) + geom_bar(mapping = aes(x = violation, y = num_violations), 
+                                  stat = 'identity') + coord_flip()
+```
+
+I then took these top 5 violations and split them up by sex and race. I also included additional graphs of the 2-5 violations for clarity because of the overwhelming violation of speeding.
+```{r}
+top5_vio <- DBI::dbGetQuery(con,
+  "SELECT subject_sex, subject_race, violation FROM TXsanantonio 
+  WHERE violation = 'USE OF HAND-HELD MOBILE COMMUNICATION DEVICE' 
+  OR violation = 'SPEEDING-POSTED LIMIT' 
+  OR violation = 'SPEEDING IN SCHOOL ZONE' 
+  OR violation = 'OPERATING A MOTOR VEHICLE WITHOUT A VALID LICENSE' 
+  OR violation = 'IMPROPER USE OR FAILURE TO USE SAFETY BELT BY PERS'")
+
+top4_vio <- DBI::dbGetQuery(con,
+  "SELECT subject_sex, subject_race, violation FROM TXsanantonio 
+  WHERE violation = 'USE OF HAND-HELD MOBILE COMMUNICATION DEVICE' 
+  OR violation = 'SPEEDING IN SCHOOL ZONE' 
+  OR violation = 'OPERATING A MOTOR VEHICLE WITHOUT A VALID LICENSE' 
+  OR violation = 'IMPROPER USE OR FAILURE TO USE SAFETY BELT BY PERS'")
+
+ggplot(data = top5_vio) + geom_bar(mapping = aes(x = violation, fill = subject_race)) + 
+  coord_flip()
+
+#created this to see the 2-5 violations more clearly
+ggplot(data = top4_vio) + geom_bar(mapping = aes(x = violation, fill = subject_race)) + 
+  coord_flip()
+
+ggplot(data = top5_vio) + geom_bar(mapping = aes(x = violation, fill = subject_sex)) + 
+  coord_flip()
+
+#created this to see the 2-5 violations more clearly
+ggplot(data = top4_vio) + geom_bar(mapping = aes(x = violation, fill = subject_sex)) + 
+  coord_flip()
+```
+
+####  Map Overlay
+
+During the EDA phase, geography became of interest using the latitude and longitude variables from the dataset. This image displays the plot of the San Antonio dataset using ggplot with the dots grouped by the race of the victim of the stop. This raised a few questions. For example, we questioned how highway stops may differ from non highway stops given a potential difference in demographics for those who drive on the highways. We also recognized the possibility of controlling for demographics of certain neighborhoods and comparing stop rates to those demographics. Both questions raise interesting questions for further investigation. 
+```{r}
+Coordinates <- DBI::dbGetQuery(con,
+  "SELECT * FROM TXsanantonio LIMIT 1000")
+
+coor <- DBI::dbGetQuery(con,
+  "SELECT lng, lat, subject_race FROM TXsanantonio LIMIT 1000")
+
+coor$lng <- with(coor, as.numeric(lng))
+coor$lat <- with(coor, as.numeric(lat))
+  
+race_plot <- ggplot(Coordinates, aes(x = as.numeric(lng), 
+                                     y = as.numeric(lat), xaxt = 'n', yaxt = 'n')) + 
+  geom_point(aes(color = subject_race)) + 
+  xlab("Longitude") + ylab("Latitude") + coord_quickmap()
+race_plot
+```
+```{r}
+coord_plot <- qmplot(lng, lat, data = coor, maptype = "toner-background", 
+                     color = subject_race, xlim = c(-99, -98.25), ylim = c(29, 29.6))
+coord_plot
+```
+```{r}
+qmplot(lng, lat, data = coor, maptype = "toner-background", 
+       color = subject_race, xlim = c(-98.75, -98.3), ylim = c(29.35, 29.5))
+```
+This is the same coordinate plot for the Oakland Dataset.
+```{r, include=FALSE}
+coor2 <- DBI::dbGetQuery(con,
+  "SELECT lng, lat, subject_race FROM CAoakland LIMIT 1000")
+
+coor2$lng <- with(coor2, as.numeric(lng))
+coor2$lat <- with(coor2, as.numeric(lat))
+  
+race_plot <- ggplot(coor2, aes(x = as.numeric(lng), y = as.numeric(lat), 
+                               xaxt = 'n', yaxt = 'n')) + 
+  geom_point(aes(color = subject_race)) + xlab("Longitude") + 
+  ylab("Latitude") + coord_quickmap()
+race_plot
+
+coord_plot <- qmplot(lng, lat, data = coor2, maptype = "toner-background", 
+                     color = subject_race, xlim = c(-122.25, -122.22), ylim = c(37.77, 37.80))
+coord_plot
+```
+This is a density plot of stops for the oaklans dataset. This was in an attempt to see if there were any particular areas of high concentration.
+```{r}
+qmplot(lng, lat, data = coor2, geom = "blank", 
+  zoom = 10, maptype = "toner-background", darken = 0, legend = "topleft") +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon", alpha = .5, color = NA) +
+  scale_fill_gradient2("Stop\nPropensity", low = "white", mid = "yellow", high = "red", 
+                       midpoint = 100)
+```
+```{r, include=FALSE}
+coor2 <- DBI::dbGetQuery(con,
+  "SELECT lng, lat FROM TXsanantonio LIMIT 100")
+
+coor2$lng <- with(coor2, as.numeric(lng))
+coor2$lat <- with(coor2, as.numeric(lat))
+
+filtered <- filter(coor2, lng < -98, lat < 30)
+
+qmplot(lng, lat, data = filtered, geom = "blank", 
+  zoom = 10, maptype = "toner-background", darken = .5, legend = "topleft") +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon", alpha = .5, color = NA) +
+  scale_fill_gradient2("Stop\nPropensity", low = "white", mid = "yellow", high = "red", 
+                       midpoint = 100)
+```

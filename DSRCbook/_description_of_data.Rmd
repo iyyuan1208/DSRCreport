@@ -1,0 +1,78 @@
+---
+title: "Description of Data"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+library(kableExtra)
+```
+
+\quad The data was extracted from the Stanford Open Policing Project data hub. The Open Policing Project’s website contains ninety city and state-wide standardized stop datasets in both RDS and CSV format. From there, we uploaded six datasets to a mySQL database and locally queried the data on our personal laptops via RMySQL package within R. 
+
+\quad The possible variables within each dataset are listed below with description and corresponding units. 
+
+```{r echo = FALSE}
+Variable <- c("Stop Date", "Stop Time", "Stop Location", "Driver Race", "Driver Sex", "Driver Age", "Search Conducted", "Contraband Found", "Citation Issued", "Warning Issued", "Frisk Performed", "Arrest Made", "Reason for Stop", "Violation")
+                  
+Description <- c("States the year, month, day", "States the time of the stop", "States the street intersection of the stop", "Describes the race of driver as given on the driver’s license", "Describes the sex orientation of driver", "Describes the age of the driver", "Describes whether there was a search conducted or not", "Describes whether there was contraband found after a search was conducted", "Describes whether there was a citation issued to the driver", "Describes whether there was a warning issued to the driver", "Describes whether there was a frisk performed on the driver", "Describes whether the driver was arrested", "Describes why the driver was stopped", "Describes the violation when a citation or warning was issued ")
+
+Units <- c("XXXX-XX-XX", "XX:XX:XX", "Names two streets, occasionally lists a city", "String representing the subject’s race", "Binary Female/Male", "Integer representing the driver’s age ", "True (search conducted) or False (search not conducted)", "True (contraband found) or False (contraband not found)", "True (citation issued) or False (no citation issued)", "True (warning issued) or False (no warning issued)", "True (frisk performed) or False (no frisk performed)", "True (arrest made) or False (no frisk performed)", "String describing the reason for the stop", "String representing the violation")
+
+table1 <- data.frame(Variable, Description, Units)
+
+kable(table1)
+```
+
+\quad We focused on the datasets for San Francisco, San Diego, Oakland, Raleigh, Charlotte, and Durham, and San Antonio. Below, the “X” represents whether the dataset for that particular city includes the specified variable.
+
+```{r echo = FALSE}
+City <- c(
+"San Francisco",
+"Oakland",
+"San Diego",
+"Charlotte",
+"Durham",
+"Raleigh",
+"San Antonio"
+)
+
+`Number of Observations` <- c(
+"905,070",
+"133,405",
+"382,844",
+"1,598,453",
+"326,024",
+"856,400",
+"1,040,428"
+)
+`Stop Date` <- c("X", "X", "X", "X", "X", "X", "X")
+`Stop Time` <- c("X", "X", "X", "X", "X", "X", "X")
+`Stop Location` <- c("X", "", "X", "", "", "", "X")
+`Driver Race` <- c("X", "X", "X", "X", "X", "X", "X")
+`Driver Sex` <- c("X", "X", "X", "X", "X", "X", "X")
+`Driver Age` <- c("X", "", "X", "X", "X", "X", "")
+`Search Conducted`<- c("X", "X", "X", "X", "X", "X", "X")
+`Contraband found` <- c("X", "X", "X", "X", "X", "X", "X")
+`Citation Issued` <- c("X", "X", "X", "X", "X", "X", "X")
+`Warning Issued` <- c("X", "X", "X", "X", "X", "X", "")
+`Frisk Performed` <- c("", "", "", "X", "X", "X", "")
+`Arrest Made` <- c("X", "X", "X", "X", "X", "X", "X")
+`Reason For Stop` <- c("X", "X", "X", "X", "X", "X", "")
+`Violation` <- c("", "", "", "", "", "", "X")
+
+table2 <- data.frame(City, `Number of Observations`, `Stop Date`, `Stop Time`, `Stop Location`, `Driver Race`, `Search Conducted`, `Contraband found`, `Citation Issued`, `Warning Issued`, `Frisk Performed`, `Arrest Made`, `Reason For Stop`, `Violation`)
+
+# transpose the table so it can fit on page
+table2_t <- as.data.frame(t(table2))
+colnames(table2_t) <- table2$City
+table2_t <- table2_t[-c(1),]
+
+kable(table2_t)
+```
+
+\quad While many of the datasets included a multitude of the variables above, there were clear limitations. First, while the California datasets were rich in variables, the “reason for stop” was dubious at best. Not only did many reasons make no logical sense, but also up to four reasons were listed for a single observation. Moreover, there is no uniformity in the “reason for stop” for all datasets in California. In contrast, the datasets in North Carolina had a clean “reason for stop”; however, these datasets do not have latitude/longitude which limits the geographical comparisons we can make. Additionally, only a small fraction of the city and state datasets contained subject age; the scarcity of information regarding subject age makes it difficult to compare nationally. Lastly, only a few datasets, such as Chicago, contained the police officer’s identification number. While we did not investigate the effect of the age, race, or other factors of individual police officers, it would be meaningful for more datasets to contain that information to draw national correlations. 

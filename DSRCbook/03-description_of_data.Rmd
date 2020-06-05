@@ -1,0 +1,219 @@
+---
+title: "Description of Data"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Description of Data
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+```
+
+\quad The data was extracted from the Stanford Open Policing Project data hub. The Open Policing Project’s website contains ninety city and state-wide standardized stop datasets in both RDS and CSV format. From there, we uploaded six datasets to a mySQL database and locally queried the data on our personal laptops via RMySQL package within R. 
+
+\quad The possible variables within each dataset are listed below with description and corresponding units. 
+
+```{r echo = FALSE}
+Variable <- c("Stop Date", "Stop Time", "Stop Location", "Driver Race", "Driver Sex", "Driver Age", "Search Conducted", "Contraband Found", "Citation Issued", "Warning Issued", "Frisk Performed", "Arrest Made", "Reason for Stop", "Violation")
+                  
+Description <- c("States the year, month, day", "States the time of the stop", "States the street intersection of the stop", "Describes the race of driver as given on the driver’s license", "Describes the sex orientation of driver", "Describes the age of the driver", "Describes whether there was a search conducted or not", "Describes whether there was contraband found after a search was conducted", "Describes whether there was a citation issued to the driver", "Describes whether there was a warning issued to the driver", "Describes whether there was a frisk performed on the driver", "Describes whether the driver was arrested", "Describes why the driver was stopped", "Describes the violation when a citation or warning was issued ")
+
+Units <- c("XXXX-XX-XX", "XX:XX:XX", "Names two streets, occasionally lists a city", "String representing the subject’s race", "Binary Female/Male", "Integer representing the driver’s age ", "True (search conducted) or False (search not conducted)", "True (contraband found) or False (contraband not found)", "True (citation issued) or False (no citation issued)", "True (warning issued) or False (no warning issued)", "True (frisk performed) or False (no frisk performed)", "True (arrest made) or False (no frisk performed)", "String describing the reason for the stop", "String representing the violation")
+
+table1 <- data.frame(Variable, Description, Units)
+
+kable(table1) %>% kable_styling() %>% scroll_box(width = "100%")
+```
+
+\quad We focused on the datasets for San Francisco, San Diego, Oakland, Raleigh, Charlotte, and Durham, and San Antonio. Below, the “X” represents whether the dataset for that particular city includes the specified variable.
+
+```{r echo = FALSE}
+City <- c(
+"San Francisco",
+"Oakland",
+"San Diego",
+"Charlotte",
+"Durham",
+"Raleigh",
+"San Antonio"
+)
+
+`Number of Observations` <- c(
+"905,070",
+"133,405",
+"382,844",
+"1,598,453",
+"326,024",
+"856,400",
+"1,040,428"
+)
+`Stop Date` <- c("X", "X", "X", "X", "X", "X", "X")
+`Stop Time` <- c("X", "X", "X", "X", "X", "X", "X")
+`Stop Location` <- c("X", "", "X", "", "", "", "X")
+`Driver Race` <- c("X", "X", "X", "X", "X", "X", "X")
+`Driver Sex` <- c("X", "X", "X", "X", "X", "X", "X")
+`Driver Age` <- c("X", "", "X", "X", "X", "X", "")
+`Search Conducted`<- c("X", "X", "X", "X", "X", "X", "X")
+`Contraband found` <- c("X", "X", "X", "X", "X", "X", "X")
+`Citation Issued` <- c("X", "X", "X", "X", "X", "X", "X")
+`Warning Issued` <- c("X", "X", "X", "X", "X", "X", "")
+`Frisk Performed` <- c("", "", "", "X", "X", "X", "")
+`Arrest Made` <- c("X", "X", "X", "X", "X", "X", "X")
+`Reason For Stop` <- c("X", "X", "X", "X", "X", "X", "")
+`Violation` <- c("", "", "", "", "", "", "X")
+
+table2 <- data.frame(City, `Number of Observations`, `Stop Date`, `Stop Time`, `Stop Location`, `Driver Race`, `Search Conducted`, `Contraband found`, `Citation Issued`, `Warning Issued`, `Frisk Performed`, `Arrest Made`, `Reason For Stop`, `Violation`)
+
+kable(table2) %>% kable_styling() %>% scroll_box(width = "100%")
+# # transpose the table so it can fit on page
+# table2_t <- as.data.frame(t(table2))
+# colnames(table2_t) <- table2$City
+# table2_t <- table2_t[-c(1),]
+# 
+# kable(table2_t)
+```
+
+\quad While many of the datasets included a multitude of the variables above, there were clear limitations. First, while the California datasets were rich in variables, the “reason for stop” was dubious at best. Not only did many reasons make no logical sense, but also up to four reasons were listed for a single observation. Moreover, there is no uniformity in the “reason for stop” for all datasets in California. In contrast, the datasets in North Carolina had a clean “reason for stop”; however, these datasets do not have latitude/longitude which limits the geographical comparisons we can make. Additionally, only a small fraction of the city and state datasets contained subject age; the scarcity of information regarding subject age makes it difficult to compare nationally. Lastly, only a few datasets, such as Chicago, contained the police officer’s identification number. While we did not investigate the effect of the age, race, or other factors of individual police officers, it would be meaningful for more datasets to contain that information to draw national correlations. 
+
+## Querying Datasets with RMySQL
+
+First import the necesarry packages to work with SQL in R
+```{r, include=TRUE}
+library(XML)
+library(RMySQL)
+library(tidyverse)
+library(knitr)
+library(rlist)
+```
+
+Next, setup a connection to the database. 
+```{r}
+# Connect to database
+con <- dbConnect(
+  MySQL(), host = "traffic.st47s.com", user = "student",
+  password = "Sagehen47", dbname = "traffic")
+```
+Note: If you are looking to modify the database you must use a different username and password that can be acquired through Professor Hardin.
+
+dbGetQuery returns a dataframe, so storing it in a variable adds that dataframe to the global environment 
+```{r}
+raleigh_df <- DBI::dbGetQuery(con, "SELECT * FROM NCraleigh LIMIT 15")
+```
+
+
+### Querying Subsets of dataset
+
+Certain scenarios such as running a logistic regression need not every variable from a dataset - only the variables of interest. Moreover, running a logistic regression on every city with all columns is a taxing operation. This is where querying can be useful in selecting portions of the datasets deemed essential. 
+
+The logistic regression called for the race, age, sex, and data variables. The query_data function will takes in a database table name (city_name) and will select the desired variables from that table. 
+```{r, eval=FALSE}
+query_data <- function(city_name){
+  # cancenate SQL query string
+  command <- 
+    paste("SELECT subject_age, subject_race, subject_sex, date, search_conducted FROM",
+         city_name, sep = " ")
+  return(DBI::dbGetQuery(con, command))
+} 
+
+# Make a list of datasets
+datasets <- list()
+datasets <- lapply(datasets_of_interest, query_data)
+```
+
+
+## Web Scrapping and Uploading Datasets
+
+This section will show the dataset upload process. The first step is to acquire all the RDS weblinks from the Stanford Policing Project Website. 
+
+The code here is written by Professor Sarkis and it will get all the rds files from the stanford policing project website. Then, it stores all the file names into a character string
+
+```{r}
+url <- "https://openpolicing.stanford.edu/data/"
+doc <- htmlParse(readLines(url), asText=TRUE)
+links <- xpathSApply(doc, "//a/@href")
+free(doc)
+
+all_links <- as.character(links[grep('_.*rds', links)])
+```
+
+One could also get all the dataset file names for a specific state by adding the state's two character abbreviation e.g.
+```{r}
+california_links <- as.character(links[grep('ca_.*rds', links)])
+```
+
+Another optional step is to splice certain links using base R indexing
+```{r}
+# subset list to get desired links
+all_links <- all_links[43:48]
+all_links <- all_links[-c(1, 2, 5)]
+```
+
+Since the datasets are written to the database using the dbWriteTable function from RMySQL library, logical datatypes get interpreted as character, which will be tedious to deal with in future analysis. Therefore, the convertLogicalToInt function will convert columns that have logical datatypes into doubles (0 and 1). 
+
+convertLogicalToInt function:
+input: dataset
+output: dataset with logical values set to binary
+```{r}
+convertLogicalToInt <- function(input_df){
+  vars <- sapply(input_df, class) %>% 
+  list.which(.=='logical')
+
+  input_df[,vars] <- sapply(input_df[,vars], as.numeric)
+  input_df
+  return(input_df)
+}
+```
+
+
+Subsequently, dbWriteTable also needs a name for the table, which can parsed out of the weblinks. The getDFName function returns a suitable datatable name. 
+
+getDFName:
+input: name of dataset (this could also be name of link from web scrape)
+output: clean dataset name that includes state and city
+```{r}
+getDFName <- function(input_string){
+  tmp <- str_split(input_string, '_', simplify = TRUE)
+tmp
+
+state <- str_to_upper(tmp[,2])
+
+if(tmp[,4] != "2019"){
+    cityName <- paste(tmp[,3], tmp[,4], sep="")
+    name <- paste(state, cityName, sep="")
+} else {
+    cityName <- tmp[,3]
+    name <- paste(state, cityName, sep="")
+}
+name
+return(name)
+}
+```
+
+The penultimate step is to read the RDS file and write that to the database using the dbWriteTable function. The results from the two previous functions will serve as arguments for the dbWriteTable function. 
+
+uploadLinksToDatabase:
+input: string link from web scrape
+outout: 0 - indicating that the code finished executing
+This function will take in a RDS link and write the dataset to the database
+```{r}
+uploadLinksToDatabase <- function(input_link){
+  tmpDF <- readRDS(gzcon(url(input_link)))
+  tmpDF <- convertLogicalToInt(tmpDF)
+  name<- getDFName(input_link)
+  
+  dbWriteTable(con2, name, tmpDF, overwrite = TRUE)
+  return(0)
+}
+```
+
+
+lapply serves as a 'oneline' for loop. The argument all_links is a character string of links, which lapply will iterate through and call the function, uploadLinksToDatabase, on each link
+```{r, eval = FALSE}
+lapply(all_links, uploadLinksToDatabase)
+```

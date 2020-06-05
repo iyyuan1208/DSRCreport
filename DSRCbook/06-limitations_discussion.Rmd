@@ -1,0 +1,14 @@
+---
+title: "Limitations and Discussion"
+output: 
+  pdf_document: default
+  html_document: default
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Limitations and Discussion
+
+\quad In consideration of the exploratory work presented so far, we want to note various limitations that prevented us from conducting various analyses as well as finding particular results. The inconsistency of the data was by far the largest setback. For instance, not all data sets consisted of only traffic stop data sets, instead many data sets at the county or city level were a combination of traffic and pedestrian stop data sets. Only data sets at the state level or denoted as ‘State Patrol’ consisted only of traffic stops. This perhaps clouded a lot of the statistics and analyses we conducted as there is no efficient way currently to confidently parse all the pedestrian stops from the traffic stops. Another inconsistency was that information on the specific officer(s) on site of each stop was not as widely recorded. Previous literature suggested that the area of exploration was the behavior of particular officers instead of looking at an entire department. While this lead seemed promising, there simply is not enough data collected including officer information to analyze any trends or to make any inferences about individual police practices in regards to racial bias.
