@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Stop Outcomes in San Diego | Data Science Research Circle</title>
+  <meta name="description" content="This is an exploratory data report on police traffic data." />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Stop Outcomes in San Diego | Data Science Research Circle" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an exploratory data report on police traffic data." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Stop Outcomes in San Diego | Data Science Research Circle" />
+  
+  <meta name="twitter:description" content="This is an exploratory data report on police traffic data." />
+  
+
+<meta name="author" content="Pomona College Data Science Research Circle" />
+
+
+<meta name="date" content="2020-05-29" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="stop-outcomes-day-to-night-in-oakland-ca.html"/>
+<link rel="next" href="weather-overlayed-with-traffic-stops.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
+<li class="chapter" data-level="2" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>2</b> Functions</a><ul>
+<li class="chapter" data-level="2.1" data-path="functions.html"><a href="functions.html#data-uploading-functions"><i class="fa fa-check"></i><b>2.1</b> Data Uploading Functions</a></li>
+<li class="chapter" data-level="2.2" data-path="functions.html"><a href="functions.html#veil-of-darkness-functions"><i class="fa fa-check"></i><b>2.2</b> Veil of Darkness Functions</a></li>
+<li class="chapter" data-level="2.3" data-path="functions.html"><a href="functions.html#nationwide-functions"><i class="fa fa-check"></i><b>2.3</b> Nationwide Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="description-of-data.html"><a href="description-of-data.html"><i class="fa fa-check"></i><b>3</b> Description of Data</a><ul>
+<li class="chapter" data-level="3.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-datasets-with-rmysql"><i class="fa fa-check"></i><b>3.1</b> Querying Datasets with RMySQL</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-subsets-of-dataset"><i class="fa fa-check"></i><b>3.1.1</b> Querying Subsets of dataset</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="description-of-data.html"><a href="description-of-data.html#web-scrapping-and-uploading-datasets"><i class="fa fa-check"></i><b>3.2</b> Web Scrapping and Uploading Datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html"><i class="fa fa-check"></i><b>4</b> Exploratory Data Analysis</a><ul>
+<li class="chapter" data-level="4.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#national-overview-of-motorist-demographics"><i class="fa fa-check"></i><b>4.1</b> National Overview of Motorist Demographics</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html"><i class="fa fa-check"></i><b>5</b> Stop outcomes, day-to-night, in Oakland, CA</a><ul>
+<li class="chapter" data-level="5.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#set-up"><i class="fa fa-check"></i><b>5.1</b> Set up</a></li>
+<li class="chapter" data-level="5.2" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#set-up-sunsetsunrise-times-in-ca-oakland"><i class="fa fa-check"></i><b>5.2</b> Set up sunset/sunrise times in CA Oakland</a></li>
+<li class="chapter" data-level="5.3" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#stop-outcomes-by-race-and-daynight"><i class="fa fa-check"></i><b>5.3</b> Stop outcomes, by race and day/night</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#counts-by-race"><i class="fa fa-check"></i><b>5.3.1</b> Counts, by race</a></li>
+<li class="chapter" data-level="5.3.2" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#daynight-outcomes-of-stop-by-race"><i class="fa fa-check"></i><b>5.3.2</b> Day/night outcomes of stop by race</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#dataset-specific-exploration"><i class="fa fa-check"></i><b>5.4</b> Dataset-specific Exploration</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#stop-outcomes-in-san-diego"><i class="fa fa-check"></i><b>5.4.1</b> Stop outcomes in San Diego</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="stop-outcomes-in-san-diego-1.html"><a href="stop-outcomes-in-san-diego-1.html"><i class="fa fa-check"></i><b>6</b> Stop Outcomes in San Diego</a><ul>
+<li class="chapter" data-level="6.0.1" data-path="stop-outcomes-in-san-diego-1.html"><a href="stop-outcomes-in-san-diego-1.html#weather-overlay-in-raleigh"><i class="fa fa-check"></i><b>6.0.1</b> Weather Overlay in Raleigh</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html"><i class="fa fa-check"></i><b>7</b> Weather Overlayed with Traffic Stops</a><ul>
+<li class="chapter" data-level="7.1" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html#visualizing-weather-in-raleigh-north-carolina"><i class="fa fa-check"></i><b>7.1</b> Visualizing Weather in Raleigh, North Carolina</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html#violations-map-in-san-antonio"><i class="fa fa-check"></i><b>7.1.1</b> Violations map in San Antonio</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html"><i class="fa fa-check"></i><b>8</b> Common Violations and Map Visualisations in San Antonio, TX</a><ul>
+<li class="chapter" data-level="8.1" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#common-violations"><i class="fa fa-check"></i><b>8.1</b> Common Violations</a></li>
+<li class="chapter" data-level="8.2" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#map-overlay"><i class="fa fa-check"></i><b>8.2</b> Map Overlay</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#socioeconomic-factors-in-durham"><i class="fa fa-check"></i><b>8.2.1</b> Socioeconomic Factors in Durham</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="socioeconomic-factors-in-durham-1.html"><a href="socioeconomic-factors-in-durham-1.html"><i class="fa fa-check"></i><b>9</b> Socioeconomic Factors in Durham</a><ul>
+<li class="chapter" data-level="9.1" data-path="socioeconomic-factors-in-durham-1.html"><a href="socioeconomic-factors-in-durham-1.html#modeling-the-probability-of-seach-given-stop"><i class="fa fa-check"></i><b>9.1</b> Modeling the Probability of Seach Given Stop</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="sunrise-and-sunset-in-san-antonio-tx.html"><a href="sunrise-and-sunset-in-san-antonio-tx.html"><i class="fa fa-check"></i><b>10</b> Sunrise and Sunset in San Antonio, TX</a></li>
+<li class="chapter" data-level="11" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>11</b> Methods</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="chapter" data-level="12" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>12</b> Final Words</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data Science Research Circle</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="stop-outcomes-in-san-diego-1" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> Stop Outcomes in San Diego</h1>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="stop-outcomes-in-san-diego-1.html#cb39-1"></a>CAsd1 &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con1, <span class="st">&quot;SELECT raw_row_number, arrest_made, citation_issued, warning_issued, search_conducted, search_person, search_vehicle FROM CAsandiego&quot;</span>)</span>
+<span id="cb39-2"><a href="stop-outcomes-in-san-diego-1.html#cb39-2"></a>CAsd2 &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con2, <span class="st">&quot;SELECT raw_row_number, date, time, service_area, subject_age, subject_race, subject_sex, type, outcome, reason_for_stop, raw_action_taken, raw_subject_race_description FROM CAsandiego&quot;</span>)</span></code></pre></div>
+<div id="plotting-count-by-race-over-years-2014-2017" class="section level4">
+<h4><span class="header-section-number">6.0.0.1</span> Plotting Count by Race over years 2014-2017</h4>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="stop-outcomes-in-san-diego-1.html#cb40-1"></a>goodSD <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb40-2"><a href="stop-outcomes-in-san-diego-1.html#cb40-2"></a><span class="kw">count</span>(<span class="dt">year =</span> <span class="kw">year</span>(date), raw_subject_race_description) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb40-3"><a href="stop-outcomes-in-san-diego-1.html#cb40-3"></a><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> year, <span class="dt">y =</span> n, <span class="dt">color =</span> raw_subject_race_description)) <span class="op">+</span></span>
+<span id="cb40-4"><a href="stop-outcomes-in-san-diego-1.html#cb40-4"></a><span class="kw">geom_point</span>() <span class="op">+</span></span>
+<span id="cb40-5"><a href="stop-outcomes-in-san-diego-1.html#cb40-5"></a><span class="kw">geom_line</span>()</span></code></pre></div>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_path).</code></pre>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<div id="recoding-race-column" class="section level5">
+<h5><span class="header-section-number">6.0.0.1.1</span> Recoding Race column</h5>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="stop-outcomes-in-san-diego-1.html#cb43-1"></a><span class="co"># in SD, subject race was very detailed and consistant unlike other datasets</span></span>
+<span id="cb43-2"><a href="stop-outcomes-in-san-diego-1.html#cb43-2"></a><span class="co"># thus, recoded raw_subject_race_description for &#39;ASIAN/PACIFIC ISLANDER&#39;</span></span>
+<span id="cb43-3"><a href="stop-outcomes-in-san-diego-1.html#cb43-3"></a>goodSD<span class="op">$</span>raw_subject_race_description &lt;-<span class="kw">recode</span>(goodSD<span class="op">$</span>raw_subject_race_description, <span class="st">&quot;VIETNAMESE&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>, </span>
+<span id="cb43-4"><a href="stop-outcomes-in-san-diego-1.html#cb43-4"></a>                                <span class="st">&quot;SAMOAN&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>, </span>
+<span id="cb43-5"><a href="stop-outcomes-in-san-diego-1.html#cb43-5"></a>                                <span class="st">&quot;LAOTIAN&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>,</span>
+<span id="cb43-6"><a href="stop-outcomes-in-san-diego-1.html#cb43-6"></a>                                <span class="st">&quot;KOREAN&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>,</span>
+<span id="cb43-7"><a href="stop-outcomes-in-san-diego-1.html#cb43-7"></a>                                <span class="st">&quot;JAPANESE&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>,</span>
+<span id="cb43-8"><a href="stop-outcomes-in-san-diego-1.html#cb43-8"></a>                                <span class="st">&quot;INDIAN&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>,</span>
+<span id="cb43-9"><a href="stop-outcomes-in-san-diego-1.html#cb43-9"></a>                                <span class="st">&quot;HAWAIIAN&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>, </span>
+<span id="cb43-10"><a href="stop-outcomes-in-san-diego-1.html#cb43-10"></a>                                <span class="st">&quot;GUAMANIAN&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>,</span>
+<span id="cb43-11"><a href="stop-outcomes-in-san-diego-1.html#cb43-11"></a>                               <span class="st">&quot;FILIPINO&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>,</span>
+<span id="cb43-12"><a href="stop-outcomes-in-san-diego-1.html#cb43-12"></a>                                <span class="st">&quot;CHINESE&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>,</span>
+<span id="cb43-13"><a href="stop-outcomes-in-san-diego-1.html#cb43-13"></a>                                <span class="st">&quot;CAMBODIAN&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>,</span>
+<span id="cb43-14"><a href="stop-outcomes-in-san-diego-1.html#cb43-14"></a>                               <span class="st">&quot;ASIAN INDIAN&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>,</span>
+<span id="cb43-15"><a href="stop-outcomes-in-san-diego-1.html#cb43-15"></a>                               <span class="st">&quot;OTHER ASIAN&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>,</span>
+<span id="cb43-16"><a href="stop-outcomes-in-san-diego-1.html#cb43-16"></a>                               <span class="st">&quot;PACIFIC ISLANDER&quot;</span>=<span class="st">&quot;ASIAN/PACIFIC ISLANDER&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="plotting-search-conducted-by-race" class="section level4">
+<h4><span class="header-section-number">6.0.0.2</span> Plotting Search Conducted by Race</h4>
+<p>It is helpful to look at the distribution of stop outcomes because it could suggest underlying intent from the officer or commonalities in policing different races (i.e. prevalence of profiled searches, warrant for arrest). The following two visualizations display the distribution of searches and arrests made on traffic stops in San Diego.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="stop-outcomes-in-san-diego-1.html#cb44-1"></a><span class="co"># create a new dataset</span></span>
+<span id="cb44-2"><a href="stop-outcomes-in-san-diego-1.html#cb44-2"></a>SearchesByRaceCOL &lt;-<span class="st"> </span>goodSD <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb44-3"><a href="stop-outcomes-in-san-diego-1.html#cb44-3"></a><span class="st">  </span></span>
+<span id="cb44-4"><a href="stop-outcomes-in-san-diego-1.html#cb44-4"></a><span class="st">  </span><span class="co"># select race and search_conducted columns</span></span>
+<span id="cb44-5"><a href="stop-outcomes-in-san-diego-1.html#cb44-5"></a><span class="st">  </span><span class="kw">group_by</span>(raw_subject_race_description, search_conducted) <span class="op">%&gt;%</span></span>
+<span id="cb44-6"><a href="stop-outcomes-in-san-diego-1.html#cb44-6"></a><span class="st">  </span></span>
+<span id="cb44-7"><a href="stop-outcomes-in-san-diego-1.html#cb44-7"></a><span class="st">  </span><span class="co"># calculate count for search_conducted by race</span></span>
+<span id="cb44-8"><a href="stop-outcomes-in-san-diego-1.html#cb44-8"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">Total =</span><span class="kw">n</span>()) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb44-9"><a href="stop-outcomes-in-san-diego-1.html#cb44-9"></a><span class="st">  </span><span class="kw">group_by</span>(raw_subject_race_description) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb44-10"><a href="stop-outcomes-in-san-diego-1.html#cb44-10"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">pct=</span>Total<span class="op">/</span><span class="kw">sum</span>(Total))</span>
+<span id="cb44-11"><a href="stop-outcomes-in-san-diego-1.html#cb44-11"></a>  <span class="kw">data.table</span>(SearchesByRaceCOL)</span></code></pre></div>
+<pre><code>##     raw_subject_race_description search_conducted  Total        pct
+##  1:       ASIAN/PACIFIC ISLANDER            FALSE  31147 0.97203757
+##  2:       ASIAN/PACIFIC ISLANDER             TRUE    896 0.02796243
+##  3:                        BLACK            FALSE  38217 0.90949548
+##  4:                        BLACK             TRUE   3803 0.09050452
+##  5:                     HISPANIC            FALSE 108932 0.94456536
+##  6:                     HISPANIC             TRUE   6393 0.05543464
+##  7:                        OTHER            FALSE  26420 0.98350892
+##  8:                        OTHER             TRUE    443 0.01649108
+##  9:                        WHITE            FALSE 155130 0.97223006
+## 10:                        WHITE             TRUE   4431 0.02776994
+## 11:                         &lt;NA&gt;            FALSE   6893 0.95537076
+## 12:                         &lt;NA&gt;             TRUE    322 0.04462924</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="stop-outcomes-in-san-diego-1.html#cb46-1"></a><span class="co"># omit NAs for search_conducted</span></span>
+<span id="cb46-2"><a href="stop-outcomes-in-san-diego-1.html#cb46-2"></a>SearchesByRaceCOL &lt;-<span class="st"> </span><span class="kw">na.omit</span>(SearchesByRaceCOL) </span>
+<span id="cb46-3"><a href="stop-outcomes-in-san-diego-1.html#cb46-3"></a><span class="co"># visualize proportion of searches to non-search stops</span></span>
+<span id="cb46-4"><a href="stop-outcomes-in-san-diego-1.html#cb46-4"></a><span class="kw">ggplot</span>(SearchesByRaceCOL, <span class="kw">aes</span>(<span class="dt">x=</span>raw_subject_race_description, <span class="dt">y=</span>pct, <span class="dt">fill=</span>search_conducted))<span class="op">+</span><span class="st"> </span><span class="kw">geom_col</span>() <span class="op">+</span><span class="st"> </span><span class="kw">coord_flip</span>() <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Search Conducted by Race&quot;</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
+</div>
+<div id="plotting-search-person-by-race" class="section level4">
+<h4><span class="header-section-number">6.0.0.3</span> Plotting Search Person by Race</h4>
+<pre><code>##     raw_subject_race_description search_person  Total         pct
+##  1:       ASIAN/PACIFIC ISLANDER         FALSE  31470 0.982117779
+##  2:       ASIAN/PACIFIC ISLANDER            NA    116 0.003620135
+##  3:       ASIAN/PACIFIC ISLANDER          TRUE    457 0.014262085
+##  4:                        BLACK         FALSE  39630 0.943122323
+##  5:                        BLACK            NA    417 0.009923846
+##  6:                        BLACK          TRUE   1973 0.046953832
+##  7:                     HISPANIC         FALSE 111919 0.970466074
+##  8:                     HISPANIC            NA    762 0.006607414
+##  9:                     HISPANIC          TRUE   2644 0.022926512
+## 10:                        OTHER         FALSE  26630 0.991326360
+## 11:                        OTHER            NA     76 0.002829170
+## 12:                        OTHER          TRUE    157 0.005844470
+## 13:                        WHITE         FALSE 156744 0.982345310
+## 14:                        WHITE            NA    755 0.004731733
+## 15:                        WHITE          TRUE   2062 0.012922957
+## 16:                         &lt;NA&gt;         FALSE   7020 0.972972973
+## 17:                         &lt;NA&gt;            NA     64 0.008870409
+## 18:                         &lt;NA&gt;          TRUE    131 0.018156618</code></pre>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+</div>
+<div id="plotting-search-vehicle-by-race" class="section level4">
+<h4><span class="header-section-number">6.0.0.4</span> Plotting Search Vehicle by Race</h4>
+<pre><code>##     raw_subject_race_description search_vehicle  Total         pct
+##  1:       ASIAN/PACIFIC ISLANDER          FALSE  31400 0.979933215
+##  2:       ASIAN/PACIFIC ISLANDER             NA    116 0.003620135
+##  3:       ASIAN/PACIFIC ISLANDER           TRUE    527 0.016446650
+##  4:                        BLACK          FALSE  39200 0.932889100
+##  5:                        BLACK             NA    417 0.009923846
+##  6:                        BLACK           TRUE   2403 0.057187054
+##  7:                     HISPANIC          FALSE 110313 0.956540212
+##  8:                     HISPANIC             NA    762 0.006607414
+##  9:                     HISPANIC           TRUE   4250 0.036852374
+## 10:                        OTHER          FALSE  26513 0.986970927
+## 11:                        OTHER             NA     76 0.002829170
+## 12:                        OTHER           TRUE    274 0.010199903
+## 13:                        WHITE          FALSE 156344 0.979838432
+## 14:                        WHITE             NA    755 0.004731733
+## 15:                        WHITE           TRUE   2462 0.015429836
+## 16:                         &lt;NA&gt;          FALSE   6968 0.965765766
+## 17:                         &lt;NA&gt;             NA     64 0.008870409
+## 18:                         &lt;NA&gt;           TRUE    183 0.025363825</code></pre>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+</div>
+<div id="plotting-arrest-made-by-race" class="section level4">
+<h4><span class="header-section-number">6.0.0.5</span> Plotting Arrest Made by Race</h4>
+<pre><code>##     raw_subject_race_description arrest_made  Total         pct
+##  1:       ASIAN/PACIFIC ISLANDER       FALSE  29262 0.913210374
+##  2:       ASIAN/PACIFIC ISLANDER          NA   2476 0.077271167
+##  3:       ASIAN/PACIFIC ISLANDER        TRUE    305 0.009518460
+##  4:                        BLACK       FALSE  37953 0.903212756
+##  5:                        BLACK          NA   3215 0.076511185
+##  6:                        BLACK        TRUE    852 0.020276059
+##  7:                     HISPANIC       FALSE 100404 0.870617819
+##  8:                     HISPANIC          NA  13224 0.114667245
+##  9:                     HISPANIC        TRUE   1697 0.014714936
+## 10:                        OTHER       FALSE  24066 0.895879090
+## 11:                        OTHER          NA   2638 0.098201988
+## 12:                        OTHER        TRUE    159 0.005918922
+## 13:                        WHITE       FALSE 145399 0.911243976
+## 14:                        WHITE          NA  12416 0.077813501
+## 15:                        WHITE        TRUE   1746 0.010942524
+## 16:                         &lt;NA&gt;       FALSE   6385 0.884961885
+## 17:                         &lt;NA&gt;          NA    774 0.107276507
+## 18:                         &lt;NA&gt;        TRUE     56 0.007761608</code></pre>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
+</div>
+<div id="plotting-citations-issued-by-race" class="section level4">
+<h4><span class="header-section-number">6.0.0.6</span> Plotting Citations Issued by Race</h4>
+<pre><code>##     raw_subject_race_description citation_issued Total        pct
+##  1:       ASIAN/PACIFIC ISLANDER           FALSE 12496 0.38997597
+##  2:       ASIAN/PACIFIC ISLANDER              NA  1937 0.06045002
+##  3:       ASIAN/PACIFIC ISLANDER            TRUE 17610 0.54957401
+##  4:                        BLACK           FALSE 19105 0.45466445
+##  5:                        BLACK              NA  2566 0.06106616
+##  6:                        BLACK            TRUE 20349 0.48426940
+##  7:                     HISPANIC           FALSE 36667 0.31794494
+##  8:                     HISPANIC              NA 12041 0.10440928
+##  9:                     HISPANIC            TRUE 66617 0.57764578
+## 10:                        OTHER           FALSE  7263 0.27037189
+## 11:                        OTHER              NA  2475 0.09213416
+## 12:                        OTHER            TRUE 17125 0.63749395
+## 13:                        WHITE           FALSE 52240 0.32739830
+## 14:                        WHITE              NA 12377 0.07756908
+## 15:                        WHITE            TRUE 94944 0.59503262
+## 16:                         &lt;NA&gt;           FALSE  2148 0.29771310
+## 17:                         &lt;NA&gt;              NA   575 0.07969508
+## 18:                         &lt;NA&gt;            TRUE  4492 0.62259182</code></pre>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
+</div>
+<div id="plotting-warnings-issued-by-race" class="section level4">
+<h4><span class="header-section-number">6.0.0.7</span> Plotting Warnings Issued by Race</h4>
+<pre><code>##     raw_subject_race_description warning_issued Total        pct
+##  1:       ASIAN/PACIFIC ISLANDER          FALSE 18313 0.57151328
+##  2:       ASIAN/PACIFIC ISLANDER             NA  1937 0.06045002
+##  3:       ASIAN/PACIFIC ISLANDER           TRUE 11793 0.36803670
+##  4:                        BLACK          FALSE 22953 0.54623989
+##  5:                        BLACK             NA  2566 0.06106616
+##  6:                        BLACK           TRUE 16501 0.39269396
+##  7:                     HISPANIC          FALSE 69890 0.60602645
+##  8:                     HISPANIC             NA 12041 0.10440928
+##  9:                     HISPANIC           TRUE 33394 0.28956427
+## 10:                        OTHER          FALSE 17356 0.64609314
+## 11:                        OTHER             NA  2475 0.09213416
+## 12:                        OTHER           TRUE  7032 0.26177270
+## 13:                        WHITE          FALSE 97389 0.61035591
+## 14:                        WHITE             NA 12377 0.07756908
+## 15:                        WHITE           TRUE 49795 0.31207501
+## 16:                         &lt;NA&gt;          FALSE  4485 0.62162162
+## 17:                         &lt;NA&gt;             NA   575 0.07969508
+## 18:                         &lt;NA&gt;           TRUE  2155 0.29868330</code></pre>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-47-1.png" width="672" /></p>
+</div>
+<div id="distribution-of-nas-in-outcome-variables" class="section level4">
+<h4><span class="header-section-number">6.0.0.8</span> Distribution of NAs in outcome variables</h4>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="stop-outcomes-in-san-diego-1.html#cb52-1"></a><span class="co">#search_conducted vs. arrest_made, citation_issued, warning_issued</span></span>
+<span id="cb52-2"><a href="stop-outcomes-in-san-diego-1.html#cb52-2"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_conducted,goodSD<span class="op">$</span>arrest_made)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 331180  34642    917
+##   TRUE   12289    101   3898</code></pre>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="stop-outcomes-in-san-diego-1.html#cb54-1"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_conducted,goodSD<span class="op">$</span>citation_issued)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 122819  31235 212685
+##   TRUE    7100    736   8452</code></pre>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="stop-outcomes-in-san-diego-1.html#cb56-1"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_conducted,goodSD<span class="op">$</span>warning_issued)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 217781  31235 117723
+##   TRUE   12605    736   2947</code></pre>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="stop-outcomes-in-san-diego-1.html#cb58-1"></a><span class="co">#search_person vs. arrest_made, citation_issued, warning_issued</span></span>
+<span id="cb58-2"><a href="stop-outcomes-in-san-diego-1.html#cb58-2"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_person,goodSD<span class="op">$</span>arrest_made)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 337245  34666   1502
+##   NA      1483     51    656
+##   TRUE    4741     26   2657</code></pre>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="stop-outcomes-in-san-diego-1.html#cb60-1"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_person,goodSD<span class="op">$</span>citation_issued)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 124552  31364 217497
+##   NA       756    252   1182
+##   TRUE    4611    355   2458</code></pre>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="stop-outcomes-in-san-diego-1.html#cb62-1"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_person,goodSD<span class="op">$</span>warning_issued)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 223434  31364 118615
+##   NA      1526    252    412
+##   TRUE    5426    355   1643</code></pre>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="stop-outcomes-in-san-diego-1.html#cb64-1"></a><span class="co">#search_vehicle vs. arrest_made, citation_issued, warning_issued</span></span>
+<span id="cb64-2"><a href="stop-outcomes-in-san-diego-1.html#cb64-2"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_vehicle,goodSD<span class="op">$</span>arrest_made)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 333675  34662   2401
+##   NA      1483     51    656
+##   TRUE    8311     30   1758</code></pre>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="stop-outcomes-in-san-diego-1.html#cb66-1"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_vehicle,goodSD<span class="op">$</span>citation_issued)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 125189  31467 214082
+##   NA       756    252   1182
+##   TRUE    3974    252   5873</code></pre>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="stop-outcomes-in-san-diego-1.html#cb68-1"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_vehicle,goodSD<span class="op">$</span>warning_issued)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 220741  31467 118530
+##   NA      1526    252    412
+##   TRUE    8119    252   1728</code></pre>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="stop-outcomes-in-san-diego-1.html#cb70-1"></a><span class="co">#What does a conducted search result in?</span></span>
+<span id="cb70-2"><a href="stop-outcomes-in-san-diego-1.html#cb70-2"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_conducted,goodSD<span class="op">$</span>search_vehicle)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 366739      0      0
+##   TRUE    3999   2190  10099</code></pre>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="stop-outcomes-in-san-diego-1.html#cb72-1"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_conducted,goodSD<span class="op">$</span>search_person)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 366739      0      0
+##   TRUE    6674   2190   7424</code></pre>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="stop-outcomes-in-san-diego-1.html#cb74-1"></a><span class="kw">table</span>(goodSD<span class="op">$</span>search_person,goodSD<span class="op">$</span>search_vehicle)</span></code></pre></div>
+<pre><code>##        
+##          FALSE     NA   TRUE
+##   FALSE 366739      0   6674
+##   NA         0   2190      0
+##   TRUE    3999      0   3425</code></pre>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="stop-outcomes-in-san-diego-1.html#cb76-1"></a><span class="co">#NAs in search variables appear to be indicators that search was not designated as a person or vehicle search</span></span>
+<span id="cb76-2"><a href="stop-outcomes-in-san-diego-1.html#cb76-2"></a><span class="co">#three variable plots</span></span>
+<span id="cb76-3"><a href="stop-outcomes-in-san-diego-1.html#cb76-3"></a><span class="co">#looking at traffic stops in relation to income level in the area</span></span>
+<span id="cb76-4"><a href="stop-outcomes-in-san-diego-1.html#cb76-4"></a><span class="co">#dimension reduction: finding what we wanted to predict/model</span></span>
+<span id="cb76-5"><a href="stop-outcomes-in-san-diego-1.html#cb76-5"></a><span class="co">#chugging away at the Shiny app</span></span></code></pre></div>
+</div>
+<div id="weather-overlay-in-raleigh" class="section level3">
+<h3><span class="header-section-number">6.0.1</span> Weather Overlay in Raleigh</h3>
+<!-- \newpage -->
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="stop-outcomes-day-to-night-in-oakland-ca.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="weather-overlayed-with-traffic-stops.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/04-combined.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

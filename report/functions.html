@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Functions | Data Exploration of U.S. Police Stops</title>
+  <meta name="description" content="This is an exploratory data report on police traffic data." />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Functions | Data Exploration of U.S. Police Stops" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an exploratory data report on police traffic data." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Functions | Data Exploration of U.S. Police Stops" />
+  
+  <meta name="twitter:description" content="This is an exploratory data report on police traffic data." />
+  
+
+<meta name="author" content="Pomona College Data Science Research Circle" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="literature-review.html"/>
+<link rel="next" href="description-of-data.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.0.3/leaflet.js"></script>
+<script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.3/leaflet-providers-plugin.js"></script>
+<link href="libs/leaflet-markercluster-1.0.5/MarkerCluster.css" rel="stylesheet" />
+<link href="libs/leaflet-markercluster-1.0.5/MarkerCluster.Default.css" rel="stylesheet" />
+<script src="libs/leaflet-markercluster-1.0.5/leaflet.markercluster.js"></script>
+<script src="libs/leaflet-markercluster-1.0.5/leaflet.markercluster.freezable.js"></script>
+<script src="libs/leaflet-markercluster-1.0.5/leaflet.markercluster.layersupport.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Data Exploration of U.S. Police Stops</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#dedication"><i class="fa fa-check"></i><b>1.1</b> Dedication</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#motivation"><i class="fa fa-check"></i><b>1.2</b> Motivation</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="literature-review.html"><a href="literature-review.html"><i class="fa fa-check"></i><b>2</b> Literature Review</a></li>
+<li class="chapter" data-level="3" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>3</b> Functions</a><ul>
+<li class="chapter" data-level="3.1" data-path="functions.html"><a href="functions.html#data-uploading-functions"><i class="fa fa-check"></i><b>3.1</b> Data Uploading Functions</a></li>
+<li class="chapter" data-level="3.2" data-path="functions.html"><a href="functions.html#veil-of-darkness-functions"><i class="fa fa-check"></i><b>3.2</b> Veil of Darkness Functions</a></li>
+<li class="chapter" data-level="3.3" data-path="functions.html"><a href="functions.html#nationwide-functions"><i class="fa fa-check"></i><b>3.3</b> Nationwide Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="description-of-data.html"><a href="description-of-data.html"><i class="fa fa-check"></i><b>4</b> Description of Data</a><ul>
+<li class="chapter" data-level="4.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-datasets-with-rmysql"><i class="fa fa-check"></i><b>4.1</b> Querying Datasets with RMySQL</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-subsets-of-dataset"><i class="fa fa-check"></i><b>4.1.1</b> Querying Subsets of dataset</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="description-of-data.html"><a href="description-of-data.html#web-scrapping-and-uploading-datasets"><i class="fa fa-check"></i><b>4.2</b> Web Scrapping and Uploading Datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html"><i class="fa fa-check"></i><b>5</b> Exploratory Data Analysis</a><ul>
+<li class="chapter" data-level="5.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#demographics-of-motorists-stopped-nationwide"><i class="fa fa-check"></i><b>5.1</b> Demographics of Motorists Stopped, Nationwide</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#set-up"><i class="fa fa-check"></i><b>5.1.1</b> Set Up</a></li>
+<li class="chapter" data-level="5.1.2" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#race-and-sex-of-stopped-motorists"><i class="fa fa-check"></i><b>5.1.2</b> Race and sex of stopped motorists</a></li>
+<li class="chapter" data-level="5.1.3" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#distribution-of-motorists-age-by-race"><i class="fa fa-check"></i><b>5.1.3</b> Distribution of motorists’ age by race</a></li>
+<li class="chapter" data-level="5.1.4" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#age-distribution-by-race-nationally"><i class="fa fa-check"></i><b>5.1.4</b> Age distribution by race, nationally</a></li>
+<li class="chapter" data-level="5.1.5" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#search-rates"><i class="fa fa-check"></i><b>5.1.5</b> Search rates</a></li>
+<li class="chapter" data-level="5.1.6" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#query-the-data"><i class="fa fa-check"></i><b>5.1.6</b> 1. Query the data</a></li>
+<li class="chapter" data-level="5.1.7" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#transform-data"><i class="fa fa-check"></i><b>5.1.7</b> 2. Transform data</a></li>
+<li class="chapter" data-level="5.1.8" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#plot-using-geofacet-1"><i class="fa fa-check"></i><b>5.1.8</b> 3. Plot using geofacet</a></li>
+<li class="chapter" data-level="5.1.9" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#use-scatter-plot-to-examine-ratios"><i class="fa fa-check"></i><b>5.1.9</b> 4. Use scatter plot to examine ratios</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#dataset-specific-exploration"><i class="fa fa-check"></i><b>5.2</b> Dataset-specific Exploration</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#stop-outcomes-from-day-to-night-in-oakland-ca"><i class="fa fa-check"></i><b>5.2.1</b> Stop outcomes from day to night in Oakland, CA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#stop-outcomes-in-san-diego-ca"><i class="fa fa-check"></i><b>5.2.2</b> Stop outcomes in San Diego, CA</a></li>
+<li class="chapter" data-level="5.2.3" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#weather-overlay-in-raleigh-nc"><i class="fa fa-check"></i><b>5.2.3</b> Weather overlay in Raleigh, NC</a></li>
+<li class="chapter" data-level="5.2.4" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#maps-in-san-antonio-tx"><i class="fa fa-check"></i><b>5.2.4</b> Maps in San Antonio, TX</a></li>
+<li class="chapter" data-level="5.2.5" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#socioeconomic-factors-in-durham-nc"><i class="fa fa-check"></i><b>5.2.5</b> Socioeconomic factors in Durham, NC</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#modeling-the-probability-of-seach-given-stop"><i class="fa fa-check"></i><b>5.3</b> Modeling the Probability of Seach Given Stop</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#sunrise-and-sunset"><i class="fa fa-check"></i><b>5.3.1</b> Sunrise and Sunset</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="logistic-regression.html"><a href="logistic-regression.html"><i class="fa fa-check"></i><b>6</b> Logistic Regression</a><ul>
+<li class="chapter" data-level="6.1" data-path="logistic-regression.html"><a href="logistic-regression.html#charlotte-nc-logistic-regression"><i class="fa fa-check"></i><b>6.1</b> Charlotte, NC Logistic Regression</a></li>
+<li class="chapter" data-level="6.2" data-path="logistic-regression.html"><a href="logistic-regression.html#plotting-s-curves"><i class="fa fa-check"></i><b>6.2</b> Plotting S-curves</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="logistic-regression.html"><a href="logistic-regression.html#grouping"><i class="fa fa-check"></i><b>6.2.1</b> Grouping</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="logistic-regression.html"><a href="logistic-regression.html#veil-of-darkness-nationwide"><i class="fa fa-check"></i><b>6.3</b> Veil of Darkness Nationwide</a></li>
+<li class="chapter" data-level="6.4" data-path="logistic-regression.html"><a href="logistic-regression.html#predictive-models"><i class="fa fa-check"></i><b>6.4</b> Predictive Models</a></li>
+<li class="chapter" data-level="6.5" data-path="logistic-regression.html"><a href="logistic-regression.html#empirical-search-probabilities-nationwide"><i class="fa fa-check"></i><b>6.5</b> Empirical Search Probabilities Nationwide</a><ul>
+<li class="chapter" data-level="6.5.1" data-path="logistic-regression.html"><a href="logistic-regression.html#create-a-list-of-relevant-data-sets"><i class="fa fa-check"></i><b>6.5.1</b> 1. Create a list of relevant data sets</a></li>
+<li class="chapter" data-level="6.5.2" data-path="logistic-regression.html"><a href="logistic-regression.html#query-the-stop-and-search-counts."><i class="fa fa-check"></i><b>6.5.2</b> 2. Query the stop and search counts.</a></li>
+<li class="chapter" data-level="6.5.3" data-path="logistic-regression.html"><a href="logistic-regression.html#combine-and-plot-the-data"><i class="fa fa-check"></i><b>6.5.3</b> 3. Combine and plot the data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="limitations-and-discussion.html"><a href="limitations-and-discussion.html"><i class="fa fa-check"></i><b>7</b> Limitations and Discussion</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data Exploration of U.S. Police Stops</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="functions" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> Functions</h1>
+<p>This section explains the various functions used throughout our research.</p>
+<div id="data-uploading-functions" class="section level2">
+<h2><span class="header-section-number">3.1</span> Data Uploading Functions</h2>
+<p>The functions here serve as cleaning functions such that a ready to use dataset gets uploaded to the database as a data table.</p>
+<p>convertLogicalToInt function:
+input: dataset
+output: dataset with logical values set to binary</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="functions.html#cb1-1"></a>convertLogicalToInt &lt;-<span class="st"> </span><span class="cf">function</span>(input_df){</span>
+<span id="cb1-2"><a href="functions.html#cb1-2"></a>  vars &lt;-<span class="st"> </span><span class="kw">sapply</span>(input_df, class) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-3"><a href="functions.html#cb1-3"></a><span class="st">  </span><span class="kw">list.which</span>(.<span class="op">==</span><span class="st">&#39;logical&#39;</span>)</span>
+<span id="cb1-4"><a href="functions.html#cb1-4"></a></span>
+<span id="cb1-5"><a href="functions.html#cb1-5"></a>  input_df[,vars] &lt;-<span class="st"> </span><span class="kw">sapply</span>(input_df[,vars], as.numeric)</span>
+<span id="cb1-6"><a href="functions.html#cb1-6"></a>  input_df</span>
+<span id="cb1-7"><a href="functions.html#cb1-7"></a>  <span class="kw">return</span>(input_df)</span>
+<span id="cb1-8"><a href="functions.html#cb1-8"></a>}</span></code></pre></div>
+<p>getDFName:
+input: name of dataset (this could also be name of link from web scrape)
+output: clean dataset name that includes state and city</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="functions.html#cb2-1"></a>getDFName &lt;-<span class="st"> </span><span class="cf">function</span>(input_string){</span>
+<span id="cb2-2"><a href="functions.html#cb2-2"></a>  tmp &lt;-<span class="st"> </span><span class="kw">str_split</span>(input_string, <span class="st">&#39;_&#39;</span>, <span class="dt">simplify =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb2-3"><a href="functions.html#cb2-3"></a>  tmp</span>
+<span id="cb2-4"><a href="functions.html#cb2-4"></a>  </span>
+<span id="cb2-5"><a href="functions.html#cb2-5"></a>  state &lt;-<span class="st"> </span><span class="kw">str_to_upper</span>(tmp[,<span class="dv">2</span>])</span>
+<span id="cb2-6"><a href="functions.html#cb2-6"></a>  </span>
+<span id="cb2-7"><a href="functions.html#cb2-7"></a>  <span class="cf">if</span>(tmp[,<span class="dv">4</span>] <span class="op">!=</span><span class="st"> &quot;2019&quot;</span>){</span>
+<span id="cb2-8"><a href="functions.html#cb2-8"></a>      cityName &lt;-<span class="st"> </span><span class="kw">paste</span>(tmp[,<span class="dv">3</span>], tmp[,<span class="dv">4</span>], <span class="dt">sep=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb2-9"><a href="functions.html#cb2-9"></a>      name &lt;-<span class="st"> </span><span class="kw">paste</span>(state, cityName, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb2-10"><a href="functions.html#cb2-10"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-11"><a href="functions.html#cb2-11"></a>      cityName &lt;-<span class="st"> </span>tmp[,<span class="dv">3</span>]</span>
+<span id="cb2-12"><a href="functions.html#cb2-12"></a>      name &lt;-<span class="st"> </span><span class="kw">paste</span>(state, cityName, <span class="dt">sep=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb2-13"><a href="functions.html#cb2-13"></a>  }</span>
+<span id="cb2-14"><a href="functions.html#cb2-14"></a>  name</span>
+<span id="cb2-15"><a href="functions.html#cb2-15"></a>  <span class="kw">return</span>(name)</span>
+<span id="cb2-16"><a href="functions.html#cb2-16"></a>}</span></code></pre></div>
+<p>uploadLinksToDatabase:
+input: string link from web scrape
+outout: 0 - indicating that the code finished executing
+This function will take in a RDS link and write the dataset to the database</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="functions.html#cb3-1"></a>uploadLinksToDatabase &lt;-<span class="st"> </span><span class="cf">function</span>(input_link){</span>
+<span id="cb3-2"><a href="functions.html#cb3-2"></a>  tmpDF &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">gzcon</span>(<span class="kw">url</span>(input_link)))</span>
+<span id="cb3-3"><a href="functions.html#cb3-3"></a>  tmpDF &lt;-<span class="st"> </span><span class="kw">convertLogicalToInt</span>(tmpDF)</span>
+<span id="cb3-4"><a href="functions.html#cb3-4"></a>  name&lt;-<span class="st"> </span><span class="kw">getDFName</span>(input_link)</span>
+<span id="cb3-5"><a href="functions.html#cb3-5"></a>  </span>
+<span id="cb3-6"><a href="functions.html#cb3-6"></a>  <span class="kw">dbWriteTable</span>(con2, name, tmpDF, <span class="dt">overwrite =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb3-7"><a href="functions.html#cb3-7"></a>  <span class="kw">return</span>(<span class="dv">0</span>)</span>
+<span id="cb3-8"><a href="functions.html#cb3-8"></a>}</span></code></pre></div>
+</div>
+<div id="veil-of-darkness-functions" class="section level2">
+<h2><span class="header-section-number">3.2</span> Veil of Darkness Functions</h2>
+<p>Veil of Darkness functions work with lutz and lubridate to determine whether a stop took place in the dark.</p>
+<p>The first step in getting the sunset and sunrise times is to get the coordinates for the city. To do this, we can Google search the city name and webscrape the Google search results.</p>
+<p>The two code chunk below has functions that will perform this process. get_cityNames takes in a datatable’s name and cleans it so that the google search engine result will return the desired page that has the coordinates.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="functions.html#cb4-1"></a>get_cityNames &lt;-<span class="st"> </span><span class="cf">function</span>(name){</span>
+<span id="cb4-2"><a href="functions.html#cb4-2"></a>  check &lt;-<span class="st"> </span><span class="kw">str_extract</span>(name, <span class="st">&quot;[a-z]+&quot;</span>)</span>
+<span id="cb4-3"><a href="functions.html#cb4-3"></a>  <span class="cf">if</span>(check <span class="op">==</span><span class="st"> &quot;statewide&quot;</span>){</span>
+<span id="cb4-4"><a href="functions.html#cb4-4"></a>    <span class="kw">return</span>(state.name[<span class="kw">grep</span>(<span class="kw">str_sub</span>(name, <span class="dv">1</span>,<span class="dv">2</span>), state.abb)])</span>
+<span id="cb4-5"><a href="functions.html#cb4-5"></a>  } <span class="cf">else</span> {</span>
+<span id="cb4-6"><a href="functions.html#cb4-6"></a>    <span class="kw">return</span>(check)</span>
+<span id="cb4-7"><a href="functions.html#cb4-7"></a>  }</span>
+<span id="cb4-8"><a href="functions.html#cb4-8"></a>}</span></code></pre></div>
+<p>get_coordinates takes in said clean city names and scrape the google search web result. The function will return a vector of doubles. The first index is for latitude and second index has longitude.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="functions.html#cb5-1"></a>get_coordinates &lt;-<span class="st"> </span><span class="cf">function</span>(city){</span>
+<span id="cb5-2"><a href="functions.html#cb5-2"></a>  url &lt;-<span class="st"> </span></span>
+<span id="cb5-3"><a href="functions.html#cb5-3"></a><span class="st">    </span><span class="kw">paste</span>(<span class="st">&quot;https://www.google.com/search?q=&quot;</span>,</span>
+<span id="cb5-4"><a href="functions.html#cb5-4"></a>          city,</span>
+<span id="cb5-5"><a href="functions.html#cb5-5"></a>          <span class="st">&quot;+lat+long&amp;oq=sandiego+lat+long&amp;aqs=chrome..69i57.2463j0j7&amp;sourceid=chrome&amp;ie=UTF-8&quot;</span>)</span>
+<span id="cb5-6"><a href="functions.html#cb5-6"></a>  doc &lt;-<span class="st"> </span><span class="kw">htmlParse</span>(<span class="kw">readLines</span>(url), <span class="dt">asText=</span><span class="ot">TRUE</span>)</span>
+<span id="cb5-7"><a href="functions.html#cb5-7"></a>  links &lt;-<span class="st"> </span><span class="kw">xpathSApply</span>(doc, <span class="st">&quot;//div[@class=&#39;kCrYT&#39;]&quot;</span>, xmlValue)</span>
+<span id="cb5-8"><a href="functions.html#cb5-8"></a>  clean_coor &lt;-<span class="st"> </span><span class="kw">as.list</span>(<span class="kw">str_split</span>(links[<span class="dv">2</span>], <span class="st">&quot;,&quot;</span>))</span>
+<span id="cb5-9"><a href="functions.html#cb5-9"></a>  lat &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">str_extract</span>(clean_coor[[<span class="dv">1</span>]][<span class="dv">1</span>], <span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+</span><span class="ch">\\</span><span class="st">.*</span><span class="ch">\\</span><span class="st">d*&quot;</span>))</span>
+<span id="cb5-10"><a href="functions.html#cb5-10"></a>  long &lt;-<span class="st"> </span><span class="dv">-1</span><span class="op">*</span><span class="kw">as.numeric</span>(<span class="kw">str_extract</span>(clean_coor[[<span class="dv">1</span>]][<span class="dv">2</span>], <span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+</span><span class="ch">\\</span><span class="st">.*</span><span class="ch">\\</span><span class="st">d*&quot;</span>))</span>
+<span id="cb5-11"><a href="functions.html#cb5-11"></a>  x &lt;-<span class="st"> </span><span class="kw">c</span>(lat,long)</span>
+<span id="cb5-12"><a href="functions.html#cb5-12"></a>  <span class="kw">return</span>(x)</span>
+<span id="cb5-13"><a href="functions.html#cb5-13"></a>}</span>
+<span id="cb5-14"><a href="functions.html#cb5-14"></a></span>
+<span id="cb5-15"><a href="functions.html#cb5-15"></a>clean_names &lt;-<span class="st"> </span><span class="kw">list</span>()</span>
+<span id="cb5-16"><a href="functions.html#cb5-16"></a>clean_names &lt;-<span class="st"> </span><span class="kw">lapply</span>(datasets_of_interest, get_cityNames)</span>
+<span id="cb5-17"><a href="functions.html#cb5-17"></a>coordinates &lt;-<span class="st"> </span><span class="kw">lapply</span>(clean_names,get_coordinates)</span></code></pre></div>
+<p>Next, we will define two helper functions in getting that call the lutz package and retrieve the times.</p>
+<p>outsunriseset
+input: latitude (dbl), longitude(dbl), date(Date or Posix), timezime (tz), direction(string)
+output: Date with time of the desired sun direction</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="functions.html#cb6-1"></a>oursunriseset &lt;-<span class="st"> </span><span class="cf">function</span>(latitude, longitude, date, timezone, direction) {</span>
+<span id="cb6-2"><a href="functions.html#cb6-2"></a>  date.lat.long &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">date =</span> date, <span class="dt">lat =</span> latitude, <span class="dt">lon =</span> longitude)</span>
+<span id="cb6-3"><a href="functions.html#cb6-3"></a>  <span class="cf">if</span>(direction <span class="op">==</span><span class="st"> &quot;sunset&quot;</span>){</span>
+<span id="cb6-4"><a href="functions.html#cb6-4"></a>    <span class="co"># call getSunlightTimes from the lutz package</span></span>
+<span id="cb6-5"><a href="functions.html#cb6-5"></a>    <span class="kw">getSunlightTimes</span>(<span class="dt">data =</span> date.lat.long, <span class="dt">keep=</span>direction, <span class="dt">tz=</span>timezone)<span class="op">$</span>sunset </span>
+<span id="cb6-6"><a href="functions.html#cb6-6"></a>  } <span class="cf">else</span> <span class="cf">if</span>(direction <span class="op">==</span><span class="st"> &quot;sunrise&quot;</span>){</span>
+<span id="cb6-7"><a href="functions.html#cb6-7"></a>    <span class="kw">getSunlightTimes</span>(<span class="dt">data =</span> date.lat.long, <span class="dt">keep=</span>direction, <span class="dt">tz=</span>timezone)<span class="op">$</span>sunrise  </span>
+<span id="cb6-8"><a href="functions.html#cb6-8"></a>  } <span class="cf">else</span> <span class="cf">if</span> (direction <span class="op">==</span><span class="st"> &quot;dusk&quot;</span>){</span>
+<span id="cb6-9"><a href="functions.html#cb6-9"></a>    <span class="kw">getSunlightTimes</span>(<span class="dt">data =</span> date.lat.long, <span class="dt">keep=</span>direction, <span class="dt">tz=</span>timezone)<span class="op">$</span>dusk</span>
+<span id="cb6-10"><a href="functions.html#cb6-10"></a>  } <span class="cf">else</span> <span class="cf">if</span> (direction <span class="op">==</span><span class="st"> &quot;dawn&quot;</span>){</span>
+<span id="cb6-11"><a href="functions.html#cb6-11"></a>    <span class="kw">getSunlightTimes</span>(<span class="dt">data =</span> date.lat.long, <span class="dt">keep=</span>direction, <span class="dt">tz=</span>timezone)<span class="op">$</span>dawn</span>
+<span id="cb6-12"><a href="functions.html#cb6-12"></a>  }</span>
+<span id="cb6-13"><a href="functions.html#cb6-13"></a>}</span></code></pre></div>
+<p>time_to_minute is the helper function the Stanford Open Policing Project uses in their tutorial to help convert times into a numeric values that’s easier to manipulate - this will be useful when splicing out times between sunset and dusk to remove ambiguouity in the intertwilight zone.
+input: time (character)
+output: minutes (double)</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="functions.html#cb7-1"></a>time_to_minute &lt;-<span class="st"> </span><span class="cf">function</span>(time) {</span>
+<span id="cb7-2"><a href="functions.html#cb7-2"></a>  <span class="kw">hour</span>(<span class="kw">hms</span>(time)) <span class="op">*</span><span class="st"> </span><span class="dv">60</span> <span class="op">+</span><span class="st"> </span><span class="kw">minute</span>(<span class="kw">hms</span>(time))</span>
+<span id="cb7-3"><a href="functions.html#cb7-3"></a>}</span></code></pre></div>
+<p>add_night_day function utilizes oursunriseset function to mutate sunrise and sunset times and a binary variables to see if the stop happened in the night of day. In addition, this function takes out the intertwilightzone i.e. stops between sunset and dusk and dawn and sunrise.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="functions.html#cb8-1"></a>add_night_day &lt;-<span class="st"> </span><span class="cf">function</span>(city_df, time_zone, lat, long){</span>
+<span id="cb8-2"><a href="functions.html#cb8-2"></a>    </span>
+<span id="cb8-3"><a href="functions.html#cb8-3"></a>    sunset_times &lt;-<span class="st"> </span>city_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">distinct</span>(date) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">date =</span> <span class="kw">as.Date</span>(<span class="kw">ymd</span>(date, <span class="dt">tz =</span> time_zone))) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb8-4"><a href="functions.html#cb8-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">sunset =</span> <span class="kw">oursunriseset</span>(lat, long, date, time_zone, <span class="dt">direction=</span><span class="st">&quot;sunset&quot;</span>), </span>
+<span id="cb8-5"><a href="functions.html#cb8-5"></a>        <span class="dt">dusk =</span> <span class="kw">oursunriseset</span>(lat, long, date, time_zone, <span class="dt">direction=</span><span class="st">&quot;dusk&quot;</span>),</span>
+<span id="cb8-6"><a href="functions.html#cb8-6"></a>        <span class="dt">dawn =</span> <span class="kw">oursunriseset</span>(lat, long, date, time_zone, <span class="dt">direction=</span><span class="st">&quot;dawn&quot;</span>),</span>
+<span id="cb8-7"><a href="functions.html#cb8-7"></a>        <span class="dt">sunrise =</span> <span class="kw">oursunriseset</span>(lat, long, date, time_zone, <span class="dt">direction=</span><span class="st">&quot;sunrise&quot;</span>),</span>
+<span id="cb8-8"><a href="functions.html#cb8-8"></a>        <span class="dt">sunset =</span> <span class="kw">format</span>(sunset, <span class="st">&quot;%H:%M:%S&quot;</span>),</span>
+<span id="cb8-9"><a href="functions.html#cb8-9"></a>        <span class="dt">dusk =</span> <span class="kw">format</span>(dusk, <span class="st">&quot;%H:%M:%S&quot;</span>),</span>
+<span id="cb8-10"><a href="functions.html#cb8-10"></a>        <span class="dt">dawn =</span> <span class="kw">format</span>(dawn, <span class="st">&quot;%H:%M:%S&quot;</span>),</span>
+<span id="cb8-11"><a href="functions.html#cb8-11"></a>        <span class="dt">sunrise =</span> <span class="kw">format</span>(sunrise, <span class="st">&quot;%H:%M:%S&quot;</span>),</span>
+<span id="cb8-12"><a href="functions.html#cb8-12"></a>        <span class="dt">sunset_min=</span><span class="kw">time_to_minute</span>(sunset), </span>
+<span id="cb8-13"><a href="functions.html#cb8-13"></a>        <span class="dt">dusk_min=</span><span class="kw">time_to_minute</span>(dusk),</span>
+<span id="cb8-14"><a href="functions.html#cb8-14"></a>        <span class="dt">dawn_min=</span><span class="kw">time_to_minute</span>(dawn), </span>
+<span id="cb8-15"><a href="functions.html#cb8-15"></a>        <span class="dt">sunrise_min=</span><span class="kw">time_to_minute</span>(sunrise)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">drop_na</span>()</span>
+<span id="cb8-16"><a href="functions.html#cb8-16"></a>  </span>
+<span id="cb8-17"><a href="functions.html#cb8-17"></a>  city_df &lt;-<span class="st"> </span>city_df <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">drop_na</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">date=</span><span class="kw">as.Date</span>(<span class="kw">ymd</span>(date, <span class="dt">tz =</span> time_zone))) <span class="op">%&gt;%</span></span>
+<span id="cb8-18"><a href="functions.html#cb8-18"></a><span class="st">    </span><span class="kw">left_join</span>(sunset_times, <span class="dt">by=</span><span class="st">&quot;date&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">drop_na</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb8-19"><a href="functions.html#cb8-19"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">minute =</span> <span class="kw">time_to_minute</span>(time), </span>
+<span id="cb8-20"><a href="functions.html#cb8-20"></a>           <span class="dt">minutes_after_dark =</span> minute <span class="op">-</span><span class="st"> </span>dusk_min,</span>
+<span id="cb8-21"><a href="functions.html#cb8-21"></a>           <span class="dt">is_dark =</span> <span class="kw">as.factor</span>(minute <span class="op">&gt;</span><span class="st"> </span>dusk_min <span class="op">|</span><span class="st"> </span>minute <span class="op">&lt;</span><span class="st"> </span>dawn_min)) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb8-22"><a href="functions.html#cb8-22"></a><span class="st">        </span><span class="co"># filter out amiguous time between sunset and dusk and dawn and sunrise</span></span>
+<span id="cb8-23"><a href="functions.html#cb8-23"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(minute <span class="op">&gt;</span><span class="st"> </span>sunset_min <span class="op">&amp;</span><span class="st"> </span>minute <span class="op">&lt;</span><span class="st"> </span>dusk_min),</span>
+<span id="cb8-24"><a href="functions.html#cb8-24"></a>         <span class="op">!</span>(minute <span class="op">&lt;</span><span class="st"> </span>sunrise_min <span class="op">&amp;</span><span class="st"> </span>minute <span class="op">&gt;</span><span class="st"> </span>dawn_min)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(subject_race, is_dark)</span>
+<span id="cb8-25"><a href="functions.html#cb8-25"></a>    </span>
+<span id="cb8-26"><a href="functions.html#cb8-26"></a>  <span class="co"># select(subject_race, search_conducted, subject_age, is_dark)</span></span>
+<span id="cb8-27"><a href="functions.html#cb8-27"></a>  <span class="kw">return</span>(city_df)</span>
+<span id="cb8-28"><a href="functions.html#cb8-28"></a>}</span></code></pre></div>
+</div>
+<div id="nationwide-functions" class="section level2">
+<h2><span class="header-section-number">3.3</span> Nationwide Functions</h2>
+<p>These are functions used when analyzing multiple datatables from the database.</p>
+<p>relevant_datasets:
+input: - all dataset names which can be acquired through SHOW TABLES SQL command
+- A vector containing string of variables names we wish to dissect
+output: a character string of dataset names</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="functions.html#cb9-1"></a>relevant_datasets &lt;-<span class="st"> </span><span class="cf">function</span>(all_dataset_names, variables_of_interest){</span>
+<span id="cb9-2"><a href="functions.html#cb9-2"></a>  </span>
+<span id="cb9-3"><a href="functions.html#cb9-3"></a>  <span class="co"># create empty vector</span></span>
+<span id="cb9-4"><a href="functions.html#cb9-4"></a>  datasets_of_interest &lt;-<span class="st"> </span><span class="kw">c</span>()</span>
+<span id="cb9-5"><a href="functions.html#cb9-5"></a>    </span>
+<span id="cb9-6"><a href="functions.html#cb9-6"></a>  <span class="cf">for</span>(city <span class="cf">in</span> all_dataset_names){</span>
+<span id="cb9-7"><a href="functions.html#cb9-7"></a>    </span>
+<span id="cb9-8"><a href="functions.html#cb9-8"></a>    <span class="co"># run only if table is not empty </span></span>
+<span id="cb9-9"><a href="functions.html#cb9-9"></a>    check_command =<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;SELECT 1 FROM&quot;</span>, city, <span class="dt">sep=</span><span class="st">&quot; &quot;</span>, <span class="st">&quot;LIMIT 1&quot;</span>)</span>
+<span id="cb9-10"><a href="functions.html#cb9-10"></a>    count &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con, check_command)</span>
+<span id="cb9-11"><a href="functions.html#cb9-11"></a>    </span>
+<span id="cb9-12"><a href="functions.html#cb9-12"></a>    <span class="cf">if</span>(<span class="kw">nrow</span>(count) <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>){</span>
+<span id="cb9-13"><a href="functions.html#cb9-13"></a>      <span class="co"># cancenate SQL query string</span></span>
+<span id="cb9-14"><a href="functions.html#cb9-14"></a>      command &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;EXPLAIN&quot;</span>, city, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>)</span>
+<span id="cb9-15"><a href="functions.html#cb9-15"></a>      field_vector &lt;-<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">as.list</span>(DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con, command))<span class="op">$</span>Field, </span>
+<span id="cb9-16"><a href="functions.html#cb9-16"></a>                             <span class="dt">use.names =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb9-17"><a href="functions.html#cb9-17"></a>  </span>
+<span id="cb9-18"><a href="functions.html#cb9-18"></a>      <span class="co"># of_interest_book is TRUE iff field_vector contains all the variables of interest</span></span>
+<span id="cb9-19"><a href="functions.html#cb9-19"></a>      of_interest_bool &lt;-<span class="st"> </span><span class="kw">setequal</span>(<span class="kw">intersect</span>(field_vector, variables_of_interest),</span>
+<span id="cb9-20"><a href="functions.html#cb9-20"></a>                                   variables_of_interest)</span>
+<span id="cb9-21"><a href="functions.html#cb9-21"></a>      </span>
+<span id="cb9-22"><a href="functions.html#cb9-22"></a>      <span class="co"># add dataset name to vector if of_interest_bool</span></span>
+<span id="cb9-23"><a href="functions.html#cb9-23"></a>      <span class="cf">if</span>(of_interest_bool){</span>
+<span id="cb9-24"><a href="functions.html#cb9-24"></a>        datasets_of_interest &lt;-<span class="st"> </span><span class="kw">c</span>(datasets_of_interest, city)</span>
+<span id="cb9-25"><a href="functions.html#cb9-25"></a>      }</span>
+<span id="cb9-26"><a href="functions.html#cb9-26"></a>    }</span>
+<span id="cb9-27"><a href="functions.html#cb9-27"></a>  }</span>
+<span id="cb9-28"><a href="functions.html#cb9-28"></a>  </span>
+<span id="cb9-29"><a href="functions.html#cb9-29"></a>  <span class="kw">return</span>(datasets_of_interest)</span>
+<span id="cb9-30"><a href="functions.html#cb9-30"></a>}</span></code></pre></div>
+<p>query_data:
+input: name (character)
+output: dataframe
+Note: the command variable must be modified to the variables you are examining</p>
+<p>fix_ages quickly sets any ages to a dbl data type</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="functions.html#cb10-1"></a>fix_ages &lt;-<span class="st"> </span><span class="cf">function</span>(city_dataset){</span>
+<span id="cb10-2"><a href="functions.html#cb10-2"></a>  city_dataset &lt;-<span class="st"> </span>city_dataset <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">subject_age =</span> <span class="kw">as.numeric</span>(subject_age)) </span>
+<span id="cb10-3"><a href="functions.html#cb10-3"></a>  <span class="kw">return</span>(city_dataset)</span>
+<span id="cb10-4"><a href="functions.html#cb10-4"></a>}</span></code></pre></div>
+<p>logistic_regression
+input:
+- city dataset (dataframe)
+- name of city (character)
+output: a dataframe where the columns are the coefficients (only returns one row of coefficient matrix; this function is insteaded to be used in a for loop or mapply so that we run the logistic regression on every dataset)</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="functions.html#cb11-1"></a>coefficient_matrix &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="st">&quot;intercept&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(), <span class="st">&quot;subject_age&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(), <span class="st">&quot;subject_race&quot;</span> =<span class="st"> </span><span class="kw">as.numeric</span>(), <span class="st">&quot;subject_age.subject_race&quot;</span> =<span class="st"> </span><span class="kw">as.numeric</span>(), <span class="st">&quot;dataset_name&quot;</span> =<span class="st"> </span><span class="kw">character</span>())</span>
+<span id="cb11-2"><a href="functions.html#cb11-2"></a></span>
+<span id="cb11-3"><a href="functions.html#cb11-3"></a>logistic_regression &lt;-<span class="st"> </span><span class="cf">function</span>(city_dataset, name){</span>
+<span id="cb11-4"><a href="functions.html#cb11-4"></a>  <span class="co"># run logistic regression</span></span>
+<span id="cb11-5"><a href="functions.html#cb11-5"></a>  fitlog &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="dt">formula =</span> search_conducted <span class="op">~</span><span class="st"> </span>subject_race<span class="op">*</span>subject_age, <span class="dt">data =</span> city_dataset, <span class="dt">family =</span> binomial, <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">maxit =</span> <span class="dv">50</span>))</span>
+<span id="cb11-6"><a href="functions.html#cb11-6"></a>  <span class="co"># record logistic regression coefficients</span></span>
+<span id="cb11-7"><a href="functions.html#cb11-7"></a>  coefficient_row_vector =<span class="st"> </span><span class="kw">t</span>(fitlog<span class="op">$</span>coefficients)</span>
+<span id="cb11-8"><a href="functions.html#cb11-8"></a>  <span class="co"># row bind each coefficient and dataset tibble with the coefficent_matrix</span></span>
+<span id="cb11-9"><a href="functions.html#cb11-9"></a>  coefficient_matrix &lt;&lt;-<span class="st"> </span><span class="kw">rbind</span>(coefficient_matrix, <span class="kw">cbind.data.frame</span>(<span class="kw">as.data.frame</span>(coefficient_row_vector), name))</span>
+<span id="cb11-10"><a href="functions.html#cb11-10"></a>}</span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="literature-review.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="description-of-data.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/02-functions.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

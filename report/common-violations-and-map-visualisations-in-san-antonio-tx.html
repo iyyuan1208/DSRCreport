@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 8 Common Violations and Map Visualisations in San Antonio, TX | Data Science Research Circle</title>
+  <meta name="description" content="This is an exploratory data report on police traffic data." />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 8 Common Violations and Map Visualisations in San Antonio, TX | Data Science Research Circle" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an exploratory data report on police traffic data." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 8 Common Violations and Map Visualisations in San Antonio, TX | Data Science Research Circle" />
+  
+  <meta name="twitter:description" content="This is an exploratory data report on police traffic data." />
+  
+
+<meta name="author" content="Pomona College Data Science Research Circle" />
+
+
+<meta name="date" content="2020-05-29" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="weather-overlayed-with-traffic-stops.html"/>
+<link rel="next" href="socioeconomic-factors-in-durham-1.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
+<li class="chapter" data-level="2" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>2</b> Functions</a><ul>
+<li class="chapter" data-level="2.1" data-path="functions.html"><a href="functions.html#data-uploading-functions"><i class="fa fa-check"></i><b>2.1</b> Data Uploading Functions</a></li>
+<li class="chapter" data-level="2.2" data-path="functions.html"><a href="functions.html#veil-of-darkness-functions"><i class="fa fa-check"></i><b>2.2</b> Veil of Darkness Functions</a></li>
+<li class="chapter" data-level="2.3" data-path="functions.html"><a href="functions.html#nationwide-functions"><i class="fa fa-check"></i><b>2.3</b> Nationwide Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="description-of-data.html"><a href="description-of-data.html"><i class="fa fa-check"></i><b>3</b> Description of Data</a><ul>
+<li class="chapter" data-level="3.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-datasets-with-rmysql"><i class="fa fa-check"></i><b>3.1</b> Querying Datasets with RMySQL</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-subsets-of-dataset"><i class="fa fa-check"></i><b>3.1.1</b> Querying Subsets of dataset</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="description-of-data.html"><a href="description-of-data.html#web-scrapping-and-uploading-datasets"><i class="fa fa-check"></i><b>3.2</b> Web Scrapping and Uploading Datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html"><i class="fa fa-check"></i><b>4</b> Exploratory Data Analysis</a><ul>
+<li class="chapter" data-level="4.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#national-overview-of-motorist-demographics"><i class="fa fa-check"></i><b>4.1</b> National Overview of Motorist Demographics</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html"><i class="fa fa-check"></i><b>5</b> Stop outcomes, day-to-night, in Oakland, CA</a><ul>
+<li class="chapter" data-level="5.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#set-up"><i class="fa fa-check"></i><b>5.1</b> Set up</a></li>
+<li class="chapter" data-level="5.2" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#set-up-sunsetsunrise-times-in-ca-oakland"><i class="fa fa-check"></i><b>5.2</b> Set up sunset/sunrise times in CA Oakland</a></li>
+<li class="chapter" data-level="5.3" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#stop-outcomes-by-race-and-daynight"><i class="fa fa-check"></i><b>5.3</b> Stop outcomes, by race and day/night</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#counts-by-race"><i class="fa fa-check"></i><b>5.3.1</b> Counts, by race</a></li>
+<li class="chapter" data-level="5.3.2" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#daynight-outcomes-of-stop-by-race"><i class="fa fa-check"></i><b>5.3.2</b> Day/night outcomes of stop by race</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#dataset-specific-exploration"><i class="fa fa-check"></i><b>5.4</b> Dataset-specific Exploration</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#stop-outcomes-in-san-diego"><i class="fa fa-check"></i><b>5.4.1</b> Stop outcomes in San Diego</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="stop-outcomes-in-san-diego-1.html"><a href="stop-outcomes-in-san-diego-1.html"><i class="fa fa-check"></i><b>6</b> Stop Outcomes in San Diego</a><ul>
+<li class="chapter" data-level="6.0.1" data-path="stop-outcomes-in-san-diego-1.html"><a href="stop-outcomes-in-san-diego-1.html#weather-overlay-in-raleigh"><i class="fa fa-check"></i><b>6.0.1</b> Weather Overlay in Raleigh</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html"><i class="fa fa-check"></i><b>7</b> Weather Overlayed with Traffic Stops</a><ul>
+<li class="chapter" data-level="7.1" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html#visualizing-weather-in-raleigh-north-carolina"><i class="fa fa-check"></i><b>7.1</b> Visualizing Weather in Raleigh, North Carolina</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html#violations-map-in-san-antonio"><i class="fa fa-check"></i><b>7.1.1</b> Violations map in San Antonio</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html"><i class="fa fa-check"></i><b>8</b> Common Violations and Map Visualisations in San Antonio, TX</a><ul>
+<li class="chapter" data-level="8.1" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#common-violations"><i class="fa fa-check"></i><b>8.1</b> Common Violations</a></li>
+<li class="chapter" data-level="8.2" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#map-overlay"><i class="fa fa-check"></i><b>8.2</b> Map Overlay</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#socioeconomic-factors-in-durham"><i class="fa fa-check"></i><b>8.2.1</b> Socioeconomic Factors in Durham</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="socioeconomic-factors-in-durham-1.html"><a href="socioeconomic-factors-in-durham-1.html"><i class="fa fa-check"></i><b>9</b> Socioeconomic Factors in Durham</a><ul>
+<li class="chapter" data-level="9.1" data-path="socioeconomic-factors-in-durham-1.html"><a href="socioeconomic-factors-in-durham-1.html#modeling-the-probability-of-seach-given-stop"><i class="fa fa-check"></i><b>9.1</b> Modeling the Probability of Seach Given Stop</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="sunrise-and-sunset-in-san-antonio-tx.html"><a href="sunrise-and-sunset-in-san-antonio-tx.html"><i class="fa fa-check"></i><b>10</b> Sunrise and Sunset in San Antonio, TX</a></li>
+<li class="chapter" data-level="11" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>11</b> Methods</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="chapter" data-level="12" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>12</b> Final Words</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data Science Research Circle</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="common-violations-and-map-visualisations-in-san-antonio-tx" class="section level1">
+<h1><span class="header-section-number">Chapter 8</span> Common Violations and Map Visualisations in San Antonio, TX</h1>
+<div id="common-violations" class="section level2">
+<h2><span class="header-section-number">8.1</span> Common Violations</h2>
+<p>Here I graphed the 5 violations that occured most frequently. It is important to notice that this would only include those violations that are worded exactly the same. More work would need to be done in order to find which violations mean the same thing but some had typos or minor differences.</p>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb82-1"></a>VioData &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con,</span>
+<span id="cb82-2"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb82-2"></a>  <span class="st">&quot;SELECT violation, COUNT(violation) AS &#39;num_violations&#39; FROM TXsanantonio</span></span>
+<span id="cb82-3"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb82-3"></a><span class="st">  GROUP BY violation</span></span>
+<span id="cb82-4"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb82-4"></a><span class="st">  ORDER BY `num_violations` DESC</span></span>
+<span id="cb82-5"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb82-5"></a><span class="st">  LIMIT 5&quot;</span>)</span>
+<span id="cb82-6"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb82-6"></a></span>
+<span id="cb82-7"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb82-7"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> VioData) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> violation, <span class="dt">y =</span> num_violations), </span>
+<span id="cb82-8"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb82-8"></a>                                  <span class="dt">stat =</span> <span class="st">&#39;identity&#39;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">coord_flip</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-66-1.png" width="672" /></p>
+<p>I then took these top 5 violations and split them up by sex and race. I also included additional graphs of the 2-5 violations for clarity because of the overwhelming violation of speeding.</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-1"></a>top5_vio &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con,</span>
+<span id="cb83-2"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-2"></a>  <span class="st">&quot;SELECT subject_sex, subject_race, violation FROM TXsanantonio </span></span>
+<span id="cb83-3"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-3"></a><span class="st">  WHERE violation = &#39;USE OF HAND-HELD MOBILE COMMUNICATION DEVICE&#39; </span></span>
+<span id="cb83-4"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-4"></a><span class="st">  OR violation = &#39;SPEEDING-POSTED LIMIT&#39; </span></span>
+<span id="cb83-5"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-5"></a><span class="st">  OR violation = &#39;SPEEDING IN SCHOOL ZONE&#39; </span></span>
+<span id="cb83-6"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-6"></a><span class="st">  OR violation = &#39;OPERATING A MOTOR VEHICLE WITHOUT A VALID LICENSE&#39; </span></span>
+<span id="cb83-7"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-7"></a><span class="st">  OR violation = &#39;IMPROPER USE OR FAILURE TO USE SAFETY BELT BY PERS&#39;&quot;</span>)</span>
+<span id="cb83-8"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-8"></a></span>
+<span id="cb83-9"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-9"></a>top4_vio &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con,</span>
+<span id="cb83-10"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-10"></a>  <span class="st">&quot;SELECT subject_sex, subject_race, violation FROM TXsanantonio </span></span>
+<span id="cb83-11"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-11"></a><span class="st">  WHERE violation = &#39;USE OF HAND-HELD MOBILE COMMUNICATION DEVICE&#39; </span></span>
+<span id="cb83-12"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-12"></a><span class="st">  OR violation = &#39;SPEEDING IN SCHOOL ZONE&#39; </span></span>
+<span id="cb83-13"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-13"></a><span class="st">  OR violation = &#39;OPERATING A MOTOR VEHICLE WITHOUT A VALID LICENSE&#39; </span></span>
+<span id="cb83-14"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-14"></a><span class="st">  OR violation = &#39;IMPROPER USE OR FAILURE TO USE SAFETY BELT BY PERS&#39;&quot;</span>)</span>
+<span id="cb83-15"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-15"></a></span>
+<span id="cb83-16"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-16"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> top5_vio) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> violation, <span class="dt">fill =</span> subject_race)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb83-17"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb83-17"></a><span class="st">  </span><span class="kw">coord_flip</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-67-1.png" width="672" /></p>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb84-1"></a><span class="co">#created this to see the 2-5 violations more clearly</span></span>
+<span id="cb84-2"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb84-2"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> top4_vio) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> violation, <span class="dt">fill =</span> subject_race)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb84-3"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb84-3"></a><span class="st">  </span><span class="kw">coord_flip</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-67-2.png" width="672" /></p>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb85-1"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> top5_vio) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> violation, <span class="dt">fill =</span> subject_sex)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb85-2"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb85-2"></a><span class="st">  </span><span class="kw">coord_flip</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-67-3.png" width="672" /></p>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb86-1"></a><span class="co">#created this to see the 2-5 violations more clearly</span></span>
+<span id="cb86-2"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb86-2"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> top4_vio) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> violation, <span class="dt">fill =</span> subject_sex)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb86-3"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb86-3"></a><span class="st">  </span><span class="kw">coord_flip</span>()</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-67-4.png" width="672" /></p>
+</div>
+<div id="map-overlay" class="section level2">
+<h2><span class="header-section-number">8.2</span> Map Overlay</h2>
+<p>During the EDA phase, geography became of interest using the latitude and longitude variables from the dataset. This image displays the plot of the San Antonio dataset using ggplot with the dots grouped by the race of the victim of the stop. This raised a few questions. For example, we questioned how highway stops may differ from non highway stops given a potential difference in demographics for those who drive on the highways. We also recognized the possibility of controlling for demographics of certain neighborhoods and comparing stop rates to those demographics. Both questions raise interesting questions for further investigation.</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-1"></a>Coordinates &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con,</span>
+<span id="cb87-2"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-2"></a>  <span class="st">&quot;SELECT * FROM TXsanantonio LIMIT 1000&quot;</span>)</span>
+<span id="cb87-3"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-3"></a></span>
+<span id="cb87-4"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-4"></a>coor &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con,</span>
+<span id="cb87-5"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-5"></a>  <span class="st">&quot;SELECT lng, lat, subject_race FROM TXsanantonio LIMIT 1000&quot;</span>)</span>
+<span id="cb87-6"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-6"></a></span>
+<span id="cb87-7"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-7"></a>coor<span class="op">$</span>lng &lt;-<span class="st"> </span><span class="kw">with</span>(coor, <span class="kw">as.numeric</span>(lng))</span>
+<span id="cb87-8"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-8"></a>coor<span class="op">$</span>lat &lt;-<span class="st"> </span><span class="kw">with</span>(coor, <span class="kw">as.numeric</span>(lat))</span>
+<span id="cb87-9"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-9"></a>  </span>
+<span id="cb87-10"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-10"></a>race_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(Coordinates, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">as.numeric</span>(lng), </span>
+<span id="cb87-11"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-11"></a>                                     <span class="dt">y =</span> <span class="kw">as.numeric</span>(lat), <span class="dt">xaxt =</span> <span class="st">&#39;n&#39;</span>, <span class="dt">yaxt =</span> <span class="st">&#39;n&#39;</span>)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb87-12"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-12"></a><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">color =</span> subject_race)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb87-13"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-13"></a><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Longitude&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Latitude&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">coord_quickmap</span>()</span>
+<span id="cb87-14"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb87-14"></a>race_plot</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-68-1.png" width="672" /></p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb88-1"></a>coord_plot &lt;-<span class="st"> </span><span class="kw">qmplot</span>(lng, lat, <span class="dt">data =</span> coor, <span class="dt">maptype =</span> <span class="st">&quot;toner-background&quot;</span>, </span>
+<span id="cb88-2"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb88-2"></a>                     <span class="dt">color =</span> subject_race, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="dv">99</span>, <span class="fl">-98.25</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">29</span>, <span class="fl">29.6</span>))</span>
+<span id="cb88-3"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb88-3"></a>coord_plot</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb89-1"></a><span class="kw">qmplot</span>(lng, lat, <span class="dt">data =</span> coor, <span class="dt">maptype =</span> <span class="st">&quot;toner-background&quot;</span>, </span>
+<span id="cb89-2"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb89-2"></a>       <span class="dt">color =</span> subject_race, <span class="dt">xlim =</span> <span class="kw">c</span>(<span class="op">-</span><span class="fl">98.75</span>, <span class="fl">-98.3</span>), <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="fl">29.35</span>, <span class="fl">29.5</span>))</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-70-1.png" width="672" />
+This is the same coordinate plot for the Oakland Dataset.</p>
+<p>This is a density plot of stops for the oaklans dataset. This was in an attempt to see if there were any particular areas of high concentration.</p>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb90-1"></a><span class="kw">qmplot</span>(lng, lat, <span class="dt">data =</span> coor2, <span class="dt">geom =</span> <span class="st">&quot;blank&quot;</span>, </span>
+<span id="cb90-2"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb90-2"></a>  <span class="dt">zoom =</span> <span class="dv">10</span>, <span class="dt">maptype =</span> <span class="st">&quot;toner-background&quot;</span>, <span class="dt">darken =</span> <span class="dv">0</span>, <span class="dt">legend =</span> <span class="st">&quot;topleft&quot;</span>) <span class="op">+</span></span>
+<span id="cb90-3"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb90-3"></a><span class="st">  </span><span class="kw">stat_density_2d</span>(<span class="kw">aes</span>(<span class="dt">fill =</span> ..level..), <span class="dt">geom =</span> <span class="st">&quot;polygon&quot;</span>, <span class="dt">alpha =</span> <span class="fl">.5</span>, <span class="dt">color =</span> <span class="ot">NA</span>) <span class="op">+</span></span>
+<span id="cb90-4"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb90-4"></a><span class="st">  </span><span class="kw">scale_fill_gradient2</span>(<span class="st">&quot;Stop</span><span class="ch">\n</span><span class="st">Propensity&quot;</span>, <span class="dt">low =</span> <span class="st">&quot;white&quot;</span>, <span class="dt">mid =</span> <span class="st">&quot;yellow&quot;</span>, <span class="dt">high =</span> <span class="st">&quot;red&quot;</span>, </span>
+<span id="cb90-5"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#cb90-5"></a>                       <span class="dt">midpoint =</span> <span class="dv">100</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-72-1.png" width="672" /></p>
+<!-- \newpage -->
+<div id="socioeconomic-factors-in-durham" class="section level3">
+<h3><span class="header-section-number">8.2.1</span> Socioeconomic Factors in Durham</h3>
+<!-- \newpage -->
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="weather-overlayed-with-traffic-stops.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="socioeconomic-factors-in-durham-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/04-combined.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

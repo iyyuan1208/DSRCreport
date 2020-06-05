@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Stop outcomes, day-to-night, in Oakland, CA | Data Science Research Circle</title>
+  <meta name="description" content="This is an exploratory data report on police traffic data." />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Stop outcomes, day-to-night, in Oakland, CA | Data Science Research Circle" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an exploratory data report on police traffic data." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Stop outcomes, day-to-night, in Oakland, CA | Data Science Research Circle" />
+  
+  <meta name="twitter:description" content="This is an exploratory data report on police traffic data." />
+  
+
+<meta name="author" content="Pomona College Data Science Research Circle" />
+
+
+<meta name="date" content="2020-05-29" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="exploratory-data-analysis.html"/>
+<link rel="next" href="stop-outcomes-in-san-diego-1.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">A Minimal Book Example</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
+<li class="chapter" data-level="2" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>2</b> Functions</a><ul>
+<li class="chapter" data-level="2.1" data-path="functions.html"><a href="functions.html#data-uploading-functions"><i class="fa fa-check"></i><b>2.1</b> Data Uploading Functions</a></li>
+<li class="chapter" data-level="2.2" data-path="functions.html"><a href="functions.html#veil-of-darkness-functions"><i class="fa fa-check"></i><b>2.2</b> Veil of Darkness Functions</a></li>
+<li class="chapter" data-level="2.3" data-path="functions.html"><a href="functions.html#nationwide-functions"><i class="fa fa-check"></i><b>2.3</b> Nationwide Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="description-of-data.html"><a href="description-of-data.html"><i class="fa fa-check"></i><b>3</b> Description of Data</a><ul>
+<li class="chapter" data-level="3.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-datasets-with-rmysql"><i class="fa fa-check"></i><b>3.1</b> Querying Datasets with RMySQL</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-subsets-of-dataset"><i class="fa fa-check"></i><b>3.1.1</b> Querying Subsets of dataset</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="description-of-data.html"><a href="description-of-data.html#web-scrapping-and-uploading-datasets"><i class="fa fa-check"></i><b>3.2</b> Web Scrapping and Uploading Datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html"><i class="fa fa-check"></i><b>4</b> Exploratory Data Analysis</a><ul>
+<li class="chapter" data-level="4.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#national-overview-of-motorist-demographics"><i class="fa fa-check"></i><b>4.1</b> National Overview of Motorist Demographics</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html"><i class="fa fa-check"></i><b>5</b> Stop outcomes, day-to-night, in Oakland, CA</a><ul>
+<li class="chapter" data-level="5.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#set-up"><i class="fa fa-check"></i><b>5.1</b> Set up</a></li>
+<li class="chapter" data-level="5.2" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#set-up-sunsetsunrise-times-in-ca-oakland"><i class="fa fa-check"></i><b>5.2</b> Set up sunset/sunrise times in CA Oakland</a></li>
+<li class="chapter" data-level="5.3" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#stop-outcomes-by-race-and-daynight"><i class="fa fa-check"></i><b>5.3</b> Stop outcomes, by race and day/night</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#counts-by-race"><i class="fa fa-check"></i><b>5.3.1</b> Counts, by race</a></li>
+<li class="chapter" data-level="5.3.2" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#daynight-outcomes-of-stop-by-race"><i class="fa fa-check"></i><b>5.3.2</b> Day/night outcomes of stop by race</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#dataset-specific-exploration"><i class="fa fa-check"></i><b>5.4</b> Dataset-specific Exploration</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="stop-outcomes-day-to-night-in-oakland-ca.html"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#stop-outcomes-in-san-diego"><i class="fa fa-check"></i><b>5.4.1</b> Stop outcomes in San Diego</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="stop-outcomes-in-san-diego-1.html"><a href="stop-outcomes-in-san-diego-1.html"><i class="fa fa-check"></i><b>6</b> Stop Outcomes in San Diego</a><ul>
+<li class="chapter" data-level="6.0.1" data-path="stop-outcomes-in-san-diego-1.html"><a href="stop-outcomes-in-san-diego-1.html#weather-overlay-in-raleigh"><i class="fa fa-check"></i><b>6.0.1</b> Weather Overlay in Raleigh</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html"><i class="fa fa-check"></i><b>7</b> Weather Overlayed with Traffic Stops</a><ul>
+<li class="chapter" data-level="7.1" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html#visualizing-weather-in-raleigh-north-carolina"><i class="fa fa-check"></i><b>7.1</b> Visualizing Weather in Raleigh, North Carolina</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="weather-overlayed-with-traffic-stops.html"><a href="weather-overlayed-with-traffic-stops.html#violations-map-in-san-antonio"><i class="fa fa-check"></i><b>7.1.1</b> Violations map in San Antonio</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html"><i class="fa fa-check"></i><b>8</b> Common Violations and Map Visualisations in San Antonio, TX</a><ul>
+<li class="chapter" data-level="8.1" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#common-violations"><i class="fa fa-check"></i><b>8.1</b> Common Violations</a></li>
+<li class="chapter" data-level="8.2" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#map-overlay"><i class="fa fa-check"></i><b>8.2</b> Map Overlay</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="common-violations-and-map-visualisations-in-san-antonio-tx.html"><a href="common-violations-and-map-visualisations-in-san-antonio-tx.html#socioeconomic-factors-in-durham"><i class="fa fa-check"></i><b>8.2.1</b> Socioeconomic Factors in Durham</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="socioeconomic-factors-in-durham-1.html"><a href="socioeconomic-factors-in-durham-1.html"><i class="fa fa-check"></i><b>9</b> Socioeconomic Factors in Durham</a><ul>
+<li class="chapter" data-level="9.1" data-path="socioeconomic-factors-in-durham-1.html"><a href="socioeconomic-factors-in-durham-1.html#modeling-the-probability-of-seach-given-stop"><i class="fa fa-check"></i><b>9.1</b> Modeling the Probability of Seach Given Stop</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="sunrise-and-sunset-in-san-antonio-tx.html"><a href="sunrise-and-sunset-in-san-antonio-tx.html"><i class="fa fa-check"></i><b>10</b> Sunrise and Sunset in San Antonio, TX</a></li>
+<li class="chapter" data-level="11" data-path="methods.html"><a href="methods.html"><i class="fa fa-check"></i><b>11</b> Methods</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="chapter" data-level="12" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>12</b> Final Words</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data Science Research Circle</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="stop-outcomes-day-to-night-in-oakland-ca" class="section level1">
+<h1><span class="header-section-number">Chapter 5</span> Stop outcomes, day-to-night, in Oakland, CA</h1>
+<p>This section of data analysis incorporates our day variable with stop outcomes in the Oakland data set.</p>
+<div id="set-up" class="section level2">
+<h2><span class="header-section-number">5.1</span> Set up</h2>
+<p>I use the following packages for this analysis. Suncalc, lutz (a cute acronym for “look up time zone”), and lubridate are necessary for calculating sunset and sunrise times. I also connect to our SQL server, but that code is excluded here because of privacy.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb30-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb30-2"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb30-2"></a><span class="kw">library</span>(RMySQL)</span>
+<span id="cb30-3"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb30-3"></a><span class="kw">library</span>(suncalc)</span>
+<span id="cb30-4"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb30-4"></a><span class="kw">library</span>(lutz)</span></code></pre></div>
+<pre><code>## Warning: package &#39;lutz&#39; was built under R version 3.6.3</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb32-1"></a><span class="kw">library</span>(lubridate)</span></code></pre></div>
+<p>Next, I query the entire Oakland data set to be available locally. I also clean the data by removing the entries that do not record data, parsing my date and time variables with lubridate, and creating a POSIX type time variable that will serve as an input for suncalc functions.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-1"></a>CAoak &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * FROM CAoakland&quot;</span>)</span>
+<span id="cb33-2"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-2"></a></span>
+<span id="cb33-3"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-3"></a><span class="co"># Lubridate</span></span>
+<span id="cb33-4"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-4"></a>CAoak &lt;-<span class="st"> </span>CAoak <span class="op">%&gt;%</span></span>
+<span id="cb33-5"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-5"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(date)) <span class="op">%&gt;%</span></span>
+<span id="cb33-6"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">nice_date =</span> <span class="kw">ymd</span>(date), </span>
+<span id="cb33-7"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-7"></a>         <span class="dt">nice_year =</span> <span class="kw">year</span>(nice_date), </span>
+<span id="cb33-8"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-8"></a>         <span class="dt">nice_month =</span> <span class="kw">month</span>(nice_date), </span>
+<span id="cb33-9"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-9"></a>         <span class="dt">nice_day =</span> <span class="kw">day</span>(nice_date), </span>
+<span id="cb33-10"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-10"></a>         <span class="dt">nice_time =</span> <span class="kw">hms</span>(time),</span>
+<span id="cb33-11"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-11"></a>         <span class="dt">nice_day_of_year =</span> <span class="kw">yday</span>(date),</span>
+<span id="cb33-12"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-12"></a>         </span>
+<span id="cb33-13"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-13"></a>         <span class="co">#for sunset sunrise: </span></span>
+<span id="cb33-14"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb33-14"></a>         <span class="dt">posix_date_time =</span> <span class="kw">as.POSIXct</span>(<span class="kw">paste</span>(nice_date, time), <span class="dt">tz =</span> <span class="st">&quot;America/Los_Angeles&quot;</span>, <span class="dt">format =</span> <span class="st">&quot;%Y-%m-%d %H:%M:%OS&quot;</span>))</span></code></pre></div>
+<pre><code>## Warning in .parse_hms(..., order = &quot;HMS&quot;, quiet = quiet): Some strings failed to
+## parse, or all strings are NAs</code></pre>
+</div>
+<div id="set-up-sunsetsunrise-times-in-ca-oakland" class="section level2">
+<h2><span class="header-section-number">5.2</span> Set up sunset/sunrise times in CA Oakland</h2>
+<p>Next, I use the function we wrote, oursunriseset, and dplyr functions to create a new set of variables in the Oakland data. For each stop, we analyze the time of day and day of the year to categorize the stop as either occurring during the day (for which the new variable light would be “day”) or during the night (for which light would be “night.”</p>
+<p>When I use the suncalc function getSunlightTimes, I let the input timezone be the Oakland timezone.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb35-1"></a>OaklandTZ &lt;-<span class="st"> </span>lutz<span class="op">::</span><span class="kw">tz_lookup_coords</span>(<span class="fl">37.75241810000001</span>, <span class="fl">-122.18087990000001</span>, <span class="dt">warn =</span> F)</span>
+<span id="cb35-2"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb35-2"></a></span>
+<span id="cb35-3"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb35-3"></a>oursunriseset &lt;-<span class="st"> </span><span class="cf">function</span>(latitude, longitude, date, <span class="dt">direction =</span> <span class="kw">c</span>(<span class="st">&quot;sunrise&quot;</span>, <span class="st">&quot;sunset&quot;</span>)) {</span>
+<span id="cb35-4"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb35-4"></a>  </span>
+<span id="cb35-5"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb35-5"></a>  date.lat.long &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">date =</span> date, <span class="dt">lat =</span> latitude, <span class="dt">lon =</span> longitude)</span>
+<span id="cb35-6"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb35-6"></a>  </span>
+<span id="cb35-7"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb35-7"></a>  <span class="cf">if</span>(direction <span class="op">==</span><span class="st"> &quot;sunrise&quot;</span>){</span>
+<span id="cb35-8"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb35-8"></a>    </span>
+<span id="cb35-9"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb35-9"></a>    <span class="kw">getSunlightTimes</span>(<span class="dt">data =</span> date.lat.long, <span class="dt">keep=</span>direction, <span class="dt">tz =</span> OaklandTZ)<span class="op">$</span>sunrise }<span class="cf">else</span>{</span>
+<span id="cb35-10"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb35-10"></a>      <span class="kw">getSunlightTimes</span>(<span class="dt">data =</span> date.lat.long, <span class="dt">keep=</span>direction, <span class="dt">tz =</span> OaklandTZ)<span class="op">$</span>sunset } }</span></code></pre></div>
+<p>Next, I run oursunriseset on the Oakland data set, using mutate to create the intermediate variables, sunrise and sunset, and the light variable. I remove the traffic stop observations for which time was not recorded.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-1"></a><span class="co"># add light variable </span></span>
+<span id="cb36-2"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-2"></a>CAoak &lt;-<span class="st"> </span>CAoak <span class="op">%&gt;%</span></span>
+<span id="cb36-3"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-3"></a><span class="st">  </span></span>
+<span id="cb36-4"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-4"></a><span class="st">  </span><span class="co"># use oursunriseset function to return posixct format sunrise and sunset times</span></span>
+<span id="cb36-5"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-5"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">sunrise =</span> <span class="kw">oursunriseset</span>(lat, lng, nice_date, <span class="dt">direction =</span> <span class="st">&quot;sunrise&quot;</span>),</span>
+<span id="cb36-6"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-6"></a>         <span class="dt">sunset =</span> <span class="kw">oursunriseset</span>(lat, lng, nice_date, <span class="dt">direction =</span> <span class="st">&quot;sunset&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb36-7"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-7"></a></span>
+<span id="cb36-8"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-8"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">light =</span> <span class="kw">ifelse</span>(posix_date_time <span class="op">&gt;</span><span class="st"> </span>sunrise <span class="op">&amp;</span><span class="st"> </span>posix_date_time <span class="op">&lt;</span><span class="st"> </span>sunset, <span class="st">&quot;day&quot;</span>, <span class="st">&quot;night&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb36-9"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-9"></a><span class="st">  </span></span>
+<span id="cb36-10"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-10"></a><span class="st">  </span><span class="co"># about 100 NA&#39;s to filter out</span></span>
+<span id="cb36-11"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-11"></a></span>
+<span id="cb36-12"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-12"></a><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(light))</span>
+<span id="cb36-13"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-13"></a></span>
+<span id="cb36-14"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb36-14"></a><span class="co"># knitr::kable((CAoak %&gt;% select(posix_date_time, subject_race, light) %&gt;% head()))</span></span></code></pre></div>
+<p>This short excerpt of the transformed Oakland data set shows how the time of stop and light variable correspond to one another.</p>
+</div>
+<div id="stop-outcomes-by-race-and-daynight" class="section level2">
+<h2><span class="header-section-number">5.3</span> Stop outcomes, by race and day/night</h2>
+<p>With the set up done, we can begin plotting stop outcomes related to day and night!</p>
+<div id="counts-by-race" class="section level3">
+<h3><span class="header-section-number">5.3.1</span> Counts, by race</h3>
+<p>The bar chart shows the number of stops per race occurring during the day and night.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb37-1"></a><span class="co"># see how drivers are stopped by race and light in absolute counts</span></span>
+<span id="cb37-2"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb37-2"></a><span class="kw">ggplot</span>(<span class="dt">data =</span> CAoak) <span class="op">+</span></span>
+<span id="cb37-3"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb37-3"></a><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> subject_race, <span class="dt">fill =</span> light))</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p>The bar chart relays effects of a slew of variables, such as driving behavior of a time of day, time of year, and racial group; traffic and patrol behavior for a given time and location is also relayed. Thus, again, we cannot make definitive statements about racial profiling.</p>
+<p>As in the veil of darkness assumption, the race of a motorist is harder to discern during the night than during the day. However, just because the day-night bars in each racial group looks to be about equal neither corroborate nor denies racial profiling. We are without information on the true traffic infringement rate per racial group in different times of the day.</p>
+</div>
+<div id="daynight-outcomes-of-stop-by-race" class="section level3">
+<h3><span class="header-section-number">5.3.2</span> Day/night outcomes of stop by race</h3>
+<p>Next, I examine how outcome of stop, race, and day/night interact. I pipe the Oakland data set into ggplot, allowing the color of each bar to represent a traffic stop outcome and the transparency of the bars to denote day and night stops.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb38-1"></a><span class="co"># how are outcomes of stops affected by race and time of day?</span></span>
+<span id="cb38-2"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb38-2"></a>  </span>
+<span id="cb38-3"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb38-3"></a>CAoak <span class="op">%&gt;%</span></span>
+<span id="cb38-4"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb38-4"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> subject_race, <span class="dt">fill =</span> outcome, <span class="dt">color =</span> outcome, <span class="dt">alpha =</span> light)) <span class="op">+</span></span>
+<span id="cb38-5"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb38-5"></a><span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">position =</span> <span class="st">&quot;dodge&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb38-6"><a href="stop-outcomes-day-to-night-in-oakland-ca.html#cb38-6"></a><span class="st">  </span><span class="kw">scale_alpha_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(.<span class="dv">2</span>, <span class="fl">.9</span>))</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+<p>Observations:</p>
+<ul>
+<li><p>For each type of outcome and race, stops during the day outnumber stops during the night. This may result from the Oakland police department’s patrol patterns, driver behavior during the day, and/or another factor.</p></li>
+<li><p>Missing data regarding traffic outcome does not look to be evenly distributed among stopped motorists – missing data during the day and night look to be about the same for all racial groups except for Black.</p></li>
+<li><p>Citations look to be the most frequent outcome of traffic stops for all racial groups, followed by warning, then arrest (not including missing data.)</p></li>
+<li><p>Future directions could look more deeply into the probabilities of each of these outcomes for different racial groups, as the nature of a stricter outcome (being issued a citation rather than a warning) may not be uniformly distributed among racial groups. Furthermore, incorporating the light variable in this direction could be illuminating: are traffic patrols more lenient during the day or during the night once a motorist is stopped? Does the extent of this leniency differ for different racial groups?</p></li>
+</ul>
+</div>
+</div>
+<div id="dataset-specific-exploration" class="section level2">
+<h2><span class="header-section-number">5.4</span> Dataset-specific Exploration</h2>
+<div id="stop-outcomes-in-san-diego" class="section level3">
+<h3><span class="header-section-number">5.4.1</span> Stop outcomes in San Diego</h3>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="exploratory-data-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="stop-outcomes-in-san-diego-1.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/04-combined.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

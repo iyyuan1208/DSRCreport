@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Logistic Regression | Data Exploration of U.S. Police Stops</title>
+  <meta name="description" content="This is an exploratory data report on police traffic data." />
+  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Logistic Regression | Data Exploration of U.S. Police Stops" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an exploratory data report on police traffic data." />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Logistic Regression | Data Exploration of U.S. Police Stops" />
+  
+  <meta name="twitter:description" content="This is an exploratory data report on police traffic data." />
+  
+
+<meta name="author" content="Pomona College Data Science Research Circle" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="exploratory-data-analysis.html"/>
+<link rel="next" href="limitations-and-discussion.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.0.3/leaflet.js"></script>
+<script src="libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.0.3/leaflet-providers-plugin.js"></script>
+<link href="libs/leaflet-markercluster-1.0.5/MarkerCluster.css" rel="stylesheet" />
+<link href="libs/leaflet-markercluster-1.0.5/MarkerCluster.Default.css" rel="stylesheet" />
+<script src="libs/leaflet-markercluster-1.0.5/leaflet.markercluster.js"></script>
+<script src="libs/leaflet-markercluster-1.0.5/leaflet.markercluster.freezable.js"></script>
+<script src="libs/leaflet-markercluster-1.0.5/leaflet.markercluster.layersupport.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Data Exploration of U.S. Police Stops</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#dedication"><i class="fa fa-check"></i><b>1.1</b> Dedication</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#motivation"><i class="fa fa-check"></i><b>1.2</b> Motivation</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="literature-review.html"><a href="literature-review.html"><i class="fa fa-check"></i><b>2</b> Literature Review</a></li>
+<li class="chapter" data-level="3" data-path="functions.html"><a href="functions.html"><i class="fa fa-check"></i><b>3</b> Functions</a><ul>
+<li class="chapter" data-level="3.1" data-path="functions.html"><a href="functions.html#data-uploading-functions"><i class="fa fa-check"></i><b>3.1</b> Data Uploading Functions</a></li>
+<li class="chapter" data-level="3.2" data-path="functions.html"><a href="functions.html#veil-of-darkness-functions"><i class="fa fa-check"></i><b>3.2</b> Veil of Darkness Functions</a></li>
+<li class="chapter" data-level="3.3" data-path="functions.html"><a href="functions.html#nationwide-functions"><i class="fa fa-check"></i><b>3.3</b> Nationwide Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="description-of-data.html"><a href="description-of-data.html"><i class="fa fa-check"></i><b>4</b> Description of Data</a><ul>
+<li class="chapter" data-level="4.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-datasets-with-rmysql"><i class="fa fa-check"></i><b>4.1</b> Querying Datasets with RMySQL</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="description-of-data.html"><a href="description-of-data.html#querying-subsets-of-dataset"><i class="fa fa-check"></i><b>4.1.1</b> Querying Subsets of dataset</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="description-of-data.html"><a href="description-of-data.html#web-scrapping-and-uploading-datasets"><i class="fa fa-check"></i><b>4.2</b> Web Scrapping and Uploading Datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html"><i class="fa fa-check"></i><b>5</b> Exploratory Data Analysis</a><ul>
+<li class="chapter" data-level="5.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#demographics-of-motorists-stopped-nationwide"><i class="fa fa-check"></i><b>5.1</b> Demographics of Motorists Stopped, Nationwide</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#set-up"><i class="fa fa-check"></i><b>5.1.1</b> Set Up</a></li>
+<li class="chapter" data-level="5.1.2" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#race-and-sex-of-stopped-motorists"><i class="fa fa-check"></i><b>5.1.2</b> Race and sex of stopped motorists</a></li>
+<li class="chapter" data-level="5.1.3" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#distribution-of-motorists-age-by-race"><i class="fa fa-check"></i><b>5.1.3</b> Distribution of motorists’ age by race</a></li>
+<li class="chapter" data-level="5.1.4" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#age-distribution-by-race-nationally"><i class="fa fa-check"></i><b>5.1.4</b> Age distribution by race, nationally</a></li>
+<li class="chapter" data-level="5.1.5" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#search-rates"><i class="fa fa-check"></i><b>5.1.5</b> Search rates</a></li>
+<li class="chapter" data-level="5.1.6" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#query-the-data"><i class="fa fa-check"></i><b>5.1.6</b> 1. Query the data</a></li>
+<li class="chapter" data-level="5.1.7" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#transform-data"><i class="fa fa-check"></i><b>5.1.7</b> 2. Transform data</a></li>
+<li class="chapter" data-level="5.1.8" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#plot-using-geofacet-1"><i class="fa fa-check"></i><b>5.1.8</b> 3. Plot using geofacet</a></li>
+<li class="chapter" data-level="5.1.9" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#use-scatter-plot-to-examine-ratios"><i class="fa fa-check"></i><b>5.1.9</b> 4. Use scatter plot to examine ratios</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#dataset-specific-exploration"><i class="fa fa-check"></i><b>5.2</b> Dataset-specific Exploration</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#stop-outcomes-from-day-to-night-in-oakland-ca"><i class="fa fa-check"></i><b>5.2.1</b> Stop outcomes from day to night in Oakland, CA</a></li>
+<li class="chapter" data-level="5.2.2" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#stop-outcomes-in-san-diego-ca"><i class="fa fa-check"></i><b>5.2.2</b> Stop outcomes in San Diego, CA</a></li>
+<li class="chapter" data-level="5.2.3" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#weather-overlay-in-raleigh-nc"><i class="fa fa-check"></i><b>5.2.3</b> Weather overlay in Raleigh, NC</a></li>
+<li class="chapter" data-level="5.2.4" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#maps-in-san-antonio-tx"><i class="fa fa-check"></i><b>5.2.4</b> Maps in San Antonio, TX</a></li>
+<li class="chapter" data-level="5.2.5" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#socioeconomic-factors-in-durham-nc"><i class="fa fa-check"></i><b>5.2.5</b> Socioeconomic factors in Durham, NC</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#modeling-the-probability-of-seach-given-stop"><i class="fa fa-check"></i><b>5.3</b> Modeling the Probability of Seach Given Stop</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="exploratory-data-analysis.html"><a href="exploratory-data-analysis.html#sunrise-and-sunset"><i class="fa fa-check"></i><b>5.3.1</b> Sunrise and Sunset</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="logistic-regression.html"><a href="logistic-regression.html"><i class="fa fa-check"></i><b>6</b> Logistic Regression</a><ul>
+<li class="chapter" data-level="6.1" data-path="logistic-regression.html"><a href="logistic-regression.html#charlotte-nc-logistic-regression"><i class="fa fa-check"></i><b>6.1</b> Charlotte, NC Logistic Regression</a></li>
+<li class="chapter" data-level="6.2" data-path="logistic-regression.html"><a href="logistic-regression.html#plotting-s-curves"><i class="fa fa-check"></i><b>6.2</b> Plotting S-curves</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="logistic-regression.html"><a href="logistic-regression.html#grouping"><i class="fa fa-check"></i><b>6.2.1</b> Grouping</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="logistic-regression.html"><a href="logistic-regression.html#veil-of-darkness-nationwide"><i class="fa fa-check"></i><b>6.3</b> Veil of Darkness Nationwide</a></li>
+<li class="chapter" data-level="6.4" data-path="logistic-regression.html"><a href="logistic-regression.html#predictive-models"><i class="fa fa-check"></i><b>6.4</b> Predictive Models</a></li>
+<li class="chapter" data-level="6.5" data-path="logistic-regression.html"><a href="logistic-regression.html#empirical-search-probabilities-nationwide"><i class="fa fa-check"></i><b>6.5</b> Empirical Search Probabilities Nationwide</a><ul>
+<li class="chapter" data-level="6.5.1" data-path="logistic-regression.html"><a href="logistic-regression.html#create-a-list-of-relevant-data-sets"><i class="fa fa-check"></i><b>6.5.1</b> 1. Create a list of relevant data sets</a></li>
+<li class="chapter" data-level="6.5.2" data-path="logistic-regression.html"><a href="logistic-regression.html#query-the-stop-and-search-counts."><i class="fa fa-check"></i><b>6.5.2</b> 2. Query the stop and search counts.</a></li>
+<li class="chapter" data-level="6.5.3" data-path="logistic-regression.html"><a href="logistic-regression.html#combine-and-plot-the-data"><i class="fa fa-check"></i><b>6.5.3</b> 3. Combine and plot the data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="limitations-and-discussion.html"><a href="limitations-and-discussion.html"><i class="fa fa-check"></i><b>7</b> Limitations and Discussion</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data Exploration of U.S. Police Stops</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="logistic-regression" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> Logistic Regression</h1>
+<div id="charlotte-nc-logistic-regression" class="section level2">
+<h2><span class="header-section-number">6.1</span> Charlotte, NC Logistic Regression</h2>
+<p>Logistic regression models are commonly used for modeling the probability of an event that only takes two possible outcomes. The dependent variable should be binary, and the output parameters of the model should indicate how strongly will the independent variables affect the likelihood of the occurrence of the event. For the policing data, it would be of great interest to investigate how would race and age of drivers contribute to the likelihood of drivers being searched. The reason for choosing to inspect the likelihood of searches rather than stops is that, during night times, there indeed exists the concern that when the police made the stop, he or she might not know the driver’s identity. However, if the police are deciding between whether to search or not, he or she should have already approached the car and have a basic understanding of the driver’s race and age. It is also worthwhile to construct a logistic model that will present a visualization of how the likelihood of getting searched changes through time as well as the comparison between drivers with different racial identity.</p>
+<p>The policing data used for the regression analysis was collected from Charlotte, North Carolina with a time range from January, 2000 to October 2015. The binary dependent variable is “search”, which denotes whether the police have conducted a search. The key independent variables are the race and age of the driver. To better observe the effect of one race relative to the other and to eliminate possible confusions with omitted categories of variables, the data was limited to only include black and white drivers.</p>
+<p>Based on the notion of only two categorical group in the “search” variable, the logistic model in predicting the search probability is presented below. <span class="math inline">\(age_i\)</span> is a numeric variable that denotes the age of the driver and <span class="math inline">\(race_i\)</span> is a categorical variable that assigns value “1” to white drivers and “0” to black drivers. Inspecting each equation with respect to the race variable allows an interpretation of the parameters. The equation for <span class="math inline">\(y_{white}\)</span> differs from <span class="math inline">\(y_{black}\)</span> by a value of <span class="math inline">\(\beta_2 + \beta_3 race_i\)</span></p>
+<p><span class="math display">\[\begin{align*}
+    y_i &amp;= \beta_0 + \beta_1 age_i + \beta_2 race_i + \beta_3 age_i*race_i \\
+    y_{white} &amp;= \beta_0 + (\beta_1 + \beta_3) age_i + \beta_2 race_i \\
+    y_{black} &amp;= \beta_0 + \beta_1 age
+\end{align*}\]</span></p>
+<p>Observing the output of the given model, <span class="math inline">\(\beta_2\)</span> and <span class="math inline">\(\beta_3\)</span> each has a value of -1.0199 and 0.00469, respectively. A negative <span class="math inline">\(\beta_2\)</span> indicates that during younger ages, white drivers might be less likely to be searched relative to black drivers. However, as drivers age, a positive <span class="math inline">\(\beta_3\)</span> indicates that the probability gap of getting searched between black and white drivers have shortened.</p>
+<pre><code>## 
+## Call:
+## glm(formula = search ~ as.numeric(subject_age) * as.factor(subject_race), 
+##     family = &quot;binomial&quot;, data = NCC2)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.6231  -0.4102  -0.3109  -0.2394   3.2771  
+## 
+## Coefficients:
+##                                                        Estimate Std. Error
+## (Intercept)                                          -1.1158593  0.0138524
+## as.numeric(subject_age)                              -0.0424910  0.0004429
+## as.factor(subject_race)white                         -1.0206028  0.0261268
+## as.numeric(subject_age):as.factor(subject_race)white  0.0047084  0.0008116
+##                                                      z value Pr(&gt;|z|)    
+## (Intercept)                                          -80.554  &lt; 2e-16 ***
+## as.numeric(subject_age)                              -95.941  &lt; 2e-16 ***
+## as.factor(subject_race)white                         -39.063  &lt; 2e-16 ***
+## as.numeric(subject_age):as.factor(subject_race)white   5.802 6.57e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 620366  on 1382621  degrees of freedom
+## Residual deviance: 592472  on 1382618  degrees of freedom
+##   (4 observations deleted due to missingness)
+## AIC: 592480
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<pre><code>##       age group      prob
+## 1 -100.00     b 0.9582433
+## 2  -99.99     b 0.9582263
+## 3  -99.98     b 0.9582092
+## 4  -99.97     b 0.9581922
+## 5  -99.96     b 0.9581752
+## 6  -99.95     b 0.9581582</code></pre>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+<p><span class="math display">\[\begin{align*}
+Pr(search_i=1|black_i) &amp;= {\frac{exp(\beta_0 + \beta_1 age_i)}{1 + exp (\beta_0 + \beta_1 age_i)}} \\
+Pr(search_i=1|white_i) &amp;= {\frac{exp(\beta_0 + (\beta_1 + \beta_3)age_i + \beta_2)}{1 + exp (\beta_0 + (\beta_1 + \beta_3)age_i + \beta_2)}}
+\end{align*}\]</span></p>
+<p>This plot shows the distribution of probabilities of being searched with the parameters of the logistic model. The horizontal axis represents the driver’s age and the vertical axis represents his or her likelihood of being searched. Two lines each represent the distribution for black and white drivers, and they are generated with equations stated above. It can be observed from this plot that when drivers are much younger (less than 35 years old), black drivers have a higher chance of being searched. When age increases, likelihood of being searched decreases for both groups of drivers. For Black drivers, the search probability seems to decrease at a higher rate relative to that of the white driver group. As the driver’s age increases to over approximately 50 years old, the two probabilities of getting searched seem to be relatively close to each other. One possible interpretation of this plot is that for the region of Charlotte, age does affect a driver’s likelihood of being searched, and additionally, the increase in the age of black driver has lowered his or her chance of being searched more so than that of the white drivers.</p>
+</div>
+<div id="plotting-s-curves" class="section level2">
+<h2><span class="header-section-number">6.2</span> Plotting S-curves</h2>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="logistic-regression.html#cb74-1"></a><span class="kw">library</span>(ggplot2)</span>
+<span id="cb74-2"><a href="logistic-regression.html#cb74-2"></a><span class="kw">library</span>(forcats)</span>
+<span id="cb74-3"><a href="logistic-regression.html#cb74-3"></a><span class="kw">library</span>(XML)</span>
+<span id="cb74-4"><a href="logistic-regression.html#cb74-4"></a><span class="kw">library</span>(RMySQL)</span>
+<span id="cb74-5"><a href="logistic-regression.html#cb74-5"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb74-6"><a href="logistic-regression.html#cb74-6"></a><span class="kw">library</span>(rlist)</span>
+<span id="cb74-7"><a href="logistic-regression.html#cb74-7"></a><span class="kw">library</span>(lubridate)</span>
+<span id="cb74-8"><a href="logistic-regression.html#cb74-8"></a><span class="kw">library</span>(caret)</span>
+<span id="cb74-9"><a href="logistic-regression.html#cb74-9"></a><span class="kw">library</span>(rpart.plot)</span>
+<span id="cb74-10"><a href="logistic-regression.html#cb74-10"></a><span class="kw">library</span>(gridExtra)</span></code></pre></div>
+<p>First let’s get the datasets that have our variables of interest</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="logistic-regression.html#cb75-1"></a>all_dataset_names &lt;-<span class="st"> </span><span class="kw">as.list</span>(DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con, </span>
+<span id="cb75-2"><a href="logistic-regression.html#cb75-2"></a>    <span class="st">&quot;SHOW TABLES&quot;</span>))<span class="op">$</span>Tables_in_traffic</span>
+<span id="cb75-3"><a href="logistic-regression.html#cb75-3"></a><span class="co"># all_dataset_names</span></span>
+<span id="cb75-4"><a href="logistic-regression.html#cb75-4"></a>variables_of_interest &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;subject_age&quot;</span>, </span>
+<span id="cb75-5"><a href="logistic-regression.html#cb75-5"></a>    <span class="st">&quot;subject_race&quot;</span>, <span class="st">&quot;subject_sex&quot;</span>, <span class="st">&quot;date&quot;</span>, </span>
+<span id="cb75-6"><a href="logistic-regression.html#cb75-6"></a>    <span class="st">&quot;search_conducted&quot;</span>)</span>
+<span id="cb75-7"><a href="logistic-regression.html#cb75-7"></a></span>
+<span id="cb75-8"><a href="logistic-regression.html#cb75-8"></a>datasets_of_interest &lt;-<span class="st"> </span><span class="kw">relevant_datasets</span>(all_dataset_names, </span>
+<span id="cb75-9"><a href="logistic-regression.html#cb75-9"></a>    variables_of_interest)</span>
+<span id="cb75-10"><a href="logistic-regression.html#cb75-10"></a>datasets_of_interest &lt;-<span class="st"> </span>datasets_of_interest[<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span>, </span>
+<span id="cb75-11"><a href="logistic-regression.html#cb75-11"></a>    <span class="dv">3</span>, <span class="dv">14</span>, <span class="dv">21</span>)]</span></code></pre></div>
+<p>This section walks through the process of plotting nationwide s-curves. The next step for plotting multiple cities is querying the data from our datasets of interest.</p>
+<p>I then plotted both curves (black and white individuals) for each dataset. I do so by computing the probabilities <span class="math inline">\(Pr(search_i=1|black_i)\)</span> and <span class="math inline">\(Pr(search_i=1|white_i)\)</span>. I use the values from the coefficient matrix to calculate the <span class="math inline">\({\beta_0 + \beta_1 age_i}\)</span> coefficient for the black population and the <span class="math inline">\({\beta_0 + (\beta_1 + \beta_3)age_i + \beta_2}\)</span> coefficient for the white population. The probabilities are then easily computed using the equation <span class="math display">\[{\frac{exp(coefficient)}{1 + exp (coefficient)}}\]</span> for each population. More information on these probabilities can be found in the previous section.</p>
+<p>I removed the datasets from Pittsburg and Connecticut because the Pittsburg dataset seemed to have flipped search conducted data points (TRUE values were most likely actually FALSE values). I am more confident of this flaw given it was also stated in the Pierson et al. (2020) that this Pittsburg dataset may be corrupt. The Connecticut dataset was also removed after looking at the actual plotted probabilities for each age—there was extremely high variance and no trend, suggesting that the logistic regression model would not demonstrate any signal.</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="logistic-regression.html#cb76-1"></a>coeff_matrix &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;coeff_matrix_raw.csv&quot;</span>)</span>
+<span id="cb76-2"><a href="logistic-regression.html#cb76-2"></a><span class="co"># function that uses our coefficient</span></span>
+<span id="cb76-3"><a href="logistic-regression.html#cb76-3"></a><span class="co"># matrix to compute probabilities for the</span></span>
+<span id="cb76-4"><a href="logistic-regression.html#cb76-4"></a><span class="co"># various datasets</span></span>
+<span id="cb76-5"><a href="logistic-regression.html#cb76-5"></a>national_plot &lt;-<span class="st"> </span><span class="cf">function</span>(num) {</span>
+<span id="cb76-6"><a href="logistic-regression.html#cb76-6"></a>    matrix &lt;-<span class="st"> </span>coeff_matrix[num, ]</span>
+<span id="cb76-7"><a href="logistic-regression.html#cb76-7"></a>    ages &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">16</span>, <span class="dv">90</span>, <span class="dv">1</span>)  <span class="co"># chosing an appropriate age range</span></span>
+<span id="cb76-8"><a href="logistic-regression.html#cb76-8"></a>    coeff_b &lt;-<span class="st"> </span>(matrix<span class="op">$</span>intercept) <span class="op">+</span><span class="st"> </span>(matrix<span class="op">$</span>subject_age) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb76-9"><a href="logistic-regression.html#cb76-9"></a><span class="st">        </span>ages  <span class="co"># calculating coefficients</span></span>
+<span id="cb76-10"><a href="logistic-regression.html#cb76-10"></a>    coeff_w &lt;-<span class="st"> </span>((matrix<span class="op">$</span>intercept) <span class="op">+</span><span class="st"> </span>(matrix<span class="op">$</span>subject_race)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb76-11"><a href="logistic-regression.html#cb76-11"></a><span class="st">        </span>(matrix<span class="op">$</span>subject_age <span class="op">+</span><span class="st"> </span>matrix<span class="op">$</span>subject_age.subject_race) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb76-12"><a href="logistic-regression.html#cb76-12"></a><span class="st">            </span>ages</span>
+<span id="cb76-13"><a href="logistic-regression.html#cb76-13"></a>    scurve_b &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff_b)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(coeff_b))  <span class="co">#computing probability curve from respective calculated coefficient</span></span>
+<span id="cb76-14"><a href="logistic-regression.html#cb76-14"></a>    scurve_w &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff_w)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(coeff_w))</span>
+<span id="cb76-15"><a href="logistic-regression.html#cb76-15"></a>    plot_b &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prob =</span> scurve_b, </span>
+<span id="cb76-16"><a href="logistic-regression.html#cb76-16"></a>        <span class="dt">age =</span> ages, <span class="dt">state =</span> matrix<span class="op">$</span>state_abbreviation, </span>
+<span id="cb76-17"><a href="logistic-regression.html#cb76-17"></a>        <span class="dt">race =</span> <span class="st">&quot;black&quot;</span>)</span>
+<span id="cb76-18"><a href="logistic-regression.html#cb76-18"></a>    plot_w &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prob =</span> scurve_w, </span>
+<span id="cb76-19"><a href="logistic-regression.html#cb76-19"></a>        <span class="dt">age =</span> ages, <span class="dt">state =</span> matrix<span class="op">$</span>state_abbreviation, </span>
+<span id="cb76-20"><a href="logistic-regression.html#cb76-20"></a>        <span class="dt">race =</span> <span class="st">&quot;white&quot;</span>)</span>
+<span id="cb76-21"><a href="logistic-regression.html#cb76-21"></a>    plot_data &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(plot_b, plot_w)</span>
+<span id="cb76-22"><a href="logistic-regression.html#cb76-22"></a>}</span>
+<span id="cb76-23"><a href="logistic-regression.html#cb76-23"></a>combine_plots &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="kw">seq</span>(datasets_of_interest), </span>
+<span id="cb76-24"><a href="logistic-regression.html#cb76-24"></a>    national_plot)</span>
+<span id="cb76-25"><a href="logistic-regression.html#cb76-25"></a>cities &lt;-<span class="st"> </span><span class="kw">do.call</span>(<span class="st">&quot;rbind&quot;</span>, combine_plots)</span>
+<span id="cb76-26"><a href="logistic-regression.html#cb76-26"></a><span class="co"># removed Pittsburg and Connecticut</span></span>
+<span id="cb76-27"><a href="logistic-regression.html#cb76-27"></a><span class="co"># statewide datasets</span></span>
+<span id="cb76-28"><a href="logistic-regression.html#cb76-28"></a>data_b &lt;-<span class="st"> </span>cities <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(race <span class="op">==</span><span class="st"> &quot;black&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb76-29"><a href="logistic-regression.html#cb76-29"></a><span class="st">    </span><span class="kw">filter</span>(state <span class="op">!=</span><span class="st"> &quot;PAPI&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(state <span class="op">!=</span><span class="st"> </span></span>
+<span id="cb76-30"><a href="logistic-regression.html#cb76-30"></a><span class="st">    &quot;CTH&quot;</span>)</span>
+<span id="cb76-31"><a href="logistic-regression.html#cb76-31"></a>data_w &lt;-<span class="st"> </span>cities <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(race <span class="op">==</span><span class="st"> &quot;white&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb76-32"><a href="logistic-regression.html#cb76-32"></a><span class="st">    </span><span class="kw">filter</span>(state <span class="op">!=</span><span class="st"> &quot;PAPI&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(state <span class="op">!=</span><span class="st"> </span></span>
+<span id="cb76-33"><a href="logistic-regression.html#cb76-33"></a><span class="st">    &quot;CTH&quot;</span>)</span>
+<span id="cb76-34"><a href="logistic-regression.html#cb76-34"></a><span class="co"># plotting the data</span></span>
+<span id="cb76-35"><a href="logistic-regression.html#cb76-35"></a><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> age, <span class="dt">y =</span> prob, </span>
+<span id="cb76-36"><a href="logistic-regression.html#cb76-36"></a>    <span class="dt">color =</span> <span class="st">&quot;Black&quot;</span>), <span class="dt">data =</span> data_b, <span class="dt">lwd =</span> <span class="dv">1</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb76-37"><a href="logistic-regression.html#cb76-37"></a><span class="st">    </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> age, <span class="dt">y =</span> prob, <span class="dt">color =</span> <span class="st">&quot;White&quot;</span>), </span>
+<span id="cb76-38"><a href="logistic-regression.html#cb76-38"></a>        <span class="dt">data =</span> data_w, <span class="dt">lwd =</span> <span class="dv">1</span>) <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;age&quot;</span>, </span>
+<span id="cb76-39"><a href="logistic-regression.html#cb76-39"></a>    <span class="dt">y =</span> <span class="st">&quot;Probability&quot;</span>, <span class="dt">color =</span> <span class="st">&quot;Subject Race&quot;</span>) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb76-40"><a href="logistic-regression.html#cb76-40"></a><span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span>state)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-40-1.png" width="672" />
+The nationwide graphs indicate that for both races, the probability of being searched decreases as age increase. Another observation is that black individuals have a higher probability of being searched for all ages in all except Philadelphia.</p>
+<p>I then plotted the separation between s-curves to visualize the difference in probabilities for black and white individuals. I did so by subtracting the s-curves generated by both coefficients (s-curve for black individuals - s-curve for black individuals).</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="logistic-regression.html#cb77-1"></a>my_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>()</span>
+<span id="cb77-2"><a href="logistic-regression.html#cb77-2"></a><span class="co"># filtering out Pittsburg and Connecticut</span></span>
+<span id="cb77-3"><a href="logistic-regression.html#cb77-3"></a>coeff_matrix &lt;-<span class="st"> </span>coeff_matrix <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(state_abbreviation <span class="op">!=</span><span class="st"> </span></span>
+<span id="cb77-4"><a href="logistic-regression.html#cb77-4"></a><span class="st">    &quot;PAPI&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(state_abbreviation <span class="op">!=</span><span class="st"> </span></span>
+<span id="cb77-5"><a href="logistic-regression.html#cb77-5"></a><span class="st">    &quot;CTH&quot;</span>)</span>
+<span id="cb77-6"><a href="logistic-regression.html#cb77-6"></a><span class="co"># creating a singular plot for all</span></span>
+<span id="cb77-7"><a href="logistic-regression.html#cb77-7"></a><span class="co"># datasets</span></span>
+<span id="cb77-8"><a href="logistic-regression.html#cb77-8"></a><span class="cf">for</span> (num <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">20</span>) {</span>
+<span id="cb77-9"><a href="logistic-regression.html#cb77-9"></a>    matrix &lt;-<span class="st"> </span>coeff_matrix[num, ]</span>
+<span id="cb77-10"><a href="logistic-regression.html#cb77-10"></a>    ages &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">16</span>, <span class="dv">90</span>, <span class="dv">1</span>)</span>
+<span id="cb77-11"><a href="logistic-regression.html#cb77-11"></a>    coeff &lt;-<span class="st"> </span>(matrix<span class="op">$</span>intercept) <span class="op">+</span><span class="st"> </span>(matrix<span class="op">$</span>subject_age) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb77-12"><a href="logistic-regression.html#cb77-12"></a><span class="st">        </span>ages</span>
+<span id="cb77-13"><a href="logistic-regression.html#cb77-13"></a>    coeff2 &lt;-<span class="st"> </span>((matrix<span class="op">$</span>intercept) <span class="op">+</span><span class="st"> </span>(matrix<span class="op">$</span>subject_race)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb77-14"><a href="logistic-regression.html#cb77-14"></a><span class="st">        </span>(matrix<span class="op">$</span>subject_age <span class="op">+</span><span class="st"> </span>matrix<span class="op">$</span>subject_age.subject_race) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb77-15"><a href="logistic-regression.html#cb77-15"></a><span class="st">            </span>ages</span>
+<span id="cb77-16"><a href="logistic-regression.html#cb77-16"></a>    scurve1 &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(coeff))</span>
+<span id="cb77-17"><a href="logistic-regression.html#cb77-17"></a>    scurve2 &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff2)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(coeff2))</span>
+<span id="cb77-18"><a href="logistic-regression.html#cb77-18"></a>    scurve &lt;-<span class="st"> </span>scurve1 <span class="op">-</span><span class="st"> </span>scurve2  <span class="co">#calculation of the difference in probability</span></span>
+<span id="cb77-19"><a href="logistic-regression.html#cb77-19"></a>    plot &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Probability =</span> scurve, </span>
+<span id="cb77-20"><a href="logistic-regression.html#cb77-20"></a>        <span class="dt">Age =</span> ages, <span class="dt">State =</span> matrix<span class="op">$</span>state_abbreviation)</span>
+<span id="cb77-21"><a href="logistic-regression.html#cb77-21"></a>    my_plot &lt;-<span class="st"> </span>my_plot <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(plot, </span>
+<span id="cb77-22"><a href="logistic-regression.html#cb77-22"></a>        <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> Age, <span class="dt">y =</span> Probability, </span>
+<span id="cb77-23"><a href="logistic-regression.html#cb77-23"></a>            <span class="dt">color =</span> State))</span>
+<span id="cb77-24"><a href="logistic-regression.html#cb77-24"></a>}</span>
+<span id="cb77-25"><a href="logistic-regression.html#cb77-25"></a>my_plot <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">legend.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">10</span>), </span>
+<span id="cb77-26"><a href="logistic-regression.html#cb77-26"></a>    <span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Difference in Probability of Being Searched for Black and White Individuals&quot;</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-41-1.png" width="672" />
+This plot further demonstrates that the probability of being searched for black individuals is higher than white individuals for every age, with all curves except Philadelphia being entirely positive. The model also indicates that the difference in probabilities goes down as the individual’s age increases.</p>
+<p>The significance of the unique result from Philadelphia was not studied, but it is important to note that Philadelphia is in the same state as Pittsburg (the corrupt dataset), so there is a possibility of systematic issues influencing all datasets in the state.</p>
+<div id="grouping" class="section level3">
+<h3><span class="header-section-number">6.2.1</span> Grouping</h3>
+<p>After recognizing the difference in probabilities for black and white individuals, I became interested in what kind of characteristics of the state or city may influence the magnitude of this difference. I performed this priliminary investigation by simply hardcoding various factors about the state or city into the coefficient matrix. The first variable I used was how the state voted in the 2016 election.</p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="logistic-regression.html#cb78-1"></a>my_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>()</span>
+<span id="cb78-2"><a href="logistic-regression.html#cb78-2"></a><span class="cf">for</span> (num <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">20</span>) {</span>
+<span id="cb78-3"><a href="logistic-regression.html#cb78-3"></a>    matrix &lt;-<span class="st"> </span>coeff_matrix[num, ]</span>
+<span id="cb78-4"><a href="logistic-regression.html#cb78-4"></a>    ages &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">16</span>, <span class="dv">90</span>, <span class="dv">1</span>)</span>
+<span id="cb78-5"><a href="logistic-regression.html#cb78-5"></a>    coeff &lt;-<span class="st"> </span>(matrix<span class="op">$</span>intercept) <span class="op">+</span><span class="st"> </span>(matrix<span class="op">$</span>subject_age) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb78-6"><a href="logistic-regression.html#cb78-6"></a><span class="st">        </span>ages</span>
+<span id="cb78-7"><a href="logistic-regression.html#cb78-7"></a>    coeff2 &lt;-<span class="st"> </span>((matrix<span class="op">$</span>intercept) <span class="op">+</span><span class="st"> </span>(matrix<span class="op">$</span>subject_race)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb78-8"><a href="logistic-regression.html#cb78-8"></a><span class="st">        </span>(matrix<span class="op">$</span>subject_age <span class="op">+</span><span class="st"> </span>matrix<span class="op">$</span>subject_age.subject_race) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb78-9"><a href="logistic-regression.html#cb78-9"></a><span class="st">            </span>ages</span>
+<span id="cb78-10"><a href="logistic-regression.html#cb78-10"></a>    scurve1 &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(coeff))</span>
+<span id="cb78-11"><a href="logistic-regression.html#cb78-11"></a>    scurve2 &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff2)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(coeff2))</span>
+<span id="cb78-12"><a href="logistic-regression.html#cb78-12"></a>    scurve &lt;-<span class="st"> </span>scurve1 <span class="op">-</span><span class="st"> </span>scurve2</span>
+<span id="cb78-13"><a href="logistic-regression.html#cb78-13"></a>    plot &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Probability =</span> scurve, </span>
+<span id="cb78-14"><a href="logistic-regression.html#cb78-14"></a>        <span class="dt">Age =</span> ages, <span class="dt">State =</span> matrix<span class="op">$</span>state_abbreviation, </span>
+<span id="cb78-15"><a href="logistic-regression.html#cb78-15"></a>        <span class="dt">makeup =</span> matrix<span class="op">$</span>state_politics)</span>
+<span id="cb78-16"><a href="logistic-regression.html#cb78-16"></a>    my_plot &lt;-<span class="st"> </span>my_plot <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(plot, </span>
+<span id="cb78-17"><a href="logistic-regression.html#cb78-17"></a>        <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> Age, <span class="dt">y =</span> Probability, </span>
+<span id="cb78-18"><a href="logistic-regression.html#cb78-18"></a>            <span class="dt">color =</span> makeup))</span>
+<span id="cb78-19"><a href="logistic-regression.html#cb78-19"></a>}</span>
+<span id="cb78-20"><a href="logistic-regression.html#cb78-20"></a>my_plot <span class="op">+</span><span class="st"> </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="st">&quot;blue&quot;</span>, </span>
+<span id="cb78-21"><a href="logistic-regression.html#cb78-21"></a>    <span class="st">&quot;red&quot;</span>)) <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">legend.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">10</span>)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb78-22"><a href="logistic-regression.html#cb78-22"></a><span class="st">    </span><span class="kw">ggtitle</span>(<span class="st">&quot;Subtracted S-curves by Blue or Red State&quot;</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-42-1.png" width="672" />
+There is no apparant trend in this graph, suggesting that the magnitude of difference may not be influenced by state politics.</p>
+<p>I then continued to look at other variables. I was primarily interested in forms of diversity and used the ranking found at <a href="https://wallethub.com/edu/most-least-diverse-states-in-america/38262/#methodology" class="uri">https://wallethub.com/edu/most-least-diverse-states-in-america/38262/#methodology</a> as a measurement. Each state was given a rank out of 50, so I grouped the subtracted s-curves on a sliding scale based on these ranks. I hardcoded these characteristics into the coefficient matrix and plotted for all forms of diversity on the website. The plot for racial and ethnic diversity is shown here.</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="logistic-regression.html#cb79-1"></a>my_plot &lt;-<span class="st"> </span><span class="kw">ggplot</span>()</span>
+<span id="cb79-2"><a href="logistic-regression.html#cb79-2"></a><span class="cf">for</span> (num <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">20</span>) {</span>
+<span id="cb79-3"><a href="logistic-regression.html#cb79-3"></a>    matrix &lt;-<span class="st"> </span>coeff_matrix[num, ]</span>
+<span id="cb79-4"><a href="logistic-regression.html#cb79-4"></a>    ages &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">16</span>, <span class="dv">90</span>, <span class="dv">1</span>)</span>
+<span id="cb79-5"><a href="logistic-regression.html#cb79-5"></a>    coeff &lt;-<span class="st"> </span>(matrix<span class="op">$</span>intercept) <span class="op">+</span><span class="st"> </span>(matrix<span class="op">$</span>subject_age) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb79-6"><a href="logistic-regression.html#cb79-6"></a><span class="st">        </span>ages</span>
+<span id="cb79-7"><a href="logistic-regression.html#cb79-7"></a>    coeff2 &lt;-<span class="st"> </span>((matrix<span class="op">$</span>intercept) <span class="op">+</span><span class="st"> </span>(matrix<span class="op">$</span>subject_race)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb79-8"><a href="logistic-regression.html#cb79-8"></a><span class="st">        </span>(matrix<span class="op">$</span>subject_age <span class="op">+</span><span class="st"> </span>matrix<span class="op">$</span>subject_age.subject_race) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb79-9"><a href="logistic-regression.html#cb79-9"></a><span class="st">            </span>ages</span>
+<span id="cb79-10"><a href="logistic-regression.html#cb79-10"></a>    scurve1 &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(coeff))</span>
+<span id="cb79-11"><a href="logistic-regression.html#cb79-11"></a>    scurve2 &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff2)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(coeff2))</span>
+<span id="cb79-12"><a href="logistic-regression.html#cb79-12"></a>    scurve &lt;-<span class="st"> </span>scurve1 <span class="op">-</span><span class="st"> </span>scurve2</span>
+<span id="cb79-13"><a href="logistic-regression.html#cb79-13"></a>    plot &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Probability =</span> scurve, </span>
+<span id="cb79-14"><a href="logistic-regression.html#cb79-14"></a>        <span class="dt">Age =</span> ages, <span class="dt">State =</span> matrix<span class="op">$</span>state_abbreviation, </span>
+<span id="cb79-15"><a href="logistic-regression.html#cb79-15"></a>        <span class="dt">makeup =</span> matrix<span class="op">$</span>state_politics, <span class="dt">diversity =</span> matrix<span class="op">$</span>racial_and_ethnic)</span>
+<span id="cb79-16"><a href="logistic-regression.html#cb79-16"></a>    my_plot &lt;-<span class="st"> </span>my_plot <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(plot, </span>
+<span id="cb79-17"><a href="logistic-regression.html#cb79-17"></a>        <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> Age, <span class="dt">y =</span> Probability, </span>
+<span id="cb79-18"><a href="logistic-regression.html#cb79-18"></a>            <span class="dt">color =</span> diversity))</span>
+<span id="cb79-19"><a href="logistic-regression.html#cb79-19"></a>}</span>
+<span id="cb79-20"><a href="logistic-regression.html#cb79-20"></a>my_plot <span class="op">+</span><span class="st"> </span><span class="kw">scale_color_gradient</span>(<span class="dt">low =</span> <span class="st">&quot;yellow&quot;</span>, </span>
+<span id="cb79-21"><a href="logistic-regression.html#cb79-21"></a>    <span class="dt">high =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">legend.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">10</span>)) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb79-22"><a href="logistic-regression.html#cb79-22"></a><span class="st">    </span><span class="kw">ggtitle</span>(<span class="st">&quot;Subtracted S-curves by Racial and Ethnic Diversity Rankings&quot;</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-43-1.png" width="672" />
+None of the variables presented any observable trend in the subtracted s-curves. However, note that this was only a simple priliminary analysis using one source for diversity ranking. In other words, this is by no means a complete study of these variables of diversity, so further work is encouraged to further study these variables as well as others.</p>
+</div>
+</div>
+<div id="veil-of-darkness-nationwide" class="section level2">
+<h2><span class="header-section-number">6.3</span> Veil of Darkness Nationwide</h2>
+<p>Running a veil of darkness logistic regression follows a similar process as using race and age as variables to predict a search being conducted. This time, we add a light binary variable</p>
+<p>First we want to get the relevant datasets. This time, we splice out different datasets as those are empty
+Here we apply the relevant_datasets function to get the character string. Then, we can use base R splicing to remove empty datasets.</p>
+<p>This code block defines the function, query_data, which calls the SQL command to retrieve the datasets with their speficied variables. Lastly, it will append each dataset to a list called datasets.</p>
+<p>At last, the previous four functions will be called in the clean_data function. Clean_data does two main things:
+1) make search conducted into a binary datatype
+2) add night and day variables to our dataset
+Notice how this is very similar to the previous clean_data function only this time we add a add_night_day function</p>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="logistic-regression.html#cb80-1"></a>clean_data &lt;-<span class="st"> </span><span class="cf">function</span>(i) {</span>
+<span id="cb80-2"><a href="logistic-regression.html#cb80-2"></a>    city_dataset &lt;-<span class="st"> </span>datasets[[i]] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">drop_na</span>()</span>
+<span id="cb80-3"><a href="logistic-regression.html#cb80-3"></a>    </span>
+<span id="cb80-4"><a href="logistic-regression.html#cb80-4"></a>    <span class="co"># first add light and day variables</span></span>
+<span id="cb80-5"><a href="logistic-regression.html#cb80-5"></a>    tmp_lat &lt;-<span class="st"> </span>coordinates[[i]][<span class="dv">1</span>]</span>
+<span id="cb80-6"><a href="logistic-regression.html#cb80-6"></a>    tmp_long &lt;-<span class="st"> </span>coordinates[[i]][<span class="dv">2</span>]</span>
+<span id="cb80-7"><a href="logistic-regression.html#cb80-7"></a>    time_zone &lt;-<span class="st"> </span>lutz<span class="op">::</span><span class="kw">tz_lookup_coords</span>(tmp_lat, </span>
+<span id="cb80-8"><a href="logistic-regression.html#cb80-8"></a>        tmp_long, <span class="dt">warn =</span> F)</span>
+<span id="cb80-9"><a href="logistic-regression.html#cb80-9"></a>    city_dataset &lt;-<span class="st"> </span><span class="kw">add_night_day</span>(city_dataset, </span>
+<span id="cb80-10"><a href="logistic-regression.html#cb80-10"></a>        time_zone, tmp_lat, tmp_long)</span>
+<span id="cb80-11"><a href="logistic-regression.html#cb80-11"></a>    </span>
+<span id="cb80-12"><a href="logistic-regression.html#cb80-12"></a>    <span class="co"># clean data</span></span>
+<span id="cb80-13"><a href="logistic-regression.html#cb80-13"></a>    <span class="cf">if</span> (<span class="kw">typeof</span>(city_dataset<span class="op">$</span>search_conducted) <span class="op">==</span><span class="st"> </span></span>
+<span id="cb80-14"><a href="logistic-regression.html#cb80-14"></a><span class="st">        &quot;character&quot;</span>) {</span>
+<span id="cb80-15"><a href="logistic-regression.html#cb80-15"></a>        </span>
+<span id="cb80-16"><a href="logistic-regression.html#cb80-16"></a>        city_dataset &lt;-<span class="st"> </span>city_dataset <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb80-17"><a href="logistic-regression.html#cb80-17"></a><span class="st">            </span><span class="kw">filter</span>(subject_race <span class="op">==</span><span class="st"> &quot;black&quot;</span> <span class="op">|</span><span class="st"> </span></span>
+<span id="cb80-18"><a href="logistic-regression.html#cb80-18"></a><span class="st">                </span>subject_race <span class="op">==</span><span class="st"> &quot;white&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb80-19"><a href="logistic-regression.html#cb80-19"></a><span class="st">            </span><span class="kw">mutate</span>(<span class="dt">search_conducted =</span> <span class="kw">case_when</span>(search_conducted <span class="op">==</span><span class="st"> </span></span>
+<span id="cb80-20"><a href="logistic-regression.html#cb80-20"></a><span class="st">                &quot;TRUE&quot;</span> <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, search_conducted <span class="op">==</span><span class="st"> </span></span>
+<span id="cb80-21"><a href="logistic-regression.html#cb80-21"></a><span class="st">                &quot;FALSE&quot;</span> <span class="op">~</span><span class="st"> </span><span class="dv">0</span>))</span>
+<span id="cb80-22"><a href="logistic-regression.html#cb80-22"></a>    } <span class="cf">else</span> {</span>
+<span id="cb80-23"><a href="logistic-regression.html#cb80-23"></a>        <span class="co"># some datasets have search_conducted as</span></span>
+<span id="cb80-24"><a href="logistic-regression.html#cb80-24"></a>        <span class="co"># already a dbl</span></span>
+<span id="cb80-25"><a href="logistic-regression.html#cb80-25"></a>        city_dataset &lt;-<span class="st"> </span>city_dataset <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb80-26"><a href="logistic-regression.html#cb80-26"></a><span class="st">            </span><span class="kw">filter</span>(subject_race <span class="op">==</span><span class="st"> &quot;black&quot;</span> <span class="op">|</span><span class="st"> </span></span>
+<span id="cb80-27"><a href="logistic-regression.html#cb80-27"></a><span class="st">                </span>subject_race <span class="op">==</span><span class="st"> &quot;white&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb80-28"><a href="logistic-regression.html#cb80-28"></a><span class="st">            </span><span class="kw">mutate</span>(<span class="dt">search_conducted =</span> search_conducted)</span>
+<span id="cb80-29"><a href="logistic-regression.html#cb80-29"></a>    }</span>
+<span id="cb80-30"><a href="logistic-regression.html#cb80-30"></a>    </span>
+<span id="cb80-31"><a href="logistic-regression.html#cb80-31"></a>    city_dataset &lt;-<span class="st"> </span>city_dataset <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">subject_race =</span> <span class="kw">as.factor</span>(<span class="kw">case_when</span>(subject_race <span class="op">==</span><span class="st"> </span></span>
+<span id="cb80-32"><a href="logistic-regression.html#cb80-32"></a><span class="st">        &quot;white&quot;</span> <span class="op">~</span><span class="st"> &quot;W&quot;</span>, subject_race <span class="op">==</span><span class="st"> &quot;black&quot;</span> <span class="op">~</span><span class="st"> </span></span>
+<span id="cb80-33"><a href="logistic-regression.html#cb80-33"></a><span class="st">        &quot;B&quot;</span>)))</span>
+<span id="cb80-34"><a href="logistic-regression.html#cb80-34"></a>    </span>
+<span id="cb80-35"><a href="logistic-regression.html#cb80-35"></a>    </span>
+<span id="cb80-36"><a href="logistic-regression.html#cb80-36"></a>    <span class="kw">return</span>(city_dataset)</span>
+<span id="cb80-37"><a href="logistic-regression.html#cb80-37"></a>}</span>
+<span id="cb80-38"><a href="logistic-regression.html#cb80-38"></a></span>
+<span id="cb80-39"><a href="logistic-regression.html#cb80-39"></a>datasets &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="kw">seq</span>(datasets), clean_data)</span></code></pre></div>
+<p>fix_ages quickly sets any ages to a dbl data type</p>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="logistic-regression.html#cb81-1"></a>fix_ages &lt;-<span class="st"> </span><span class="cf">function</span>(city_dataset) {</span>
+<span id="cb81-2"><a href="logistic-regression.html#cb81-2"></a>    city_dataset &lt;-<span class="st"> </span>city_dataset <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">subject_age =</span> <span class="kw">as.numeric</span>(subject_age))</span>
+<span id="cb81-3"><a href="logistic-regression.html#cb81-3"></a>    <span class="kw">return</span>(city_dataset)</span>
+<span id="cb81-4"><a href="logistic-regression.html#cb81-4"></a>}</span>
+<span id="cb81-5"><a href="logistic-regression.html#cb81-5"></a></span>
+<span id="cb81-6"><a href="logistic-regression.html#cb81-6"></a>datasets &lt;-<span class="st"> </span><span class="kw">lapply</span>(datasets, fix_ages)</span></code></pre></div>
+<p>Since we are analyzing multiple outputs from a logistic regression, we need a way to store those outputs. We decided to takes the coefficients from each logistic regression and make a dataframe out of them.</p>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="logistic-regression.html#cb82-1"></a>coefficient_matrix &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">intercept =</span> <span class="kw">numeric</span>(), </span>
+<span id="cb82-2"><a href="logistic-regression.html#cb82-2"></a>    <span class="dt">subject_raceW =</span> <span class="kw">as.numeric</span>(), <span class="dt">subject_age =</span> <span class="kw">as.numeric</span>(), </span>
+<span id="cb82-3"><a href="logistic-regression.html#cb82-3"></a>    <span class="dt">is_darkTRUE =</span> <span class="kw">as.numeric</span>(), <span class="st">`</span><span class="dt">subject_raceW:subject_age</span><span class="st">`</span> =<span class="st"> </span><span class="kw">as.numeric</span>(), </span>
+<span id="cb82-4"><a href="logistic-regression.html#cb82-4"></a>    <span class="dt">dataset_name =</span> <span class="kw">character</span>())</span>
+<span id="cb82-5"><a href="logistic-regression.html#cb82-5"></a></span>
+<span id="cb82-6"><a href="logistic-regression.html#cb82-6"></a><span class="kw">mapply</span>(logistic_regression, datasets, datasets_of_interest)</span>
+<span id="cb82-7"><a href="logistic-regression.html#cb82-7"></a></span>
+<span id="cb82-8"><a href="logistic-regression.html#cb82-8"></a><span class="co"># fitlog &lt;- glm(formula =</span></span>
+<span id="cb82-9"><a href="logistic-regression.html#cb82-9"></a><span class="co"># search_conducted ~</span></span>
+<span id="cb82-10"><a href="logistic-regression.html#cb82-10"></a><span class="co"># subject_race*subject_age+is_dark, data</span></span>
+<span id="cb82-11"><a href="logistic-regression.html#cb82-11"></a><span class="co"># = datasets[[1]], family = binomial,</span></span>
+<span id="cb82-12"><a href="logistic-regression.html#cb82-12"></a><span class="co"># control = list(maxit = 50))</span></span>
+<span id="cb82-13"><a href="logistic-regression.html#cb82-13"></a><span class="co"># summary(fitlog)</span></span>
+<span id="cb82-14"><a href="logistic-regression.html#cb82-14"></a></span>
+<span id="cb82-15"><a href="logistic-regression.html#cb82-15"></a><span class="kw">colnames</span>(coefficient_matrix) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;intercept&quot;</span>, </span>
+<span id="cb82-16"><a href="logistic-regression.html#cb82-16"></a>    <span class="st">&quot;subject_raceW&quot;</span>, <span class="st">&quot;subject_age&quot;</span>, <span class="st">&quot;is_dark&quot;</span>, </span>
+<span id="cb82-17"><a href="logistic-regression.html#cb82-17"></a>    <span class="st">&quot;subject_raceW.subject_age&quot;</span>, <span class="st">&quot;datasetnames&quot;</span>)</span></code></pre></div>
+<p>Now that we have the coefficient_matrix we can select certain coefficients to compute the probabilities for white and black people along with day and night.</p>
+<p><span class="math inline">\(Pr(search_i=1|black_i)\)</span> and <span class="math inline">\(Pr(search_i=1|white_i)\)</span>. I use the values from the coefficient matrix to calculate the <span class="math inline">\({\beta_0 + \beta_1 age_i}\)</span> coefficient for the black population in the day and <span class="math inline">\({\beta_0 + \beta_1 age_i + \beta_4}\)</span> for black population at night. <span class="math inline">\({\beta_0 + (\beta_1 + \beta_3)age_i + \beta_2}\)</span> coefficient for the white population at day light, then <span class="math inline">\({\beta_0 + (\beta_1 + \beta_3)ages_i + \beta_2 + \beta_4}\)</span>. The probabilities are then easily computed using the equation <span class="math display">\[{\frac{exp(coefficient)}{1 + exp (coefficient)}}\]</span> for each population. More information on these probabilities can be found in the previous section.</p>
+<p>There are four s-curve we want to plot: Black driver in the day, Black and night, white and day, and White and night. Thus, we’ll make a dataframe for each scenario and then row bind all of them.</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="logistic-regression.html#cb83-1"></a>plot_all &lt;-<span class="st"> </span><span class="cf">function</span>(i) {</span>
+<span id="cb83-2"><a href="logistic-regression.html#cb83-2"></a>    matrix &lt;-<span class="st"> </span>coefficient_matrix[i, ]</span>
+<span id="cb83-3"><a href="logistic-regression.html#cb83-3"></a>    ages &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">16</span>, <span class="dv">90</span>, <span class="dv">1</span>)</span>
+<span id="cb83-4"><a href="logistic-regression.html#cb83-4"></a>    </span>
+<span id="cb83-5"><a href="logistic-regression.html#cb83-5"></a>    <span class="co"># black and day coefficients</span></span>
+<span id="cb83-6"><a href="logistic-regression.html#cb83-6"></a>    coeff_black &lt;-<span class="st"> </span>(matrix<span class="op">$</span>intercept) <span class="op">+</span><span class="st"> </span>(matrix<span class="op">$</span>subject_age) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb83-7"><a href="logistic-regression.html#cb83-7"></a><span class="st">        </span>ages</span>
+<span id="cb83-8"><a href="logistic-regression.html#cb83-8"></a>    scurve &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff_black)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span><span class="kw">exp</span>(coeff_black))</span>
+<span id="cb83-9"><a href="logistic-regression.html#cb83-9"></a>    plot.data &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prob =</span> scurve, </span>
+<span id="cb83-10"><a href="logistic-regression.html#cb83-10"></a>        <span class="dt">age =</span> ages, <span class="dt">state =</span> <span class="kw">as.character</span>(matrix<span class="op">$</span>datasetnames), </span>
+<span id="cb83-11"><a href="logistic-regression.html#cb83-11"></a>        <span class="dt">race =</span> <span class="kw">as.character</span>(<span class="st">&quot;black&quot;</span>), <span class="dt">is_dark =</span> <span class="st">&quot;FALSE&quot;</span>, </span>
+<span id="cb83-12"><a href="logistic-regression.html#cb83-12"></a>        <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb83-13"><a href="logistic-regression.html#cb83-13"></a>    </span>
+<span id="cb83-14"><a href="logistic-regression.html#cb83-14"></a>    <span class="co"># black and night</span></span>
+<span id="cb83-15"><a href="logistic-regression.html#cb83-15"></a>    coeff_black_night &lt;-<span class="st"> </span>(matrix<span class="op">$</span>intercept) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb83-16"><a href="logistic-regression.html#cb83-16"></a><span class="st">        </span>(matrix<span class="op">$</span>is_dark) <span class="op">+</span><span class="st"> </span>(matrix<span class="op">$</span>subject_age) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb83-17"><a href="logistic-regression.html#cb83-17"></a><span class="st">        </span>ages</span>
+<span id="cb83-18"><a href="logistic-regression.html#cb83-18"></a>    scurve_night &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff_black_night)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span></span>
+<span id="cb83-19"><a href="logistic-regression.html#cb83-19"></a><span class="st">        </span><span class="kw">exp</span>(coeff_black_night))</span>
+<span id="cb83-20"><a href="logistic-regression.html#cb83-20"></a>    plot.data_night &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prob =</span> scurve_night, </span>
+<span id="cb83-21"><a href="logistic-regression.html#cb83-21"></a>        <span class="dt">age =</span> ages, <span class="dt">state =</span> <span class="kw">as.character</span>(matrix<span class="op">$</span>datasetnames), </span>
+<span id="cb83-22"><a href="logistic-regression.html#cb83-22"></a>        <span class="dt">race =</span> <span class="kw">as.character</span>(<span class="st">&quot;black&quot;</span>), <span class="dt">is_dark =</span> <span class="st">&quot;TRUE&quot;</span>, </span>
+<span id="cb83-23"><a href="logistic-regression.html#cb83-23"></a>        <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb83-24"><a href="logistic-regression.html#cb83-24"></a>    </span>
+<span id="cb83-25"><a href="logistic-regression.html#cb83-25"></a>    <span class="co"># white and day</span></span>
+<span id="cb83-26"><a href="logistic-regression.html#cb83-26"></a>    coeff_white_day &lt;-<span class="st"> </span>matrix<span class="op">$</span>intercept <span class="op">+</span><span class="st"> </span></span>
+<span id="cb83-27"><a href="logistic-regression.html#cb83-27"></a><span class="st">        </span>matrix<span class="op">$</span>subject_raceW <span class="op">+</span><span class="st"> </span>(matrix<span class="op">$</span>subject_age <span class="op">+</span><span class="st"> </span></span>
+<span id="cb83-28"><a href="logistic-regression.html#cb83-28"></a><span class="st">        </span>matrix<span class="op">$</span>subject_raceW.subject_age) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb83-29"><a href="logistic-regression.html#cb83-29"></a><span class="st">        </span>ages</span>
+<span id="cb83-30"><a href="logistic-regression.html#cb83-30"></a>    scurve_white_day &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff_white_day)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span></span>
+<span id="cb83-31"><a href="logistic-regression.html#cb83-31"></a><span class="st">        </span><span class="kw">exp</span>(coeff_white_day))</span>
+<span id="cb83-32"><a href="logistic-regression.html#cb83-32"></a>    plot.data_white_day &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prob =</span> scurve_white_day, </span>
+<span id="cb83-33"><a href="logistic-regression.html#cb83-33"></a>        <span class="dt">age =</span> ages, <span class="dt">state =</span> <span class="kw">as.character</span>(matrix<span class="op">$</span>datasetnames), </span>
+<span id="cb83-34"><a href="logistic-regression.html#cb83-34"></a>        <span class="dt">race =</span> <span class="kw">as.character</span>(<span class="st">&quot;white&quot;</span>), <span class="dt">is_dark =</span> <span class="st">&quot;FALSE&quot;</span>, </span>
+<span id="cb83-35"><a href="logistic-regression.html#cb83-35"></a>        <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb83-36"><a href="logistic-regression.html#cb83-36"></a>    </span>
+<span id="cb83-37"><a href="logistic-regression.html#cb83-37"></a>    <span class="co"># white and night</span></span>
+<span id="cb83-38"><a href="logistic-regression.html#cb83-38"></a>    coeff_white_night &lt;-<span class="st"> </span>matrix<span class="op">$</span>intercept <span class="op">+</span><span class="st"> </span></span>
+<span id="cb83-39"><a href="logistic-regression.html#cb83-39"></a><span class="st">        </span>matrix<span class="op">$</span>subject_raceW <span class="op">+</span><span class="st"> </span>matrix<span class="op">$</span>is_dark <span class="op">+</span><span class="st"> </span></span>
+<span id="cb83-40"><a href="logistic-regression.html#cb83-40"></a><span class="st">        </span>(matrix<span class="op">$</span>subject_age <span class="op">+</span><span class="st"> </span>matrix<span class="op">$</span>subject_raceW.subject_age) <span class="op">*</span><span class="st"> </span></span>
+<span id="cb83-41"><a href="logistic-regression.html#cb83-41"></a><span class="st">            </span>ages</span>
+<span id="cb83-42"><a href="logistic-regression.html#cb83-42"></a>    scurve_white_night &lt;-<span class="st"> </span><span class="kw">exp</span>(coeff_white_night)<span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span></span>
+<span id="cb83-43"><a href="logistic-regression.html#cb83-43"></a><span class="st">        </span><span class="kw">exp</span>(coeff_white_night))</span>
+<span id="cb83-44"><a href="logistic-regression.html#cb83-44"></a>    plot.data_white_night &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prob =</span> scurve_white_night, </span>
+<span id="cb83-45"><a href="logistic-regression.html#cb83-45"></a>        <span class="dt">age =</span> ages, <span class="dt">state =</span> <span class="kw">as.character</span>(matrix<span class="op">$</span>datasetnames), </span>
+<span id="cb83-46"><a href="logistic-regression.html#cb83-46"></a>        <span class="dt">race =</span> <span class="kw">as.character</span>(<span class="st">&quot;white&quot;</span>), <span class="dt">is_dark =</span> <span class="st">&quot;TRUE&quot;</span>, </span>
+<span id="cb83-47"><a href="logistic-regression.html#cb83-47"></a>        <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb83-48"><a href="logistic-regression.html#cb83-48"></a>    </span>
+<span id="cb83-49"><a href="logistic-regression.html#cb83-49"></a>    full_plot_data &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(plot.data_white_day, </span>
+<span id="cb83-50"><a href="logistic-regression.html#cb83-50"></a>        plot.data_white_night, plot.data, </span>
+<span id="cb83-51"><a href="logistic-regression.html#cb83-51"></a>        plot.data_night)</span>
+<span id="cb83-52"><a href="logistic-regression.html#cb83-52"></a>    </span>
+<span id="cb83-53"><a href="logistic-regression.html#cb83-53"></a>}</span>
+<span id="cb83-54"><a href="logistic-regression.html#cb83-54"></a></span>
+<span id="cb83-55"><a href="logistic-regression.html#cb83-55"></a>datum &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="kw">seq</span>(datasets), plot_all)</span>
+<span id="cb83-56"><a href="logistic-regression.html#cb83-56"></a>all_cities &lt;-<span class="st"> </span><span class="kw">do.call</span>(<span class="st">&quot;rbind&quot;</span>, datum)</span>
+<span id="cb83-57"><a href="logistic-regression.html#cb83-57"></a>all_cities &lt;-<span class="st"> </span>all_cities <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(state <span class="op">!=</span><span class="st"> </span></span>
+<span id="cb83-58"><a href="logistic-regression.html#cb83-58"></a><span class="st">    &quot;PApittsburgh&quot;</span> <span class="op">&amp;</span><span class="st"> </span>state <span class="op">!=</span><span class="st"> &quot;CThartford&quot;</span>)</span></code></pre></div>
+<p>Lastly, after getting the predicted probabilities from the different coefficients it is time to plot them.</p>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="logistic-regression.html#cb84-1"></a>black_day_data &lt;-<span class="st"> </span>all_cities <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(race <span class="op">==</span><span class="st"> </span></span>
+<span id="cb84-2"><a href="logistic-regression.html#cb84-2"></a><span class="st">    &quot;black&quot;</span> <span class="op">&amp;</span><span class="st"> </span>is_dark <span class="op">==</span><span class="st"> &quot;FALSE&quot;</span>)</span>
+<span id="cb84-3"><a href="logistic-regression.html#cb84-3"></a>black_night_data &lt;-<span class="st"> </span>all_cities <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(race <span class="op">==</span><span class="st"> </span></span>
+<span id="cb84-4"><a href="logistic-regression.html#cb84-4"></a><span class="st">    &quot;black&quot;</span> <span class="op">&amp;</span><span class="st"> </span>is_dark <span class="op">==</span><span class="st"> &quot;TRUE&quot;</span>)</span>
+<span id="cb84-5"><a href="logistic-regression.html#cb84-5"></a>white_day_data &lt;-<span class="st"> </span>all_cities <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(race <span class="op">==</span><span class="st"> </span></span>
+<span id="cb84-6"><a href="logistic-regression.html#cb84-6"></a><span class="st">    &quot;white&quot;</span> <span class="op">&amp;</span><span class="st"> </span>is_dark <span class="op">==</span><span class="st"> &quot;FALSE&quot;</span>)</span>
+<span id="cb84-7"><a href="logistic-regression.html#cb84-7"></a>white_night_data &lt;-<span class="st"> </span>all_cities <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(race <span class="op">==</span><span class="st"> </span></span>
+<span id="cb84-8"><a href="logistic-regression.html#cb84-8"></a><span class="st">    &quot;white&quot;</span> <span class="op">&amp;</span><span class="st"> </span>is_dark <span class="op">==</span><span class="st"> &quot;TRUE&quot;</span>)</span>
+<span id="cb84-9"><a href="logistic-regression.html#cb84-9"></a></span>
+<span id="cb84-10"><a href="logistic-regression.html#cb84-10"></a>p &lt;-<span class="st"> </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> age, <span class="dt">y =</span> prob, </span>
+<span id="cb84-11"><a href="logistic-regression.html#cb84-11"></a>    <span class="dt">color =</span> <span class="st">&quot;black and day&quot;</span>), <span class="dt">data =</span> black_day_data, </span>
+<span id="cb84-12"><a href="logistic-regression.html#cb84-12"></a>    <span class="dt">lwd =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> age, <span class="dt">y =</span> prob, </span>
+<span id="cb84-13"><a href="logistic-regression.html#cb84-13"></a>    <span class="dt">color =</span> <span class="st">&quot;black and night&quot;</span>), <span class="dt">data =</span> black_night_data, </span>
+<span id="cb84-14"><a href="logistic-regression.html#cb84-14"></a>    <span class="dt">lwd =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> age, <span class="dt">y =</span> prob, </span>
+<span id="cb84-15"><a href="logistic-regression.html#cb84-15"></a>    <span class="dt">color =</span> <span class="st">&quot;white and day&quot;</span>), <span class="dt">data =</span> white_day_data, </span>
+<span id="cb84-16"><a href="logistic-regression.html#cb84-16"></a>    <span class="dt">lwd =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> age, <span class="dt">y =</span> prob, </span>
+<span id="cb84-17"><a href="logistic-regression.html#cb84-17"></a>    <span class="dt">color =</span> <span class="st">&quot;white and night&quot;</span>), <span class="dt">data =</span> white_night_data, </span>
+<span id="cb84-18"><a href="logistic-regression.html#cb84-18"></a>    <span class="dt">lwd =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span><span class="kw">facet_wrap</span>(<span class="op">~</span>state)</span>
+<span id="cb84-19"><a href="logistic-regression.html#cb84-19"></a><span class="kw">ggsave</span>(<span class="st">&quot;cities_night_day_log_reg.png&quot;</span>, p, </span>
+<span id="cb84-20"><a href="logistic-regression.html#cb84-20"></a>    <span class="dt">scale =</span> <span class="dv">15</span>)</span></code></pre></div>
+<p><img src="cities_night_day_log_reg.png" />
+The plots above show the probabilities of being searched given the subject’s race, in the day or night, and age. The most noteworthy thing to point out is that in nearly every prediction, white drivers at night tend to have a higher probability of getting searched. Moreover, in cities like Greensboro and Louisville, a driver being white or black has a higher probability of being searched rather at night than day. However, in all the cities black drivers at night still lead to the highest probabilities in being searched. This reiterates the Stanford Open Policing project’s caveat that the this test does account for seasonal changes, artificial lighting, and vehicle make.</p>
+</div>
+<div id="predictive-models" class="section level2">
+<h2><span class="header-section-number">6.4</span> Predictive Models</h2>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="logistic-regression.html#cb85-1"></a>durham &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT date, time, search_conducted, subject_race, subject_age, subject_sex, reason_for_stop FROM NCdurham&quot;</span>)</span></code></pre></div>
+<p>We look to predict whether a traffic stop results in a search using logistic regression. We use subject_age, subject_sex to predict search_conducted. We train the model on 100000 random samples, and then test the model on 200000 random samples from the durham dataset.</p>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="logistic-regression.html#cb86-1"></a><span class="co"># sampling training data</span></span>
+<span id="cb86-2"><a href="logistic-regression.html#cb86-2"></a>new_durham &lt;-<span class="st"> </span>durham <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(subject_sex <span class="op">!=</span><span class="st"> </span></span>
+<span id="cb86-3"><a href="logistic-regression.html#cb86-3"></a><span class="st">    &quot;NA&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">sample_n</span>(<span class="fl">1e+05</span>)</span>
+<span id="cb86-4"><a href="logistic-regression.html#cb86-4"></a><span class="co"># sampling test data</span></span>
+<span id="cb86-5"><a href="logistic-regression.html#cb86-5"></a>new_test &lt;-<span class="st"> </span>durham <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(subject_sex <span class="op">!=</span><span class="st"> </span></span>
+<span id="cb86-6"><a href="logistic-regression.html#cb86-6"></a><span class="st">    &quot;NA&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">sample_n</span>(<span class="fl">2e+05</span>)</span>
+<span id="cb86-7"><a href="logistic-regression.html#cb86-7"></a><span class="co"># makes model</span></span>
+<span id="cb86-8"><a href="logistic-regression.html#cb86-8"></a>testmodel &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="dt">formula =</span> <span class="kw">as.factor</span>(search_conducted) <span class="op">~</span><span class="st"> </span></span>
+<span id="cb86-9"><a href="logistic-regression.html#cb86-9"></a><span class="st">    </span><span class="kw">as.numeric</span>(subject_age) <span class="op">*</span><span class="st"> </span><span class="kw">as.factor</span>(subject_sex), </span>
+<span id="cb86-10"><a href="logistic-regression.html#cb86-10"></a>    <span class="dt">data =</span> new_durham, <span class="dt">family =</span> <span class="st">&quot;binomial&quot;</span>)</span>
+<span id="cb86-11"><a href="logistic-regression.html#cb86-11"></a><span class="co"># trains and tests model</span></span>
+<span id="cb86-12"><a href="logistic-regression.html#cb86-12"></a>predtest &lt;-<span class="st"> </span><span class="kw">predict</span>(testmodel, <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb86-13"><a href="logistic-regression.html#cb86-13"></a>predict1 &lt;-<span class="st"> </span><span class="kw">predict</span>(testmodel, <span class="dt">newdata =</span> new_durham, </span>
+<span id="cb86-14"><a href="logistic-regression.html#cb86-14"></a>    <span class="dt">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb86-15"><a href="logistic-regression.html#cb86-15"></a>pred &lt;-<span class="st"> </span><span class="kw">ifelse</span>(predict1 <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.05</span>, <span class="st">&quot;TRUE&quot;</span>, <span class="st">&quot;FALSE&quot;</span>)</span>
+<span id="cb86-16"><a href="logistic-regression.html#cb86-16"></a><span class="co"># confusion matrix</span></span>
+<span id="cb86-17"><a href="logistic-regression.html#cb86-17"></a><span class="kw">table</span>(pred, new_durham<span class="op">$</span>search_conducted)</span></code></pre></div>
+<pre><code>##        
+## pred    FALSE  TRUE
+##   FALSE 46025  1337
+##   TRUE  47254  5383</code></pre>
+<p>Using a confusion matrix, setting the percentage threshold to 0.05, we correctly predicted a search only 10% of the time. This suggests that the model is not doing a great job, but since there are a very small proportion of searched stops in the dataset, there might not be much signal to pickup. The model is unable to predict search conducted as well as we had hoped and so other tests, such as the threshold test could be used to help us answer a similar question. Regardless of how the model performs, we are still able to use the coefficients to help explain the data.</p>
+</div>
+<div id="empirical-search-probabilities-nationwide" class="section level2">
+<h2><span class="header-section-number">6.5</span> Empirical Search Probabilities Nationwide</h2>
+<p>Here I plot the empirical search probabilities for each data set to see how the true search behavior compares with the predicted probabilities of our model. I use SQL commands COUNT and GROUP BY to circumvent downloading each data set individually; then, I use dplyr functions to calculate the search probability for each age and race group. (For race group, we only consider Black and white stopped motorists.)</p>
+<p>First I load the necessary packages and establish the SQL connection, which isn’t included here due to privacy.</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="logistic-regression.html#cb88-1"></a><span class="kw">library</span>(tidyverse)</span>
+<span id="cb88-2"><a href="logistic-regression.html#cb88-2"></a><span class="kw">library</span>(RMySQL)</span>
+<span id="cb88-3"><a href="logistic-regression.html#cb88-3"></a><span class="kw">library</span>(stringr)</span>
+<span id="cb88-4"><a href="logistic-regression.html#cb88-4"></a><span class="kw">library</span>(geofacet)</span>
+<span id="cb88-5"><a href="logistic-regression.html#cb88-5"></a><span class="kw">library</span>(grid)  <span class="co"># for printing landscape plots</span></span></code></pre></div>
+<div id="create-a-list-of-relevant-data-sets" class="section level3">
+<h3><span class="header-section-number">6.5.1</span> 1. Create a list of relevant data sets</h3>
+<p>Next, I use the function relevant_datasets to find the data set names that include all relevant variables: age, race, sex, date of stop, and whether or not a search was conducted.</p>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="logistic-regression.html#cb89-1"></a><span class="co"># query to find all data sets</span></span>
+<span id="cb89-2"><a href="logistic-regression.html#cb89-2"></a>all_dataset_names &lt;-<span class="st"> </span><span class="kw">as.list</span>(DBI<span class="op">::</span><span class="kw">dbGetQuery</span>(con, </span>
+<span id="cb89-3"><a href="logistic-regression.html#cb89-3"></a>    <span class="st">&quot;SHOW TABLES&quot;</span>))<span class="op">$</span>Tables_in_traffic</span>
+<span id="cb89-4"><a href="logistic-regression.html#cb89-4"></a></span>
+<span id="cb89-5"><a href="logistic-regression.html#cb89-5"></a>variables_of_interest &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;subject_age&quot;</span>, </span>
+<span id="cb89-6"><a href="logistic-regression.html#cb89-6"></a>    <span class="st">&quot;subject_race&quot;</span>, <span class="st">&quot;subject_sex&quot;</span>, <span class="st">&quot;date&quot;</span>, </span>
+<span id="cb89-7"><a href="logistic-regression.html#cb89-7"></a>    <span class="st">&quot;search_conducted&quot;</span>)</span>
+<span id="cb89-8"><a href="logistic-regression.html#cb89-8"></a></span>
+<span id="cb89-9"><a href="logistic-regression.html#cb89-9"></a>datasets_of_interest &lt;-<span class="st"> </span><span class="kw">relevant_datasets</span>(all_dataset_names, </span>
+<span id="cb89-10"><a href="logistic-regression.html#cb89-10"></a>    variables_of_interest)</span>
+<span id="cb89-11"><a href="logistic-regression.html#cb89-11"></a></span>
+<span id="cb89-12"><a href="logistic-regression.html#cb89-12"></a><span class="co"># manually remove certain data sets</span></span>
+<span id="cb89-13"><a href="logistic-regression.html#cb89-13"></a>datasets_of_interest &lt;-<span class="st"> </span>datasets_of_interest[<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span>, </span>
+<span id="cb89-14"><a href="logistic-regression.html#cb89-14"></a>    <span class="dv">8</span>, <span class="dv">20</span>, <span class="dv">26</span>, <span class="dv">30</span>)]</span></code></pre></div>
+</div>
+<div id="query-the-stop-and-search-counts." class="section level3">
+<h3><span class="header-section-number">6.5.2</span> 2. Query the stop and search counts.</h3>
+<p>Next, I use a function p_search_conducted to generate a list of data frames that has the probability that a search is conducted on a stopped motorist of a particular racial and age group. The input for this function is the name of a data set, and a data frame with search probabilities is returned.</p>
+<p>More details of how this function works is as follows. First, it checks the variable type of search_conducted because our SQL database contains data sets with search_conducted values as character strings (so, type varchar) or as a binary 0 or 1, (so, type double). Second, the function queries SQL twice, counting the number of times a search was conducted for each racial-age group and the number of times a stop was conducted for each racial-age group. Since our logistic regression considers only stops on Black and white people, p_search_conducted will only consider racial groups Black and white. The former is the numerator of the eventual search probability while the latter is the denominator. Lastly, with some dplyr data manipulation, I combine the two data frames resulting from the two SQL queries to have one data frame of search probabilities.</p>
+<p>I use the lapply function to iterate p_search_conducted on a list of data set names (and return a list of data frames.)</p>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="logistic-regression.html#cb90-1"></a>p_search_conducted &lt;-<span class="st"> </span><span class="cf">function</span>(dataset_name){</span>
+<span id="cb90-2"><a href="logistic-regression.html#cb90-2"></a></span>
+<span id="cb90-3"><a href="logistic-regression.html#cb90-3"></a>  dataset_str &lt;-<span class="st"> </span><span class="kw">paste</span>(dataset_name)</span>
+<span id="cb90-4"><a href="logistic-regression.html#cb90-4"></a>  </span>
+<span id="cb90-5"><a href="logistic-regression.html#cb90-5"></a>  <span class="co"># first, check the type of search_conducted</span></span>
+<span id="cb90-6"><a href="logistic-regression.html#cb90-6"></a>  explain_command_str &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;EXPLAIN&quot;</span>, dataset_name, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>)</span>
+<span id="cb90-7"><a href="logistic-regression.html#cb90-7"></a>  </span>
+<span id="cb90-8"><a href="logistic-regression.html#cb90-8"></a>  explain_df &lt;-<span class="st"> </span><span class="kw">dbGetQuery</span>(con, explain_command_str) <span class="op">%&gt;%</span></span>
+<span id="cb90-9"><a href="logistic-regression.html#cb90-9"></a><span class="st">    </span><span class="kw">filter</span>(Field <span class="op">==</span><span class="st"> &quot;search_conducted&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb90-10"><a href="logistic-regression.html#cb90-10"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">dataset =</span> dataset_str) <span class="op">%&gt;%</span></span>
+<span id="cb90-11"><a href="logistic-regression.html#cb90-11"></a><span class="st">    </span><span class="kw">select</span>(Field, Type, dataset)</span>
+<span id="cb90-12"><a href="logistic-regression.html#cb90-12"></a>  </span>
+<span id="cb90-13"><a href="logistic-regression.html#cb90-13"></a>  <span class="co"># note that explain_df[1, 2] is the entry that has the type of search_conducted</span></span>
+<span id="cb90-14"><a href="logistic-regression.html#cb90-14"></a>  </span>
+<span id="cb90-15"><a href="logistic-regression.html#cb90-15"></a>  <span class="co"># second, create SQL search strings based on type of search_conducted</span></span>
+<span id="cb90-16"><a href="logistic-regression.html#cb90-16"></a>  <span class="cf">if</span> (explain_df[<span class="dv">1</span>, <span class="dv">2</span>] <span class="op">==</span><span class="st"> &quot;varchar(50)&quot;</span>) {</span>
+<span id="cb90-17"><a href="logistic-regression.html#cb90-17"></a>    </span>
+<span id="cb90-18"><a href="logistic-regression.html#cb90-18"></a>      search_numerator_sql &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;SELECT subject_age, subject_race, </span></span>
+<span id="cb90-19"><a href="logistic-regression.html#cb90-19"></a><span class="st">                                COUNT(*) as &#39;search_counts&#39; FROM&quot;</span>,</span>
+<span id="cb90-20"><a href="logistic-regression.html#cb90-20"></a>                                dataset_str, </span>
+<span id="cb90-21"><a href="logistic-regression.html#cb90-21"></a>                                <span class="st">&quot;WHERE (subject_race=&#39;black&#39; </span></span>
+<span id="cb90-22"><a href="logistic-regression.html#cb90-22"></a><span class="st">                                OR subject_race = &#39;white&#39;) </span></span>
+<span id="cb90-23"><a href="logistic-regression.html#cb90-23"></a><span class="st">                                AND search_conducted = &#39;TRUE&#39; </span></span>
+<span id="cb90-24"><a href="logistic-regression.html#cb90-24"></a><span class="st">                                AND subject_age &gt; 0 </span></span>
+<span id="cb90-25"><a href="logistic-regression.html#cb90-25"></a><span class="st">                                GROUP BY subject_age, subject_race&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>)</span>
+<span id="cb90-26"><a href="logistic-regression.html#cb90-26"></a>    </span>
+<span id="cb90-27"><a href="logistic-regression.html#cb90-27"></a>  } <span class="cf">else</span> <span class="cf">if</span> (explain_df[<span class="dv">1</span>, <span class="dv">2</span>] <span class="op">==</span><span class="st"> &quot;double&quot;</span>) {</span>
+<span id="cb90-28"><a href="logistic-regression.html#cb90-28"></a>    </span>
+<span id="cb90-29"><a href="logistic-regression.html#cb90-29"></a>      search_numerator_sql &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;SELECT subject_age, subject_race, </span></span>
+<span id="cb90-30"><a href="logistic-regression.html#cb90-30"></a><span class="st">                                COUNT(*) as &#39;search_counts&#39; FROM&quot;</span>,</span>
+<span id="cb90-31"><a href="logistic-regression.html#cb90-31"></a>                                dataset_str, </span>
+<span id="cb90-32"><a href="logistic-regression.html#cb90-32"></a>                                <span class="st">&quot;WHERE (subject_race=&#39;black&#39; </span></span>
+<span id="cb90-33"><a href="logistic-regression.html#cb90-33"></a><span class="st">                                OR subject_race = &#39;white&#39;) </span></span>
+<span id="cb90-34"><a href="logistic-regression.html#cb90-34"></a><span class="st">                                AND search_conducted = &#39;1&#39; </span></span>
+<span id="cb90-35"><a href="logistic-regression.html#cb90-35"></a><span class="st">                                AND subject_age &gt; 0 </span></span>
+<span id="cb90-36"><a href="logistic-regression.html#cb90-36"></a><span class="st">                                GROUP BY subject_age, subject_race&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>)</span>
+<span id="cb90-37"><a href="logistic-regression.html#cb90-37"></a>      </span>
+<span id="cb90-38"><a href="logistic-regression.html#cb90-38"></a>  }</span>
+<span id="cb90-39"><a href="logistic-regression.html#cb90-39"></a>  </span>
+<span id="cb90-40"><a href="logistic-regression.html#cb90-40"></a>  stops_denominator_sql &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;SELECT subject_age, subject_race, </span></span>
+<span id="cb90-41"><a href="logistic-regression.html#cb90-41"></a><span class="st">                                 COUNT(*) as &#39;total_stop_counts&#39; FROM&quot;</span>, </span>
+<span id="cb90-42"><a href="logistic-regression.html#cb90-42"></a>                                 dataset_str, </span>
+<span id="cb90-43"><a href="logistic-regression.html#cb90-43"></a>                                 <span class="st">&quot;WHERE (subject_race=&#39;black&#39; </span></span>
+<span id="cb90-44"><a href="logistic-regression.html#cb90-44"></a><span class="st">                                 OR subject_race = &#39;white&#39;) </span></span>
+<span id="cb90-45"><a href="logistic-regression.html#cb90-45"></a><span class="st">                                 AND subject_age &gt; 0 </span></span>
+<span id="cb90-46"><a href="logistic-regression.html#cb90-46"></a><span class="st">                                 GROUP BY subject_age, subject_race&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>)</span>
+<span id="cb90-47"><a href="logistic-regression.html#cb90-47"></a>  </span>
+<span id="cb90-48"><a href="logistic-regression.html#cb90-48"></a>  <span class="co"># third, calculate % search_conducted per age in df thru query</span></span>
+<span id="cb90-49"><a href="logistic-regression.html#cb90-49"></a>  </span>
+<span id="cb90-50"><a href="logistic-regression.html#cb90-50"></a>  search_numerator &lt;-<span class="st"> </span><span class="kw">dbGetQuery</span>(con, search_numerator_sql)</span>
+<span id="cb90-51"><a href="logistic-regression.html#cb90-51"></a>  </span>
+<span id="cb90-52"><a href="logistic-regression.html#cb90-52"></a>  stops_denominator &lt;-<span class="st"> </span><span class="kw">dbGetQuery</span>(con, stops_denominator_sql)</span>
+<span id="cb90-53"><a href="logistic-regression.html#cb90-53"></a>  </span>
+<span id="cb90-54"><a href="logistic-regression.html#cb90-54"></a>  <span class="co"># fourth, combine results into one df </span></span>
+<span id="cb90-55"><a href="logistic-regression.html#cb90-55"></a>  </span>
+<span id="cb90-56"><a href="logistic-regression.html#cb90-56"></a>  search_probability &lt;-<span class="st"> </span>search_numerator <span class="op">%&gt;%</span></span>
+<span id="cb90-57"><a href="logistic-regression.html#cb90-57"></a><span class="st">    </span><span class="kw">right_join</span>(stops_denominator, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;subject_race&quot;</span>, <span class="st">&quot;subject_age&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb90-58"><a href="logistic-regression.html#cb90-58"></a><span class="st">    </span><span class="kw">replace_na</span>(<span class="kw">list</span>(<span class="dt">search_counts =</span> <span class="dv">0</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb90-59"><a href="logistic-regression.html#cb90-59"></a><span class="st">    </span><span class="kw">mutate</span>(<span class="dt">search_percent =</span> search_counts <span class="op">/</span><span class="st"> </span>total_stop_counts,</span>
+<span id="cb90-60"><a href="logistic-regression.html#cb90-60"></a>           </span>
+<span id="cb90-61"><a href="logistic-regression.html#cb90-61"></a>           <span class="co"># create column for dataset name</span></span>
+<span id="cb90-62"><a href="logistic-regression.html#cb90-62"></a>           <span class="dt">dataset =</span> dataset_str,</span>
+<span id="cb90-63"><a href="logistic-regression.html#cb90-63"></a>           <span class="dt">subject_age =</span> <span class="kw">as.numeric</span>(subject_age))</span>
+<span id="cb90-64"><a href="logistic-regression.html#cb90-64"></a>  </span>
+<span id="cb90-65"><a href="logistic-regression.html#cb90-65"></a>  <span class="kw">return</span>(search_probability)</span>
+<span id="cb90-66"><a href="logistic-regression.html#cb90-66"></a></span>
+<span id="cb90-67"><a href="logistic-regression.html#cb90-67"></a>}</span>
+<span id="cb90-68"><a href="logistic-regression.html#cb90-68"></a></span>
+<span id="cb90-69"><a href="logistic-regression.html#cb90-69"></a>search_probs_list &lt;-<span class="st"> </span><span class="kw">lapply</span>(datasets_of_interest, p_search_conducted)</span></code></pre></div>
+</div>
+<div id="combine-and-plot-the-data" class="section level3">
+<h3><span class="header-section-number">6.5.3</span> 3. Combine and plot the data</h3>
+<p>Finally, I plot the data!</p>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="logistic-regression.html#cb91-1"></a>combined_search_probs_list &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(search_probs_list, </span>
+<span id="cb91-2"><a href="logistic-regression.html#cb91-2"></a>    <span class="dt">.id =</span> <span class="st">&quot;column_label&quot;</span>)</span>
+<span id="cb91-3"><a href="logistic-regression.html#cb91-3"></a></span>
+<span id="cb91-4"><a href="logistic-regression.html#cb91-4"></a>empirical_search_p &lt;-<span class="st"> </span>combined_search_probs_list <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb91-5"><a href="logistic-regression.html#cb91-5"></a><span class="st">    </span><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> subject_age, </span>
+<span id="cb91-6"><a href="logistic-regression.html#cb91-6"></a>    <span class="dt">y =</span> search_percent, <span class="dt">color =</span> subject_race), </span>
+<span id="cb91-7"><a href="logistic-regression.html#cb91-7"></a>    <span class="dt">alpha =</span> <span class="fl">0.4</span>) <span class="op">+</span><span class="st"> </span><span class="kw">facet_wrap</span>(<span class="op">~</span>dataset) <span class="op">+</span><span class="st"> </span></span>
+<span id="cb91-8"><a href="logistic-regression.html#cb91-8"></a><span class="st">    </span><span class="kw">scale_y_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="fl">0.4</span>))</span>
+<span id="cb91-9"><a href="logistic-regression.html#cb91-9"></a></span>
+<span id="cb91-10"><a href="logistic-regression.html#cb91-10"></a><span class="kw">ggsave</span>(<span class="st">&quot;empirical prob search_conducted.png&quot;</span>, </span>
+<span id="cb91-11"><a href="logistic-regression.html#cb91-11"></a>    <span class="dt">width =</span> <span class="dv">14</span>, <span class="dt">height =</span> <span class="dv">10</span>, <span class="dt">units =</span> <span class="st">&quot;in&quot;</span>)</span></code></pre></div>
+<div style="page-break-after: always;"></div>
+<p><img src="empirical_prob_search_conducted.png" /></p>
+<div style="page-break-after: always;"></div>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="exploratory-data-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="limitations-and-discussion.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/05-nationwide_log_reg.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "section"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
